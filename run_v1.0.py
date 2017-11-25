@@ -50,6 +50,7 @@ class Application(tornado.web.Application):
             (r"/", HomeHandler),
             (r"/index.html", HomeHandler),
             (r"/business_search.html", Business_search),
+            #列表显示企业
             (r"/business_list.html", Business_list),
             #(r"/archive", ArchiveHandler),
             #(r"/feed", FeedHandler),
