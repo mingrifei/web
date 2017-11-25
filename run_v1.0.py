@@ -48,6 +48,7 @@ class Application(tornado.web.Application):
     def __init__(self):
         handlers = [
             (r"/", HomeHandler),
+            #首页页面
             (r"/index.html", HomeHandler),
             #查询企业页面
             (r"/business_search.html", Business_search),
