@@ -1,0 +1,267 @@
+{% extends "frame.html" %}
+
+{% block main %}
+  {% for entry in entries %}
+    {% module Entry(entry) %}
+  {% end %}
+        <div class="tpl-content-wrapper">
+            
+            <div class="container-fluid am-cf">
+                <div class="row">
+                    <div class="am-u-sm-12 am-u-md-12 am-u-lg-9">
+                        <div class="page-header-heading"><span class="am-icon-home page-header-heading-icon"></span> 账户状态和声明 <small>Account status</small></div>
+                        <p class="page-header-description">您现在使用的为大众版本，使用本系统数据无任何限制，不收取任何费用。，平台上的信息均来自网络公开信息，由信息来源方对信息真实性等负相应责任，平台所展示信息出于传递更多信息之目的，并不意味平台赞同其观点或已经证实其内容的真实性。</p>
+						<p class="page-header-description">数据来源包括但不限于：全国企业信用信息公示系统 中国裁判文书网 中国执行信息公开网 国家知识产权局 商标局 版权局。</p>
+                    </div>
+                    <div class="am-u-lg-3 tpl-index-settings-button">
+                        <button type="button" class="page-header-button"><span class="am-icon-paint-brush"></span> 设置</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row-content am-cf">
+                <div class="row  am-cf">
+                    <div class="am-u-sm-12 am-u-md-12 am-u-lg-4">
+                        <div class="widget am-cf">
+                            <div class="widget-head am-cf">
+                                <div class="widget-title am-fl">输入要查询的企业名称</div>
+                                <div class="widget-function am-fr">
+                                    <a href="javascript:;" class="am-icon-cog"></a>
+                                </div>
+                            </div>
+                            <div class="widget-body am-fr">
+                                <div class="am-fl">
+                                    <div class="row">
+										<div class="am-u-sm-12 am-u-md-12">
+											<div class="am-input-group am-input-group-sm tpl-form-border-form cl-p">
+												<input type="text" class="am-form-field " placeholder="请输入公司名称、人名、产品名称或其它关键词 ...">
+												<span class="am-input-group-btn">
+													<button class="am-btn  am-btn-default am-btn-success tpl-table-list-field am-icon-search" type="button"></button>
+												</span>
+											</div>
+										</div>
+									</div>
+                                </div>
+                                <div class="am-fr am-cf">
+                                    <div class="widget-fluctuation-description-amount text-success" am-cf>
+                                        +23014
+
+                                    </div>
+                                    <div class="widget-fluctuation-description-text am-text-right">
+                                        本月新增加
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="am-u-sm-12 am-u-md-6 am-u-lg-4">
+                        <div class="widget widget-primary am-cf">
+                            <div class="widget-statistic-header">
+                                共计注册资本总额
+                            </div>
+                            <div class="widget-statistic-body">
+                                <div class="widget-statistic-value">
+                                    ￥75,751,131亿元
+                                </div>
+                                <div class="widget-statistic-description">
+                                    其中新三板企业注册资本为 <strong>2,940,355亿</strong> 人民币
+                                </div>
+                                <span class="widget-statistic-icon am-icon-credit-card-alt"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="am-u-sm-12 am-u-md-6 am-u-lg-4">
+                        <div class="widget widget-purple am-cf">
+                            <div class="widget-statistic-header">
+                                共收录的基金公司信息
+                            </div>
+                            <div class="widget-statistic-body">
+                                <div class="widget-statistic-value">
+                                    21,709+122家
+                                </div>
+                                <div class="widget-statistic-description">
+                                    收录的私募基金公司为 <strong>21709</strong>家
+                                </div>
+                                <span class="widget-statistic-icon am-icon-support"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row am-cf">
+                    <div class="am-u-sm-12 am-u-md-8">
+                        <div class="widget am-cf">
+                            <div class="widget-head am-cf">
+                                <div class="widget-title am-fl">企业收录信息分类（单元：亿元）</div>
+                                <div class="widget-function am-fr">
+                                    <a href="javascript:;" class="am-icon-cog"></a>
+                                </div>
+                            </div>
+                            <div class="widget-body-md widget-body tpl-amendment-echarts am-fr" id="tpl-echarts">
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="am-u-sm-12 am-u-md-4">
+                        <div class="widget am-cf">
+                            <div class="widget-head am-cf">
+                                <div class="widget-title am-fl">收录企业信息分布</div>
+                                <div class="widget-function am-fr">
+                                    <a href="javascript:;" class="am-icon-cog"></a>
+                                </div>
+                            </div>
+                            <div class="widget-body widget-body-md am-fr">
+
+                                
+								<div class="am-progress-title">科技推广和应用服务业 <span class="am-fr am-progress-title-more">15% / 100%</span></div>
+								<div class="am-progress">
+									<div class="am-progress-bar" style="width: 15%"></div>
+								</div>
+                                <div class="am-progress-title">研究和试验发展 <span class="am-fr am-progress-title-more">14% / 100%</span></div>
+                                <div class="am-progress">
+                                    <div class="am-progress-bar  am-progress-bar-warning" style="width: 14%"></div>
+                                </div>
+                                <div class="am-progress-title">资本市场服务 <span class="am-fr am-progress-title-more">13% / 100%</span></div>
+                                <div class="am-progress">
+                                    <div class="am-progress-bar am-progress-bar-danger" style="width: 13%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row am-cf">
+                    <div class="am-u-sm-12 am-u-md-12 am-u-lg-4 widget-margin-bottom-lg ">
+                        <div class="tpl-user-card am-text-center widget-body-lg">
+                            <div class="tpl-user-card-title">
+                                最近一个月热度
+                            </div>
+                            <div class="tpl-user-card-title">
+                                相关制造业
+                            </div>
+                            <div class="achievement-description">
+                                其中
+                                <strong>30天内</strong> 搜索了
+                                <strong>20000多</strong>次。
+                            </div>
+							<div class="tpl-user-card-title">
+                                资本市场服务
+                            </div>
+                            <div class="achievement-description">
+                                其中
+                                <strong>30天内</strong> 搜索了
+                                <strong>10000多</strong>次。
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="am-u-sm-12 am-u-md-12 am-u-lg-8 widget-margin-bottom-lg">
+
+                        <div class="widget am-cf widget-body-lg">
+
+                            <div class="widget-body  am-fr">
+                                <div class="am-scrollable-horizontal ">
+                                    <table width="100%" class="am-table am-table-compact am-text-nowrap tpl-table-black " id="example-r">
+                                        <thead>
+                                            <tr>
+                                                <th>文章标题</th>
+                                                <th>作者</th>
+                                                <th>时间</th>
+                                                <th>操作</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr class="gradeX">
+                                                <td>新加坡大数据初创公司 Latize 获 150 万美元风险融资</td>
+                                                <td>张鹏飞</td>
+                                                <td>2016-09-26</td>
+                                                <td>
+                                                    <div class="tpl-table-black-operation">
+                                                        <a href="javascript:;">
+                                                            <i class="am-icon-pencil"></i> 编辑
+                                                        </a>
+                                                        <a href="javascript:;" class="tpl-table-black-operation-del">
+                                                            <i class="am-icon-trash"></i> 删除
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr class="even gradeC">
+                                                <td>自拍的“政治角色”：观众背对希拉里自拍合影表示“支持”</td>
+                                                <td>天纵之人</td>
+                                                <td>2016-09-26</td>
+                                                <td>
+                                                    <div class="tpl-table-black-operation">
+                                                        <a href="javascript:;">
+                                                            <i class="am-icon-pencil"></i> 编辑
+                                                        </a>
+                                                        <a href="javascript:;" class="tpl-table-black-operation-del">
+                                                            <i class="am-icon-trash"></i> 删除
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr class="gradeX">
+                                                <td>关于创新管理，我想和你当面聊聊。</td>
+                                                <td>王宽师</td>
+                                                <td>2016-09-26</td>
+                                                <td>
+                                                    <div class="tpl-table-black-operation">
+                                                        <a href="javascript:;">
+                                                            <i class="am-icon-pencil"></i> 编辑
+                                                        </a>
+                                                        <a href="javascript:;" class="tpl-table-black-operation-del">
+                                                            <i class="am-icon-trash"></i> 删除
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr class="even gradeC">
+                                                <td>究竟是趋势带动投资，还是投资引领趋势？</td>
+                                                <td>着迷</td>
+                                                <td>2016-09-26</td>
+                                                <td>
+                                                    <div class="tpl-table-black-operation">
+                                                        <a href="javascript:;">
+                                                            <i class="am-icon-pencil"></i> 编辑
+                                                        </a>
+                                                        <a href="javascript:;" class="tpl-table-black-operation-del">
+                                                            <i class="am-icon-trash"></i> 删除
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr class="even gradeC">
+                                                <td>Docker领域再添一员，网易云发布“蜂巢”，加入云计算之争</td>
+                                                <td>醉里挑灯看键</td>
+                                                <td>2016-09-26</td>
+                                                <td>
+                                                    <div class="tpl-table-black-operation">
+                                                        <a href="javascript:;">
+                                                            <i class="am-icon-pencil"></i> 编辑
+                                                        </a>
+                                                        <a href="javascript:;" class="tpl-table-black-operation-del">
+                                                            <i class="am-icon-trash"></i> 删除
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+
+
+                                            <!-- more data -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+{% end %}
