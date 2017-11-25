@@ -49,6 +49,7 @@ class Application(tornado.web.Application):
         handlers = [
             (r"/", HomeHandler),
             (r"/index.html", HomeHandler),
+            #查询企业页面
             (r"/business_search.html", Business_search),
             #列表显示企业
             (r"/business_list.html", Business_list),
