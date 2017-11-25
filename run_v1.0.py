@@ -58,8 +58,8 @@ class Application(tornado.web.Application):
             #(r"/feed", FeedHandler),
             #(r"/entry/([^/]+)", EntryHandler),
             #(r"/compose", ComposeHandler),
-            #(r"/auth/create", AuthCreateHandler),
-            #(r"/auth/login", AuthLoginHandler),
+            (r"/auth/create", AuthCreateHandler),
+            (r"/auth/login", AuthLoginHandler),
             #(r"/auth/logout", AuthLogoutHandler),
         ]
         settings = dict(
@@ -103,7 +103,7 @@ class BaseHandler(tornado.web.RequestHandler):
         return self.db.get("SELECT * FROM authors WHERE id = %s", int(user_id))
 
     def any_author_exists(self):
-        return bool(self.db.get("SELECT * FROM authors LIMIT 1"))
+        return bool(self.db.get("SELECT * FROM bigdata.authors LIMIT 1"))
 
 
 class HomeHandler(BaseHandler):
