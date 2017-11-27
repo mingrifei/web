@@ -15,9 +15,8 @@
 # under the License.
 
 import bcrypt
-import pymysql
 import concurrent.futures
-pymysql.install_as_MySQLdb()
+import pymysql
 import markdown
 import os.path
 import re
@@ -33,7 +32,7 @@ import unicodedata
 
 from tornado.options import define, options
 
-define("port", default=8080, help="run on the given port", type=int)
+define("port", default=8888, help="run on the given port", type=int)
 define("mysql_host", default="127.0.0.1:3306", help="blog database host")
 define("mysql_database", default="bigdata", help="blog database name")
 define("mysql_user", default="root", help="blog database user")
@@ -48,19 +47,18 @@ class Application(tornado.web.Application):
     def __init__(self):
         handlers = [
             (r"/", HomeHandler),
-            (r"/main.html", MainHandler),
-            #(r"/archive", ArchiveHandler),
-            #(r"/feed", FeedHandler),
-            #(r"/entry/([^/]+)", EntryHandler),
-            #(r"/compose", ComposeHandler),
-            #(r"/auth/create", AuthCreateHandler),
-            #(r"/auth/login", AuthLoginHandler),
-            #(r"/auth/logout", AuthLogoutHandler),
+            (r"/archive", ArchiveHandler),
+            (r"/feed", FeedHandler),
+            (r"/entry/([^/]+)", EntryHandler),
+            (r"/compose", ComposeHandler),
+            (r"/auth/create", AuthCreateHandler),
+            (r"/auth/login", AuthLoginHandler),
+            (r"/auth/logout", AuthLogoutHandler),
         ]
         settings = dict(
             blog_title=u"Tornado Blog",
-            template_path=os.path.join(os.path.dirname(__file__), "template"),
-            static_path=os.path.join(os.path.dirname(__file__), "statics"),
+            template_path=os.path.join(os.path.dirname(__file__), "templates"),
+            static_path=os.path.join(os.path.dirname(__file__), "static"),
             ui_modules={"Entry": EntryModule},
             xsrf_cookies=True,
             cookie_secret="__TODO:_GENERATE_YOUR_OWN_RANDOM_VALUE_HERE__",
@@ -105,21 +103,9 @@ class HomeHandler(BaseHandler):
     def get(self):
         entries = self.db.query("SELECT * FROM entries ORDER BY published "
                                 "DESC LIMIT 5")
-        '''
         if not entries:
             self.redirect("/compose")
             return
-        '''
-        self.render("home.html", entries=entries)
-class MainHandler(BaseHandler):
-    def get(self):
-        entries = self.db.query("SELECT * FROM entries ORDER BY published "
-                                "DESC LIMIT 5")
-        '''
-        if not entries:
-            self.redirect("/compose")
-            return
-        '''
         self.render("home.html", entries=entries)
 
 
@@ -170,7 +156,7 @@ class ComposeHandler(BaseHandler):
         else:
             slug = unicodedata.normalize("NFKD", title).encode(
                 "ascii", "ignore")
-            slug = re.sub(r"[^\w]+", " ", slug)
+            slug = re.sub(r"[^\w]+", "", str(slug,encoding="utf-8"))
             slug = "-".join(slug.lower().strip().split())
             if not slug: slug = "entry"
             while True:
@@ -222,7 +208,7 @@ class AuthLoginHandler(BaseHandler):
         hashed_password = yield executor.submit(
             bcrypt.hashpw, tornado.escape.utf8(self.get_argument("password")),
             tornado.escape.utf8(author.hashed_password))
-        if hashed_password == author.hashed_password:
+        if str(hashed_password, encoding = "utf-8") == author.hashed_password:
             self.set_secure_cookie("blogdemo_user", str(author.id))
             self.redirect(self.get_argument("next", "/"))
         else:

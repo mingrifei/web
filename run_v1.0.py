@@ -54,13 +54,15 @@ class Application(tornado.web.Application):
             (r"/business_search.html", Business_search),
             #列表显示企业
             (r"/business_list.html", Business_list),
+            # 查询企业详情
+            (r"/business_detail.html", Business_detail),
             #(r"/archive", ArchiveHandler),
             #(r"/feed", FeedHandler),
             #(r"/entry/([^/]+)", EntryHandler),
             #(r"/compose", ComposeHandler),
             (r"/auth/create", AuthCreateHandler),
             (r"/auth/login", AuthLoginHandler),
-            #(r"/auth/logout", AuthLogoutHandler),
+            (r"/auth/logout", AuthLogoutHandler),
         ]
         settings = dict(
             blog_title=u"企业信息服务平台",
@@ -98,7 +100,7 @@ class BaseHandler(tornado.web.RequestHandler):
         return self.application.db
 
     def get_current_user(self):
-        user_id = self.get_secure_cookie("blogdemo_user")
+        user_id = self.get_secure_cookie("login_user")
         if not user_id: return None
         return self.db.get("SELECT * FROM authors WHERE id = %s", int(user_id))
 
@@ -108,36 +110,42 @@ class BaseHandler(tornado.web.RequestHandler):
 
 class HomeHandler(BaseHandler):
     def get(self):
-        entries = self.db.query("SELECT * FROM entries ORDER BY published "
-                                "DESC LIMIT 5")
-        '''
-        if not entries:
-            self.redirect("/compose")
+        userinfo=self.current_user
+        if self.current_user==None:
+            self.redirect("/auth/login")
             return
-        '''
-        self.render("index.html", entries=entries)
-#企业查询
+        else:#登录成功后
+            business_count = self.db.get("SELECT FORMAT(sum(case when business_reg_capital like '%%万元人民币%%' "
+                                           "then replace(business_reg_capital,'万元人民币','')*10000 "
+                                            "when business_reg_capital like '%%未公开%%' "
+                                            "then 0 "
+                                            "when business_reg_capital like '%%万美元%%' "
+                                            "then replace(business_reg_capital,'万美元','')*60000 "
+                                             "when business_reg_capital like '%%万人民币%%' "
+                                            "then replace(business_reg_capital,'万人民币','')*10000 "
+                                              "when business_reg_capital like '%%万%%' "
+                                            "then replace(business_reg_capital,'万','')*10000 "
+                                           "else business_reg_capital end)/100000000,2) `business_reg_capital`, "
+                                           "format(count(*),0) `business_count` FROM business_base_info LIMIT 5")
+            self.render("index.html", userinfo=userinfo,business_count=business_count)
+#企业搜索查询
 class Business_search(BaseHandler):
+
     def get(self):
-        entries = self.db.query("SELECT * FROM entries ORDER BY published "
-                                "DESC LIMIT 5")
-        '''
-        if not entries:
-            self.redirect("/compose")
-            return
-        '''
-        self.render("business_search.html", entries=entries)
-#企业查询
+        userinfo = self.current_user
+        self.render("business_search.html", userinfo=userinfo)
+#企业列表查询
 class Business_list(BaseHandler):
     def get(self):
-        entries = self.db.query("SELECT * FROM entries ORDER BY published "
-                                "DESC LIMIT 5")
-        '''
-        if not entries:
-            self.redirect("/compose")
-            return
-        '''
-        self.render("business_list.html", entries=entries)
+        business_name = self.get_argument("business_name", None)
+        business_list=self.db.query("select  business_id,business_name,business_legal_name,business_reg_capital,business_reg_time,business_industry,business_scope  from `bigdata`.`business_base_info` where match(business_name,business_legal_name) against ('*中信*' IN BOOLEAN MODE)")
+        self.render("business_list.html", userinfo=self.current_user,business_list=business_list)
+#企业详情查询
+class Business_detail(BaseHandler):
+    def get(self):
+        business_name = self.get_argument("business_name", None)
+        business_list=self.db.query("select  business_id,business_name,business_legal_name,business_reg_capital,business_reg_time,business_industry,business_scope  from `bigdata`.`business_base_info` where match(business_name,business_legal_name) against ('*中信*' IN BOOLEAN MODE)")
+        self.render("business_detail.html", userinfo=self.current_user,business_list=business_list)
 
 
 class EntryHandler(BaseHandler):
@@ -217,7 +225,7 @@ class AuthCreateHandler(BaseHandler):
             "VALUES (%s, %s, %s)",
             self.get_argument("email"), self.get_argument("name"),
             hashed_password)
-        self.set_secure_cookie("blogdemo_user", str(author_id))
+        self.set_secure_cookie("login_user", str(author_id))
         self.redirect(self.get_argument("next", "/"))
 
 
@@ -234,27 +242,27 @@ class AuthLoginHandler(BaseHandler):
         author = self.db.get("SELECT * FROM authors WHERE email = %s",
                              self.get_argument("email"))
         if not author:
-            self.render("login.html", error="email not found")
+            self.render("login.html", error="邮箱或密码不正确")
             return
         hashed_password = yield executor.submit(
             bcrypt.hashpw, tornado.escape.utf8(self.get_argument("password")),
             tornado.escape.utf8(author.hashed_password))
-        if hashed_password == author.hashed_password:
-            self.set_secure_cookie("blogdemo_user", str(author.id))
+        if str(hashed_password, encoding = "utf-8") == author.hashed_password:
+            self.set_secure_cookie("login_user", str(author.id))
             self.redirect(self.get_argument("next", "/"))
         else:
-            self.render("login.html", error="incorrect password")
+            self.render("login.html", error="密码错误")
 
 
 class AuthLogoutHandler(BaseHandler):
     def get(self):
-        self.clear_cookie("blogdemo_user")
+        self.clear_cookie("login_user")
         self.redirect(self.get_argument("next", "/"))
 
 
 class EntryModule(tornado.web.UIModule):
     def render(self, entry):
-        return self.render_string("modules/entry.html", entry=entry)
+        return self.render_string("index.html", entry=entry)
 
 
 def main():

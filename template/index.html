@@ -1,9 +1,6 @@
 {% extends "frame.html" %}
 
 {% block main %}
-  {% for entry in entries %}
-    {% module Entry(entry) %}
-  {% end %}
         <div class="tpl-content-wrapper">
             
             <div class="container-fluid am-cf">
@@ -64,7 +61,7 @@
                             </div>
                             <div class="widget-statistic-body">
                                 <div class="widget-statistic-value">
-                                    ￥75,751,131亿元
+                                    ￥{{business_count.business_reg_capital}}亿元
                                 </div>
                                 <div class="widget-statistic-description">
                                     其中新三板企业注册资本为 <strong>2,940,355亿</strong> 人民币
@@ -80,7 +77,7 @@
                             </div>
                             <div class="widget-statistic-body">
                                 <div class="widget-statistic-value">
-                                    21,709+122家
+                                    {{business_count.business_count}}+122家
                                 </div>
                                 <div class="widget-statistic-description">
                                     收录的私募基金公司为 <strong>21709</strong>家
