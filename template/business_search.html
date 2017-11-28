@@ -57,36 +57,13 @@
 									<div class="widget-title am-fl">大家都在搜索的企业：</div>
 								</div>
 							</div>
+                            {% for  business_search_hot in business_search_hots%}
 							<div class="widget-body am-fl">
 								<div class="am-fl am-cf">
-                                    <div class="widget-title am-fl">国信证券股份有限公司</div>
+                                    <div class="widget-title am-fl"><a href="business_list.html?business_name={{business_search_hot.system_operate_business_name}}">{{business_search_hot.system_operate_business_name}}</a></div>
 								</div>
 							</div>
-							<div class="widget-body am-fl">
-								<div class="am-fl am-cf">
-									<div class="widget-title am-fl">招商证券股份有限公司</div>
-								</div>
-							</div>
-							<div class="widget-body am-fl">
-								<div class="am-fl">
-									<div class="widget-title am-fl">私募基金公司</div>
-								</div>
-							</div>
-							<div class="widget-body am-fl">
-								<div class="am-fl">
-									<div class="widget-title am-fl">合伙企业</div>
-								</div>
-							</div>
-							<div class="widget-body am-fl">
-								<div class="am-fl">
-									<div class="widget-title am-fl">金证科技股份有限公司</div>
-								</div>
-							</div>
-							<div class="widget-body am-fl">
-								<div class="am-fl">
-									<div class="widget-title am-fl">前海合伙企业</div>
-                                </div>
-							</div>
+                            {%end%}
                         </div>
 
                     </div>
