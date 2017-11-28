@@ -9,9 +9,9 @@
                         <div class="widget am-cf">
                             <div class="widget-head am-cf">
                                 <div class="am-u-sm-8 widget-title  am-cf">
-                                    <h2>深圳市英可瑞科技股份有限公司</h2>
-                                    <button type="button" class="am-btn am-btn-default am-round am-btn-xs">存续期</button>
-                                    <button type="button" class="am-btn am-btn-default am-round am-btn-xs">商务服务业</button>
+                                    <h2>{{business_detail_base.business_name }}</h2>
+                                    <button type="button" class="am-btn am-btn-default am-round am-btn-xs">{{ business_detail_base.business_reg_state }}</button>
+                                    <button type="button" class="am-btn am-btn-default am-round am-btn-xs">{{ business_detail_base.business_industry }}</button>
                                 </div>
                                 <div class="am-u-sm-4 widget-title  am-fr">
                                     <button type="button" class="am-btn am-btn-default am-round am-btn-xs am-btn-primary">发送报告</button>
@@ -19,32 +19,30 @@
                                     <button type="button" class="am-btn am-btn-default am-round am-btn-xs am-btn-success">更新数据</button>
                                 </div>
                             </div>
-                            <div class="am-u-sm-12">
-                                    <table width="100%" class="am-table am-table-compact  tpl-table-black" id="example-r">
+                            <div class="am-u-sm-12 ">
+                                    <table width="100%" class="am-table am-table-compact tpl-table-black  " id="example-r">
                                         <tbody>
-                                            <tr class="gradeX">
-                                                <td>电话：</td>
-                                                <td>0755-26586000</td>
+                                            <tr >
+                                                <td width="20"></td>
+                                                <td width="60">电话：</td>
+                                                <td>{{ business_detail_base.business_phone }}</td>
                                                 <td>邮箱：</td>
-                                                <td>wenbiaoliao@tom.com</td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
+                                                <td>{{ business_detail_base.business_email }}</td>
+
                                                 </tr>
-                                            <tr class="gradeX">
+                                            <tr>
+                                                <td></td>
                                                 <td>网址：</td>
-                                                <td>http://www.increase-cn.com</td>
+                                                <td>{{ business_detail_base.business_url}}</td>
                                                 <td>地址：</td>
-                                                <td>深圳市南山区马家龙工业区77栋二、三层</td>
-                                                <td>更新时间：</td>
-                                                <td>2017-11-24</td>
-                                                <td></td>
-                                                <td></td>
+                                                <td>{{ business_detail_base.business_addres}}</td>
+
+
                                             </tr>
                                             <tr class="gradeC">
+                                                <td></td>
                                                 <td>简介：</td>
-                                                <td colspan="5">深圳市英可瑞科技股份有限公司于2002年04月24日在深圳市市场监督管理局南山局登记成立。法定代表人尹伟，公司经营范围包括计算机软件及信息技术的技术开发、咨询和销售等。</td>
+                                                <td colspan="3">{{ business_detail_base.business_summary}}</td>
                                                 <td></td>
                                                 <td></td>
                                             </tr>
@@ -68,7 +66,7 @@
                                     <div class="am-tab-panel am-fade am-in am-active" id="tab1">
                                         <div class="row-content am-cf">
                                             <div class="row">
-                                                 <div class="am-u-sm-12 am-u-md-12 am-u-lg-8">
+                                                 <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
                                                     <div class="widget am-cf">
                                                         <div class="widget-head am-cf">
                                                             <div class="widget-title am-fl">工商信息</div>
@@ -83,25 +81,25 @@
                                                                         <tr class="gradeX">
                                                                             <td></td>
                                                                             <td>法人信息：</td>
-                                                                            <td>张鹏飞</td>
+                                                                            <td>{{ business_detail_base.business_legal_name}}</td>
                                                                             <td>注册资本:</td>
-                                                                            <td>(人民币)5000万元</td>
+                                                                            <td>{{ business_detail_base.business_reg_capital}}</td>
                                                                             <td></td>
                                                                             <td></td>
                                                                         </tr>
                                                                         <tr class="even gradeC">
                                                                             <td></td>
                                                                             <td>工商注册号：</td>
-                                                                            <td>440301103478497</td>
+                                                                            <td>{{ business_detail_base.business_reg_number}}</td>
                                                                             <td>组织机构代码:</td>
-                                                                            <td>78393145X</td>
+                                                                            <td>{{ business_detail_base.business_organization_number}}</td>
                                                                             <td></td>
                                                                             <td></td>
                                                                         </tr>
                                                                         <tr class="even gradeX">
                                                                             <td></td>
                                                                             <td>统一信用代码：</td>
-                                                                            <td>9144030078393145XC</td>
+                                                                            <td>{{ business_detail_base.business_unite_number}}</td>
                                                                             <td>企业类型:</td>
                                                                             <td>有限责任公司</td>
                                                                             <td></td>
@@ -110,34 +108,34 @@
                                                                         <tr class="even gradeC">
                                                                             <td></td>
                                                                             <td>纳税人识别号：</td>
-                                                                            <td>9144030078393145XC</td>
+                                                                            <td>{{ business_detail_base.business_payment_number}}</td>
                                                                             <td>行业:</td>
-                                                                            <td>批发业</td>
+                                                                            <td>{{ business_detail_base.business_industry}}</td>
                                                                             <td></td>
                                                                             <td></td>
                                                                         </tr>
                                                                         <tr class="even gradeX">
                                                                             <td></td>
                                                                             <td>营业期限：</td>
-                                                                            <td>2006-01-11至无固定期限</td>
+                                                                            <td>{{ business_detail_base.business_cycle_time}}</td>
                                                                             <td>核准日期:</td>
-                                                                            <td>2016-11-08</td>
+                                                                            <td>{{ business_detail_base.business_approved_time}}</td>
                                                                             <td></td>
                                                                             <td></td>
                                                                         </tr>
                                                                         <tr class="even gradeC">
                                                                             <td></td>
                                                                             <td>登记机关：</td>
-                                                                            <td>深圳市市场监督管理局</td>
+                                                                            <td>{{ business_detail_base.business_reg_Institute}}</td>
                                                                             <td>英文名称:</td>
-                                                                            <td>ENKDF kdndefing.co.ltd</td>
+                                                                            <td>{{ business_detail_base.business_en_name}}</td>
                                                                             <td></td>
                                                                             <td></td>
                                                                         </tr>
                                                                         <tr class="even gradeC">
                                                                             <td></td>
                                                                             <td>注册地址：</td>
-                                                                            <td colspan="5">深圳市宝安区新安街道留仙大道2号汇聚创新园2308附近公司</td>
+                                                                            <td colspan="5">{{ business_detail_base.business_en_name}}</td>
 
                                                                         </tr>
                                                                         <tr class="even gradeX">
@@ -146,7 +144,7 @@
                                                                         </tr>
                                                                         <tr class="even gradeC">
                                                                             <td></td>
-                                                                            <td colspan="4">实验室台柜、通风柜、通风设备、实验室台柜配件、实验室仪器设备、气体管路设备、除湿干燥设备、恒温恒湿设备、空调净化设备、空气处理设备、环保机械设备、水处理设备、中央空调系统的研发、销售、上门安装与上门维护；实验室规划设计与技术开发；分析仪器、玻璃仪器、化学试剂、仪器仪表、计量仪器、环保设备、化工原料（不含危险品及限制项目）、一类医疗器械、家</td>
+                                                                            <td colspan="4">{{ business_detail_base.business_scope}}</td>
                                                                         </tr>
                                                                         <!-- more data -->
                                                                     </tbody>
@@ -158,7 +156,7 @@
                                                  </div>
                                             </div>
                                             <div class="row">
-                                                 <div class="am-u-sm-12 am-u-md-12 am-u-lg-8">
+                                                 <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
                                                     <div class="widget am-cf">
                                                         <div class="widget-head am-cf">
                                                             <div class="widget-title am-fl">股东信息</div>
@@ -176,28 +174,13 @@
                                                                       </tr>
 
                                                                     <tbody>
+                                                                    {% for business_detail_holde in business_detail_holdes %}
                                                                         <tr class="gradeX">
-
-                                                                            <td>深圳市金证科技股份有限公司</td>
-                                                                            <td>60.00%</td>
-                                                                            <td>1,800.00万元</td>
-
-
+                                                                            <td>{{ business_detail_holde.men_name }}</td>
+                                                                            <td>{{ business_detail_holde.holder_percent }}</td>
+                                                                            <td>{{ business_detail_holde.holder_amomon }}</td>
                                                                         </tr>
-                                                                        <tr class="gradeX">
-
-                                                                            <td>深圳市众创投融投资企业（有限合伙）</td>
-                                                                            <td>30.00%</td>
-                                                                            <td>1,000.00万元</td>
-
-                                                                        </tr>
-                                                                        <tr class="gradeX">
-
-                                                                            <td>深圳市投融投资企业（有限合伙）</td>
-                                                                            <td>10.00%</td>
-                                                                            <td>200.00万元</td>
-
-                                                                        </tr>
+                                                                    {%end%}
 
                                                                         <!-- more data -->
                                                                     </tbody>
@@ -209,7 +192,7 @@
                                                  </div>
                                             </div>
                                             <div class="row">
-                                                 <div class="am-u-sm-12 am-u-md-12 am-u-lg-8">
+                                                 <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
                                                     <div class="widget am-cf">
                                                         <div class="widget-head am-cf">
                                                             <div class="widget-title am-fl">对外投资</div>
@@ -231,33 +214,17 @@
                                                                       </tr>
 
                                                                     <tbody>
+                                                                    {% for business_detail_invest in business_detail_invests %}
                                                                         <tr class="gradeX">
-                                                                            <td>横琴华易软件系统开发有限公司</td>
-                                                                            <td>张志兵</td>
-                                                                            <td>100万元人民币</td>
-                                                                            <td>30万元人民币</td>
-                                                                            <td>30.00%</td>
-                                                                            <td>2016-04-08</td>
-                                                                            <td>存续</td>
+                                                                            <td>{{ business_detail_invest.invest_name }}</td>
+                                                                            <td>{{ business_detail_invest.legal_name }}</td>
+                                                                            <td>{{ business_detail_invest.invest_reg_capital }}</td>
+                                                                            <td>{{ business_detail_invest.invest_amount}}</td>
+                                                                            <td>{{ business_detail_invest.invest_amomon}}</td>
+                                                                            <td>{{ business_detail_invest.invest_reg_time}}</td>
+                                                                            <td>{{ business_detail_invest.invest_state}}</td>
                                                                         </tr>
-                                                                         <tr class="gradeX">
-                                                                            <td>深圳市前海金客投资咨询有限公司</td>
-                                                                            <td>王玲芳</td>
-                                                                            <td>(人民币)500万元</td>
-                                                                            <td>50万元人民币</td>
-                                                                            <td>30.00%</td>
-                                                                            <td>2016-04-08</td>
-                                                                            <td>存续（在营、开业、在册）</td>
-                                                                        </tr>
-                                                                        <tr class="gradeX">
-                                                                            <td>山东省华众金融信息服务有限公司</td>
-                                                                            <td>王洪俊</td>
-                                                                            <td>100万元人民币</td>
-                                                                            <td>30万元人民币</td>
-                                                                            <td>30.00%</td>
-                                                                            <td>2016-04-08</td>
-                                                                            <td>存续</td>
-                                                                        </tr>
+                                                                    {% end %}
 
                                                                         <!-- more data -->
                                                                     </tbody>
@@ -269,7 +236,7 @@
                                                  </div>
                                             </div>
                                             <div class="row">
-                                                 <div class="am-u-sm-12 am-u-md-12 am-u-lg-8">
+                                                 <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
                                                     <div class="widget am-cf">
                                                         <div class="widget-head am-cf">
                                                             <div class="widget-title am-fl">变更记录</div>
@@ -314,7 +281,7 @@
                                     <div class="am-tab-panel am-fade" id="tab2">
                                         <div class="row-content am-cf">
                                            <div class="row">
-                                                 <div class="am-u-sm-12 am-u-md-12 am-u-lg-8">
+                                                 <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
                                                     <div class="widget am-cf">
                                                         <div class="widget-head am-cf">
                                                             <div class="widget-title am-fl">融资情况</div>
