@@ -138,8 +138,12 @@ class Business_search(BaseHandler):
 class Business_list(BaseHandler):
     def get(self):
         business_name = '*'+self.get_argument("business_name", None)+'*'
+        self.db.execute(
+            "INSERT INTO `bigdata`.`system_user_log` ( `system_operate_type`, `system_operate_business_name`, `system_operate_detail`, `system_operate_user`) VALUES ( %s,%s,%s,%s)",
+            '1',self.get_argument("business_name", None),'ip',self.current_user.id)
         business_list=self.db.query("select  business_id,business_name,business_legal_name,business_reg_capital,business_reg_time,business_industry,business_scope  from `bigdata`.`business_base_info` where match(business_name,business_legal_name) against (%s IN BOOLEAN MODE)",business_name)
         self.render("business_list.html", userinfo=self.current_user,business_list=business_list)
+
 #企业详情查询
 class Business_detail(BaseHandler):
     def get(self):
