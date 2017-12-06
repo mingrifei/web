@@ -43,3 +43,46 @@ CREATE TABLE authors (
     name VARCHAR(100) NOT NULL,
     hashed_password VARCHAR(100) NOT NULL
 );
+
+--去除重复数据 business_base
+DELETE FROM business_base
+WHERE
+    business_id IN (SELECT
+        id
+    FROM
+        (SELECT
+            a.business_id as id
+        FROM
+            business_base a
+        GROUP BY a.business_id
+        HAVING COUNT(*) = 2) AS t1)
+    AND id NOT IN (SELECT
+        id
+    FROM
+        (SELECT
+            MIN(id) as id
+        FROM
+            business_base a
+        GROUP BY a.business_id
+        HAVING COUNT(business_id) = 2) AS t2);
+--去除重复数据 business_base_info
+DELETE FROM business_base_info
+WHERE
+    business_id IN (SELECT
+        id
+    FROM
+        (SELECT
+            a.business_id as id
+        FROM
+            business_base_info a
+        GROUP BY a.business_id
+        HAVING COUNT(*) = 2) AS t1)
+    AND id NOT IN (SELECT
+        id
+    FROM
+        (SELECT
+            MIN(id) as id
+        FROM
+            business_base_info a
+        GROUP BY a.business_id
+        HAVING COUNT(business_id) = 2) AS t2);
