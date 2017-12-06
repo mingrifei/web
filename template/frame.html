@@ -40,12 +40,7 @@
                 </span>
                 </div>
                 <!-- 搜索 -->
-                <div class="am-fl tpl-header-search">
-                    <form class="tpl-header-search-form" action="javascript:;">
-                        <button class="tpl-header-search-btn am-icon-search"></button>
-                        <input class="tpl-header-search-box" type="text" placeholder="搜索内容...">
-                    </form>
-                </div>
+
                 <!-- 其它功能-->
                 <div class="am-fr tpl-header-navbar">
                     <ul>
@@ -198,6 +193,25 @@
                         <i class="am-icon-table sidebar-nav-link-logo"></i> 企业查询
                     </a>
                 </li>
+                                <li class="sidebar-nav-link">
+                    <a href="javascript:;" class="sidebar-nav-sub-title">
+                        <i class="am-icon-table sidebar-nav-link-logo"></i> 私募专区
+                        <span class="am-icon-chevron-down am-fr am-margin-right-sm sidebar-nav-sub-ico"></span>
+                    </a>
+                    <ul class="sidebar-nav sidebar-nav-sub">
+                        <li class="sidebar-nav-link">
+                            <a href="pf_company.html">
+                                <span class="am-icon-angle-right sidebar-nav-link-logo"></span> 私募基金管理人
+                            </a>
+                        </li>
+
+                        <li class="sidebar-nav-link">
+                            <a href="pf_map.html">
+                                <span class="am-icon-angle-right sidebar-nav-link-logo"></span> 私募地图
+                            </a>
+                        </li>
+                    </ul>
+                </li>
                 <li class="sidebar-nav-link">
                     <a href="calendar.html">
                         <i class="am-icon-calendar sidebar-nav-link-logo"></i> 批量查询
@@ -285,7 +299,6 @@
          {% block main %}
         <!-- 内容区域 -->
         {% end %}
-    </div>
     </div>
 
     {% block bottom %}

@@ -1,7 +1,7 @@
 {% extends "frame.html" %}
 
 {% block main %}
-        <div class="tpl-content-wrapper" >
+        <div class="tpl-content-wrapper" data-type="pf_search">
 
             <div class="container-fluid am-cf">
                 <div class="row">
@@ -28,7 +28,7 @@
                                 </div>
                             </div>
                             <div class="widget-body am-fr">
-                                <form action="business_list.html">
+                                <form action="pf_company_list.html">
                                 <div class="am-fl">
                                     <div class="row">
 										<div class="am-u-sm-12 am-u-md-12 am-u-lg-8">
@@ -52,6 +52,16 @@
                                     </div>
                                 </div>
                             </div>
+
+                             {% for  pf_company_province in pf_company_provinces%}
+							<div class="widget-body am-fl">
+								<div class="am-fl am-cf">
+                                    <div class="widget-title am-fl"><a href="pf_company_list.html?business_name={{pf_company_province.registerProvince}}">{{pf_company_province.registerProvince}}({{pf_company_province.count}})</a></div>
+								</div>
+							</div>
+                            {%end%}
+
+
 							<div class="widget-body am-fl">
 								<div class="am-fl">
 									<div class="widget-title am-fl">大家都在搜索的企业：</div>
@@ -60,7 +70,7 @@
                             {% for  business_search_hot in business_search_hots%}
 							<div class="widget-body am-fl">
 								<div class="am-fl am-cf">
-                                    <div class="widget-title am-fl"><a href="business_list.html?business_name={{business_search_hot.system_operate_business_name}}">{{business_search_hot.system_operate_business_name}}</a></div>
+                                    <div class="widget-title am-fl"><a href="pf_company_list.html?business_province={{business_search_hot.system_operate_business_name}}">{{business_search_hot.system_operate_business_name}}</a></div>
 								</div>
 							</div>
                             {%end%}
@@ -71,7 +81,7 @@
                 </div>
             </div>
         </div>
-<script>
+<script type="javascript">
 
 </script>
 {% end %}
