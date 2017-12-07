@@ -172,10 +172,12 @@ class pf_company_search(BaseHandler):
 
     def get(self):
         userinfo = self.current_user
-        pf_company_provinces=self.db.query("select b.registerProvince,count(*) as count from pf_base_info a left join pf_base b on b.registerNo=a.djbm where b.registerProvince<>'' group by b.registerProvince")
+        pf_company_provinces=self.db.query("SELECT b.registerProvince,b.registerCity,  COUNT(b.registerCity) AS vcount FROM  pf_base_info a   right JOIN  pf_base b ON  a.djbm=b.registerNo WHERE  b.registerCity <>'' GROUP BY b.registerProvince,b.registerCity order by vcount desc limit 60")
+        pf_company_office_provinces=self.db.query("SELECT b.officeProvince,b.officeCity,  COUNT(b.officeCity) AS vcount FROM  pf_base_info a   right JOIN  pf_base b ON  a.djbm=b.registerNo WHERE  b.registerCity <>'' GROUP BY b.officeProvince,b.officeCity order by vcount desc limit 60")
+
         business_search_hiss=self.db.query("SELECT SUBSTRING_INDEX(GROUP_CONCAT(system_operate_time ORDER BY system_operate_time DESC), ',',1)  as sort,   system_operate_business_name FROM bigdata.system_user_log where system_operate_user=%s and system_operate_type=201  group by system_operate_business_name order by  sort desc",self.current_user.id)
         business_search_hots=self.db.query("SELECT SUBSTRING_INDEX(GROUP_CONCAT(system_operate_time ORDER BY system_operate_time DESC), ',',1)  as sort,   system_operate_business_name FROM bigdata.system_user_log where system_operate_type=201  group by system_operate_business_name order by  sort desc ")
-        self.render("pf_company_search.html", userinfo=userinfo, business_search_hiss=business_search_hiss,business_search_hots=business_search_hots,pf_company_provinces=pf_company_provinces)
+        self.render("pf_company_search.html", userinfo=userinfo, business_search_hiss=business_search_hiss,business_search_hots=business_search_hots,pf_company_provinces=pf_company_provinces,pf_company_office_provinces=pf_company_office_provinces)
 #私募基金列表查询
 class pf_company_list(BaseHandler):
     def get(self):

@@ -52,29 +52,45 @@
                                     </div>
                                 </div>
                             </div>
-
-                             {% for  pf_company_province in pf_company_provinces%}
-							<div class="widget-body am-fl">
-								<div class="am-fl am-cf">
-                                    <div class="widget-title am-fl"><a href="pf_company_list.html?business_name={{pf_company_province.registerProvince}}">{{pf_company_province.registerProvince}}({{pf_company_province.count}})</a></div>
-								</div>
-							</div>
-                            {%end%}
-
-
-							<div class="widget-body am-fl">
+                            <div class="widget-body am-fl">
 								<div class="am-fl">
 									<div class="widget-title am-fl">大家都在搜索的企业：</div>
 								</div>
 							</div>
+                            <div class="widget-body am-fl">
                             {% for  business_search_hot in business_search_hots%}
-							<div class="widget-body am-fl">
-								<div class="am-fl am-cf">
-                                    <div class="widget-title am-fl"><a href="pf_company_list.html?business_province={{business_search_hot.system_operate_business_name}}">{{business_search_hot.system_operate_business_name}}</a></div>
-								</div>
-							</div>
+                                <div class="am-u-sm-2">
+                                    <div class="am-fl am-fl">
+                                        <div class="widget-title am-fl"><a href="pf_company_list.html?business_province={{business_search_hot.system_operate_business_name}}">{{business_search_hot.system_operate_business_name}}</a></div>
+                                    </div>
+                                </div>
                             {%end%}
-                        </div>
+                            </div>
+                            <div class="widget-head am-cf ">
+                                <div class="widget-title am-fl">按注册地址查询</div>
+                            </div>
+                            <div class="widget-body am-fl">
+                             {% for  pf_company_province in pf_company_provinces%}
+
+								<div class="am-u-sm-3">
+                                    <div class="widget-title am-fl"><a href="pf_company_list.html?business_name={{pf_company_province.registerCity}}">{{pf_company_province.registerProvince}}--{{pf_company_province.registerCity}}({{pf_company_province.vcount}})</a></div>
+								</div>
+
+                            {%end%}
+                            </div>
+                            <div class="widget-head am-cf ">
+                                <div class="widget-title am-fl">按办公地址查询</div>
+                            </div>
+                            <div class="widget-body am-fl">
+                             {% for  pf_company_office_province in pf_company_office_provinces%}
+
+								<div class="am-u-sm-3">
+                                    <div class="widget-title am-fl"><a href="pf_company_list.html?business_name={{pf_company_office_province.officeCity}}">{{pf_company_office_province.officeProvince}}--{{pf_company_office_province.officeCity}}({{pf_company_office_province.vcount}})</a></div>
+								</div>
+
+                            {%end%}
+
+                            </div>
 
                     </div>
 
