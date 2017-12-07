@@ -86,3 +86,7 @@ WHERE
             business_base_info a
         GROUP BY a.business_id
         HAVING COUNT(business_id) = 2) AS t2);
+#pf_base加入索引
+ALTER TABLE `bigdata`.`pf_base`
+DROP INDEX `idx_base_regprocityno` ,
+ADD INDEX `idx_base_regprocityno` (`registerProvince` ASC, `registerCity` ASC, `registerNo` ASC);

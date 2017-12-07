@@ -30,6 +30,7 @@ import tornado.ioloop
 import tornado.options
 import tornado.web
 import unicodedata
+import json
 
 from tornado.options import define, options
 
@@ -61,7 +62,7 @@ class Application(tornado.web.Application):
             # 列表显示企业
             (r"/pf_company_list.html", pf_company_list),
             # 查询私募地图
-            #(r"/pf_map.html", pf_map),
+            (r"/pf_map.html", pf_map_list),
             #(r"/archive", ArchiveHandler),
             #(r"/feed", FeedHandler),
             #(r"/entry/([^/]+)", EntryHandler),
@@ -69,6 +70,7 @@ class Application(tornado.web.Application):
             (r"/auth/create", AuthCreateHandler),
             (r"/auth/login", AuthLoginHandler),
             (r"/auth/logout", AuthLogoutHandler),
+            (r"/router/rest", api_rest),
         ]
         settings = dict(
             blog_title=u"企业信息服务平台",
@@ -195,7 +197,24 @@ class pf_company_list(BaseHandler):
         if len(business_list) > 0:
             self.create_log(operate_type='200', operate_event=self.get_argument("business_name", None))
         self.render("pf_company_list.html", userinfo=self.current_user,business_list=business_list)
+#私募地图
+class pf_map_list(BaseHandler):
+    def get(self):
+        self.render("pf_map.html", userinfo=self.current_user)
 
+
+
+
+class api_rest(BaseHandler):
+    def get(self):
+        api_name = self.get_argument("api_name", None)
+        if api_name is not None:
+            api_name=api_name
+        else:
+            api_name='TEST_API'
+        self.set_header('Content-Type', 'application/json; charset=UTF-8')
+        self.write(json.dumps({'message': 'ok','data':'[{api_name:'+api_name+'}]'}))
+        self.finish()
 
 class EntryHandler(BaseHandler):
     def get(self, slug):

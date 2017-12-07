@@ -94,8 +94,8 @@ var pageData = {
 
         echartsA.setOption(option);
     },
-    'pf_search':function chartData() {
-        var echartsB = echarts.init(document.getElementById('pf-echarts'));
+    'pf_map':function chartData() {
+        var echartsB = echarts.init(document.getElementById('tab1'));
         option = {
     backgroundColor: '#1b1b1b',
     color: ['gold','aqua','lime'],
