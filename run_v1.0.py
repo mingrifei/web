@@ -187,16 +187,22 @@ class pf_company_list(BaseHandler):
         #business_list=self.db.query("select  pf_id,jjglrqc,jjglrqcyw,djbm,zzjgdm,djsj,zcdz,bgdz,zczb,sjzb,sjbl,qyxz,jglx,ygrs,clsj,frdb  from `bigdata`.`pf_base_info` where match(jjglrqc,frdb) against (%s IN BOOLEAN MODE)",business_name)
         #if len(business_list)>0:
             #self.create_log(operate_type='201',operate_event=self.get_argument("business_name", None))
-        business_name = '*' + self.get_argument("business_name", None) + '*'
-        business_province = self.get_argument("business_province", None)
-        if business_province is not None:
-            business_province_list=self.db.query()
-        business_list = self.db.query(
-            "select  business_id,business_name,business_legal_name,business_reg_capital,business_reg_time,business_industry,business_scope  from `bigdata`.`business_base` where match(business_name,business_legal_name) against (%s IN BOOLEAN MODE) limit 10",
-            business_name)
-        if len(business_list) > 0:
-            self.create_log(operate_type='200', operate_event=self.get_argument("business_name", None))
-        self.render("pf_company_list.html", userinfo=self.current_user,business_list=business_list)
+        v_business_name=self.get_argument("business_name", None)
+        if v_business_name is not None:
+            business_name = '*' + v_business_name + '*'
+        business_city = self.get_argument("business_city", None)
+        search_type = self.get_argument("search_type", None)
+        if business_city is not None:
+            if search_type=="reg":
+                business_list=self.db.query("SELECT c.registerNo, a.business_id, a.business_name, a.business_legal_name, a.business_reg_capital, a.business_reg_time, a.business_industry, a.business_scope, a.business_phone, b.jglx FROM `business_base` a INNER JOIN pf_base_info  b ON a.business_reg_number = b.gszch INNER JOIN pf_base c ON c.registerNo = b.djbm WHERE c.registerCity = %s limit 10",business_city)
+            else:
+                business_list=self.db.query("SELECT c.registerNo, a.business_id, a.business_name, a.business_legal_name, a.business_reg_capital, a.business_reg_time, a.business_industry, a.business_scope, a.business_phone, b.jglx FROM `business_base` a INNER JOIN pf_base_info  b ON a.business_reg_number = b.gszch INNER JOIN pf_base c ON c.registerNo = b.djbm WHERE c.officecity = %s limit 10",business_city)
+            self.render("pf_company_list.html", userinfo=self.current_user, business_list=business_list)
+        if v_business_name is not None:
+            business_list = self.db.query("select b.djbm registerNo,b.jglx, business_id,business_name,business_legal_name,business_reg_capital,business_reg_time,business_industry,business_scope  from `bigdata`.`business_base` inner join pf_base_info b on b.gszch=business_base.business_id where match(business_name,business_legal_name) against (%s IN BOOLEAN MODE) limit 10",business_name)
+            if len(business_list) > 0:
+                self.create_log(operate_type='200', operate_event=self.get_argument("business_name", None))
+            self.render("pf_company_list.html", userinfo=self.current_user,business_list=business_list)
 #私募地图
 class pf_map_list(BaseHandler):
     def get(self):
