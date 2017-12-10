@@ -63,6 +63,8 @@ class Application(tornado.web.Application):
             (r"/pf_company_list.html", pf_company_list),
             # 查询私募地图
             (r"/pf_map.html", pf_map_list),
+            # 查询私募详情
+            (r"/pf_detail.html", pf_detail),
             #(r"/archive", ArchiveHandler),
             #(r"/feed", FeedHandler),
             #(r"/entry/([^/]+)", EntryHandler),
@@ -203,9 +205,23 @@ class pf_company_list(BaseHandler):
             if len(business_list) > 0:
                 self.create_log(operate_type='200', operate_event=self.get_argument("business_name", None))
             self.render("pf_company_list.html", userinfo=self.current_user,business_list=business_list)
+#私募基金详情
+class pf_detail(BaseHandler):
+    def get(self):
+        business_id =self.get_argument("id", None)
+        business_detail_base=self.db.get("SELECT `business_id`, `business_name`, `business_logo`, `business_phone`, `business_email`, `business_url`, `business_addres`, `busines_tags`, `business_summary`, `business_update_time`, `business_legal_id`, `business_legal_name`, `business_reg_capital`, `business_reg_time`, `business_reg_state`, `business_reg_number`, `business_organization_number`, `business_unite_number`, `business_type`, `business_payment_number`, `business_industry`, `business_cycle_time`, `business_approved_time`, `business_reg_Institute`, `business_reg_addres`, `business_en_name`, `business_scope`, `business_score`, `business_plate` FROM `bigdata`.`business_base` where business_id=%s LIMIT 1",business_id)
+        business_detail_holdes=self.db.query("SELECT business_id,men_id,men_name,holder_percent,holder_amomon FROM `bigdata`.`business_holder` where business_id=%s group by business_id,men_id,men_name,holder_percent,holder_amomon",business_id)
+        business_detail_invests=self.db.query("SELECT `business_id`, `invest_name`, `invest_id`, `legal_name`, `legal_id`, `invest_reg_capital`, `invest_amount`, `invest_amomon`, DATE_FORMAT(invest_reg_time,'%%Y-%%m') `invest_reg_time`, `invest_state` FROM `bigdata`.`business_invest` where business_id=%s",business_id)
+        pf_detail_product=self.db.query("SELECT a.pf_id,a.cpmc,a.cpid,a.cpfl FROM bigdata.pf_product_info  a left join bigdata.pf_base_info b on a.pf_id=b.pf_id where b.gszch=%s",business_id)
+        if len(business_detail_base)>0:
+            self.create_log(operate_type='200', operate_event=business_detail_base['business_name'])
+        self.render("pf_detail.html",pf_detail_products=pf_detail_product,userinfo=self.current_user,business_detail_base=business_detail_base,business_detail_holdes=business_detail_holdes,business_detail_invests=business_detail_invests)
+
 #私募地图
 class pf_map_list(BaseHandler):
     def get(self):
+        #pf_map_list = self.db.query("SELECT c.registerNo, a.business_id, a.business_name, a.business_legal_name, a.business_reg_capital, a.business_reg_time, a.business_industry, a.business_scope, a.business_phone, b.jglx FROM `business_base` a INNER JOIN pf_base_info  b ON a.business_reg_number = b.gszch INNER JOIN pf_base c ON c.registerNo = b.djbm WHERE c.officecity = %s limit 10")
+        #print(pf_map_list)
         self.render("pf_map.html", userinfo=self.current_user)
 
 
@@ -216,10 +232,15 @@ class api_rest(BaseHandler):
         api_name = self.get_argument("api_name", None)
         if api_name is not None:
             api_name=api_name
+            resultapi=self.db.query("SELECT  a.registerProvince,  COUNT(a.registerProvince) as vcount, a.officeProvince FROM bigdata.pf_base a WHERE a.registerProvince <> a.officeProvince and a.registerProvince!='' GROUP BY a.registerProvince , a.officeProvince")
+            #print(resultapi)
+            resultapi=json.dumps(resultapi)
+
         else:
             api_name='TEST_API'
         self.set_header('Content-Type', 'application/json; charset=UTF-8')
-        self.write(json.dumps({'message': 'ok','data':'[{api_name:'+api_name+'}]'}))
+        #self.write(json.dumps({'message': 'ok','data':'+resultapi+''}))
+        self.write(resultapi)
         self.finish()
 
 class EntryHandler(BaseHandler):

@@ -1,5 +1,4 @@
 {% extends "frame.html" %}
-
 {% block main %}
 
         <div class="tpl-content-wrapper" data-type="pf_map">
@@ -20,8 +19,8 @@
                                   </ul>
 
                                   <div class="am-tabs-bd">
-                                    <div class="am-tab-panel am-fade am-in am-active" id="tab1">
-
+                                    <div class="am-tab-panel am-active" id="tab1" data-type="div_pf_map">
+                                        <div id="pf_map" class="am-u-sm-12 am-u-md-12 am-u-lg-12" style="height:800px"></div>
                                     </div>
                                     <div class="am-tab-panel am-fade" id="tab2">
                                         <div class="am-u-sm-12 am-u-md-12 am-u-lg-3">
@@ -48,4 +47,8 @@
             </div>
 
         </div>
+
+<script src="{{ static_url("assets/js/pf_map.js")}}" type="text/javascript" />
+
+
 {% end %}

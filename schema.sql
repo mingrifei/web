@@ -90,3 +90,26 @@ WHERE
 ALTER TABLE `bigdata`.`pf_base`
 DROP INDEX `idx_base_regprocityno` ,
 ADD INDEX `idx_base_regprocityno` (`registerProvince` ASC, `registerCity` ASC, `registerNo` ASC);
+#获取区坐标
+select concat('\'',aaa.city,'\':[',aaa.reg_b,',',aaa.reg_a,'],') from (
+select city,avg(reg_a) as reg_a,avg(reg_b) as reg_b from (
+select a.registerCity as city,avg(substring_index(regCoordinate,',','1')) as reg_a ,avg(substring_index(regCoordinate,',','-1')) as reg_b  FROM
+    bigdata.pf_base a group by a.registerCity
+union
+select a.officeCity as city,avg(substring_index(officeCoordinate,',','1')) as reg_a ,avg(substring_index(officeCoordinate,',','-1')) as reg_b  FROM
+    bigdata.pf_base a group by a.officeCity) as aa where aa.city<>'' group by city) as aaa;
+#获取公司异地办公情况
+SELECT
+    CONCAT('[{name:\'',
+            a.registerCity,
+            '\',value:',COUNT(a.registerCity),'}, {name:\'',
+            a.officeCity,
+            '\'',
+            '}],') AS vcount
+FROM
+    bigdata.pf_base a
+WHERE
+    a.registerCity <> a.officeCity
+        AND a.registerCity <> ''
+        AND officeCity <> ''
+GROUP BY a.registerCity , a.officeCity;
