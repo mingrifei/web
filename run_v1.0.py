@@ -179,8 +179,8 @@ class pf_company_search(BaseHandler):
         pf_company_provinces=self.db.query("SELECT b.registerProvince,b.registerCity,  COUNT(b.registerCity) AS vcount FROM  pf_base_info a   right JOIN  pf_base b ON  a.djbm=b.registerNo WHERE  b.registerCity <>'' GROUP BY b.registerProvince,b.registerCity order by vcount desc limit 60")
         pf_company_office_provinces=self.db.query("SELECT b.officeProvince,b.officeCity,  COUNT(b.officeCity) AS vcount FROM  pf_base_info a   right JOIN  pf_base b ON  a.djbm=b.registerNo WHERE  b.registerCity <>'' GROUP BY b.officeProvince,b.officeCity order by vcount desc limit 60")
 
-        business_search_hiss=self.db.query("SELECT SUBSTRING_INDEX(GROUP_CONCAT(system_operate_time ORDER BY system_operate_time DESC), ',',1)  as sort,   system_operate_business_name FROM bigdata.system_user_log where system_operate_user=%s and system_operate_type=201  group by system_operate_business_name order by  sort desc",self.current_user.id)
-        business_search_hots=self.db.query("SELECT SUBSTRING_INDEX(GROUP_CONCAT(system_operate_time ORDER BY system_operate_time DESC), ',',1)  as sort,   system_operate_business_name FROM bigdata.system_user_log where system_operate_type=201  group by system_operate_business_name order by  sort desc ")
+        business_search_hiss=self.db.query("SELECT SUBSTRING_INDEX(GROUP_CONCAT(system_operate_time ORDER BY system_operate_time DESC), ',',1)  as sort,   system_operate_business_name FROM bigdata.system_user_log where system_operate_user=%s and system_operate_type=300  group by system_operate_business_name order by  sort desc",self.current_user.id)
+        business_search_hots=self.db.query("SELECT SUBSTRING_INDEX(GROUP_CONCAT(system_operate_time ORDER BY system_operate_time DESC), ',',1)  as sort,   system_operate_business_name FROM bigdata.system_user_log where system_operate_type=300  group by system_operate_business_name order by  sort desc ")
         self.render("pf_company_search.html", userinfo=userinfo, business_search_hiss=business_search_hiss,business_search_hots=business_search_hots,pf_company_provinces=pf_company_provinces,pf_company_office_provinces=pf_company_office_provinces)
 #私募基金列表查询
 class pf_company_list(BaseHandler):
@@ -203,7 +203,7 @@ class pf_company_list(BaseHandler):
         if v_business_name is not None:
             business_list = self.db.query("select b.djbm registerNo,b.jglx, business_id,business_name,business_legal_name,business_reg_capital,business_reg_time,business_industry,business_scope  from `bigdata`.`business_base` inner join pf_base_info b on b.gszch=business_base.business_id where match(business_name,business_legal_name) against (%s IN BOOLEAN MODE) limit 10",business_name)
             if len(business_list) > 0:
-                self.create_log(operate_type='200', operate_event=self.get_argument("business_name", None))
+                self.create_log(operate_type='300', operate_event=self.get_argument("business_name", None))
             self.render("pf_company_list.html", userinfo=self.current_user,business_list=business_list)
 #私募基金详情
 class pf_detail(BaseHandler):
@@ -214,7 +214,7 @@ class pf_detail(BaseHandler):
         business_detail_invests=self.db.query("SELECT `business_id`, `invest_name`, `invest_id`, `legal_name`, `legal_id`, `invest_reg_capital`, `invest_amount`, `invest_amomon`, DATE_FORMAT(invest_reg_time,'%%Y-%%m') `invest_reg_time`, `invest_state` FROM `bigdata`.`business_invest` where business_id=%s",business_id)
         pf_detail_product=self.db.query("SELECT a.pf_id,a.cpmc,a.cpid,a.cpfl FROM bigdata.pf_product_info  a left join bigdata.pf_base_info b on a.pf_id=b.pf_id where b.gszch=%s",business_id)
         if len(business_detail_base)>0:
-            self.create_log(operate_type='200', operate_event=business_detail_base['business_name'])
+            self.create_log(operate_type='300', operate_event=business_detail_base['business_name'])
         self.render("pf_detail.html",pf_detail_products=pf_detail_product,userinfo=self.current_user,business_detail_base=business_detail_base,business_detail_holdes=business_detail_holdes,business_detail_invests=business_detail_invests)
 
 #私募地图
