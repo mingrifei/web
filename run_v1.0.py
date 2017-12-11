@@ -65,6 +65,8 @@ class Application(tornado.web.Application):
             (r"/pf_map.html", pf_map_list),
             # 查询私募详情
             (r"/pf_detail.html", pf_detail),
+            # 查询私募管理人发行产品详情
+            (r"/pf_product_detail.html", pf_product_base),
             #(r"/archive", ArchiveHandler),
             #(r"/feed", FeedHandler),
             #(r"/entry/([^/]+)", EntryHandler),
@@ -216,6 +218,15 @@ class pf_detail(BaseHandler):
         if len(business_detail_base)>0:
             self.create_log(operate_type='200', operate_event=business_detail_base['business_name'])
         self.render("pf_detail.html",pf_detail_products=pf_detail_product,userinfo=self.current_user,business_detail_base=business_detail_base,business_detail_holdes=business_detail_holdes,business_detail_invests=business_detail_invests)
+#私募管理人发行产品详情
+class pf_product_base(BaseHandler):
+    def get(self):
+        pf_cpid = self.get_argument("id", None)
+        pf_product_bases = self.db.query(
+            "SELECT `pf_product_base`.`pf_id`,    `pf_product_base`.`pf_cpid`,    `pf_product_base`.`pf_cpmc`,    `pf_product_base`.`pf_jjbm`,    `pf_product_base`.`pf_clsj`,    `pf_product_base`.`pf_basj`,    `pf_product_base`.`pf_bajd`,    `pf_product_base`.`pf_jjlx`,    `pf_product_base`.`pf_bz`,    `pf_product_base`.`pf_jjglrmc`,    `pf_product_base`.`pf_jjglrid`,    `pf_product_base`.`pf_gllx`,    `pf_product_base`.`pf_tgrmc`,    `pf_product_base`.`pf_yzzt`,    `pf_product_base`.`pf_gxsj`,    `pf_product_base`.`pf_tbts`,    `pf_product_base`.`pf_bbyb`,    `pf_product_base`.`pf_bbbnb`,    `pf_product_base`.`pf_bbnb`,    `pf_product_base`.`pf_bbjb`FROM `bigdata`.`pf_product_base` where pf_cpid=%s",
+            pf_cpid)
+        self.render("pf_detail.html", pf_product_bases=pf_product_bases, userinfo=self.current_user)
+
 
 #私募地图
 class pf_map_list(BaseHandler):
