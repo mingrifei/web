@@ -2,23 +2,717 @@
 
 {% block main %}
         <div class="tpl-content-wrapper" >
-
-            <div class="container-fluid am-cf">
-                <div class="row">
-                    <div class="am-u-sm-12 am-u-md-12 am-u-lg-9">
-                        <div class="page-header-heading"><span class="am-icon-home page-header-heading-icon"></span> 账户状态和声明 <small>Account status</small></div>
-                        <p class="page-header-description">您现在使用的为大众版本，使用本系统数据无任何限制，不收取任何费用。平台上的信息均来自网络公开信息，由信息来源方对信息真实性等负相应责任，平台所展示信息出于传递更多信息之目的，并不意味平台赞同其观点或已经证实其内容的真实性。</p>
-						<p class="page-header-description">数据来源包括但不限于：全国企业信用信息公示系统 中国裁判文书网 中国执行信息公开网 国家知识产权局 商标局 版权局。</p>
+            <div class="widget am-cf">
+                <div class="widget-head am-cf">
+                    <div class="am-u-sm-12 am-u-md-12 am-u-lg-8 widget-title am-cf">
+                        <h2>{{pf_product_bases.pf_cpmc}}</h2>
+                        <button type="button" class="am-btn am-btn-default am-round am-btn-xs">{{pf_product_bases.pf_jjlx}}</button>
+                        <button type="button" class="am-btn am-btn-default am-round am-btn-xs">{{pf_product_bases.pf_yzzt}}</button>
                     </div>
-                    <div class="am-u-lg-3 tpl-index-settings-button">
-                        <button type="button" class="page-header-button"><span class="am-icon-paint-brush"></span> 设置</button>
+                    <div class="am-u-sm-12 am-u-md-12 am-u-lg-4 widget-title am-fr">
+                        <button type="button" class="am-btn am-btn-default am-round am-btn-xs am-btn-primary">发送报告</button>
+                        <button type="button" class="am-btn am-btn-default am-round am-btn-xs am-btn-warning">加入监控</button>
+                        <button type="button" class="am-btn am-btn-default am-round am-btn-xs am-btn-success">更新数据</button>
                     </div>
                 </div>
+                <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+                    <table width="100%" class="am-table am-table-compact tpl-table-black " id="example-r">
+                        <tbody>
+ 
+                            <tr>
+                                <td>基金编号：</td>
+                                <td>{{pf_product_bases.pf_jjbm}}</td>
+                                <td>成立时间：</td>
+                                <td>{{pf_product_bases.pf_clsj}}</td>
+                            </tr>
+                            <tr>
+                                <td>备案时间：</td>
+                                <td>{{pf_product_bases.pf_basj}}</td>
+                                <td>基金备案阶段：</td>
+                                <td>{{pf_product_bases.pf_bajd}}</td>
+                            </tr>
+                            <tr>
+                                <td>币种：</td>
+                                <td>{{pf_product_bases.pf_bz}}</td>
+                                <td>基金管理人名称：</td>
+                                <td>{{pf_product_bases.pf_jjglrmc}}</td>
+                            </tr>
+                            <tr>
+                                <td>管理类型：</td>
+                                <td>{{pf_product_bases.pf_gllx}}</td>
+                                <td>托管人名称：</td>
+                                <td>{{pf_product_bases.pf_tgrmc}}</td>
+                            </tr>
 
+                        </tbody>
+                    </table>
+                </div>
+                <div class="widget-body am-fr">
+                    <div class="am-tabs" data-am-tabs="">
+                        <ul class="am-tabs-nav am-nav am-nav-tabs">
+                            <li class="am-active"><a href="#tab1">基金业绩</a>
+                            </li>
+                            <li><a href="#tab2">基本信息</a>
+                            </li>
+                            <li><a href="#tab3">管理团队</a>
+                            </li>
+                            <li><a href="#tab4">风险提示</a>
+                            </li>
+                            <li><a href="#tab5">相关舆情</a>
+                            </li>
+                        </ul>
+                        <div class="am-tabs-bd" style="touch-action: pan-y; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0);">
+                            <div class="am-tab-panel am-fade am-in am-active" id="tab1">
+                                <div class="row-content am-cf">
+                                    <div class="row">
+                                        <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+                                            <div class="widget am-cf">
+                                                <div class="widget-head am-cf">
+                                                    <div class="widget-title am-fl">工商信息</div>
+                                                    <div class="widget-function am-fr">
+                                                        <a href="javascript:;" class="am-icon-cog"></a>
+                                                    </div>
+                                                </div>
+                                                <div class="widget-body widget-body-lg am-fr">
+                                                    <div class="am-scrollable-horizontal ">
+                                                        <table width="100%" class="am-table am-table-compact tpl-table-black ">
+                                                            <tbody>
+                                                                <tr class="gradeX">
+                                                                    <td></td>
+                                                                    <td>法人信息：</td>
+                                                                    <td>张英飚</td>
+                                                                    <td>注册资本:</td>
+                                                                    <td>(人民币)1000.0000万元</td>
+                                                                    <td></td>
+                                                                    <td></td>
+                                                                </tr>
+                                                                <tr class="even gradeC">
+                                                                    <td></td>
+                                                                    <td>工商注册号：</td>
+                                                                    <td>440301102841646</td>
+                                                                    <td>组织机构代码:</td>
+                                                                    <td>799210454</td>
+                                                                    <td></td>
+                                                                    <td></td>
+                                                                </tr>
+                                                                <tr class="even gradeX">
+                                                                    <td></td>
+                                                                    <td>统一信用代码：</td>
+                                                                    <td>91440300799210454D</td>
+                                                                    <td>企业类型:</td>
+                                                                    <td>有限责任公司</td>
+                                                                    <td></td>
+                                                                    <td></td>
+                                                                </tr>
+                                                                <tr class="even gradeC">
+                                                                    <td></td>
+                                                                    <td>纳税人识别号：</td>
+                                                                    <td>440300799210454</td>
+                                                                    <td>行业:</td>
+                                                                    <td>商务服务业</td>
+                                                                    <td></td>
+                                                                    <td></td>
+                                                                </tr>
+                                                                <tr class="even gradeX">
+                                                                    <td></td>
+                                                                    <td>营业期限：</td>
+                                                                    <td>2007-03-16至无固定期限</td>
+                                                                    <td>核准日期:</td>
+                                                                    <td>2017-03-13 16:00:00</td>
+                                                                    <td></td>
+                                                                    <td></td>
+                                                                </tr>
+                                                                <tr class="even gradeC">
+                                                                    <td></td>
+                                                                    <td>登记机关：</td>
+                                                                    <td>深圳市市场监督管理局</td>
+                                                                    <td>英文名称:</td>
+                                                                    <td>Shenzhen Jingtai Lifeng Investment Development Co.,Ltd.</td>
+                                                                    <td></td>
+                                                                    <td></td>
+                                                                </tr>
+                                                                <tr class="even gradeC">
+                                                                    <td></td>
+                                                                    <td>注册地址：</td>
+                                                                    <td colspan="5">Shenzhen Jingtai Lifeng Investment Development Co.,Ltd.</td>
+                                                                </tr>
+                                                                <tr class="even gradeX">
+                                                                    <td></td>
+                                                                    <td colspan="4">经营范围：</td>
+                                                                </tr>
+                                                                <tr class="even gradeC">
+                                                                    <td></td>
+                                                                    <td colspan="4">投资兴办实业（具体项目另行申报）；投资咨询和经济信息咨询（不含限制项目）。^；</td>
+                                                                </tr>
+                                                                <!-- more data -->
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+                                            <div class="widget am-cf">
+                                                <div class="widget-head am-cf">
+                                                    <div class="widget-title am-fl">股东信息</div>
+                                                    <div class="widget-function am-fr">
+                                                        <a href="javascript:;" class="am-icon-cog"></a>
+                                                    </div>
+                                                </div>
+                                                <div class="widget-body am-fr">
+                                                    <div class="am-scrollable-horizontal ">
+                                                        <table width="100%" class="am-table am-table-compact am-table-bordered am-table-radius tpl-table-black ">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <th>股东</th>
+                                                                    <th>出资比例</th>
+                                                                    <th>认缴出资</th>
+                                                                </tr>
+                                                            </tbody>
+                                                            <tbody>
+                                                                <tr class="gradeX">
+                                                                    <td>深圳市翔昊世纪投资发展有限公司</td>
+                                                                    <td>50.00%</td>
+                                                                    <td>500.00万元</td>
+                                                                </tr>
+                                                                <tr class="gradeX">
+                                                                    <td>吕伟志</td>
+                                                                    <td>1.00%</td>
+                                                                    <td>10.00万元</td>
+                                                                </tr>
+                                                                <tr class="gradeX">
+                                                                    <td>夏阳</td>
+                                                                    <td>5.00%</td>
+                                                                    <td>50.00万元</td>
+                                                                </tr>
+                                                                <tr class="gradeX">
+                                                                    <td>张英飚</td>
+                                                                    <td>39.00%</td>
+                                                                    <td>390.00万元</td>
+                                                                </tr>
+                                                                <tr class="gradeX">
+                                                                    <td>杨梅</td>
+                                                                    <td>5.00%</td>
+                                                                    <td>50.00万元</td>
+                                                                </tr>
+                                                                <!-- more data -->
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+                                            <div class="widget am-cf">
+                                                <div class="widget-head am-cf">
+                                                    <div class="widget-title am-fl">对外投资</div>
+                                                    <div class="widget-function am-fr">
+                                                        <a href="javascript:;" class="am-icon-cog"></a>
+                                                    </div>
+                                                </div>
+                                                <div class="widget-body am-fr">
+                                                    <div class="am-scrollable-horizontal ">
+                                                        <table width="100%" class="am-table am-table-compact am-table-bordered am-table-radius tpl-table-black ">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <th>对外投资</th>
+                                                                    <th>被投资法定代表人</th>
+                                                                    <th>注册资本</th>
+                                                                    <th>投资数额</th>
+                                                                    <th>投资占比</th>
+                                                                    <th>注册时间</th>
+                                                                    <th>状态</th>
+                                                                </tr>
+                                                            </tbody>
+                                                            <tbody>
+                                                                <tr class="gradeX">
+                                                                    <td>深圳市景泰投资咨询企业（有限合伙）</td>
+                                                                    <td>张英飚</td>
+                                                                    <td>(人民币)2000.0000万元</td>
+                                                                    <td>1000万元人民币</td>
+                                                                    <td>50.00%</td>
+                                                                    <td>2015-12</td>
+                                                                    <td>存续</td>
+                                                                </tr>
+                                                                <!-- more data -->
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+                                            <div class="widget am-cf">
+                                                <div class="widget-head am-cf">
+                                                    <div class="widget-title am-fl">变更记录</div>
+                                                    <div class="widget-function am-fr">
+                                                        <a href="javascript:;" class="am-icon-cog"></a>
+                                                    </div>
+                                                </div>
+                                                <div class="widget-body am-fr">
+                                                    <div class="am-scrollable-horizontal ">
+                                                        <table width="100%" class="am-table am-table-compact am-table-bordered am-table-radius tpl-table-black ">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <th>变更时间</th>
+                                                                    <th>变更项目</th>
+                                                                    <th>变更前</th>
+                                                                    <th>变更后</th>
+                                                                </tr>
+                                                            </tbody>
+                                                            <tbody>
+                                                                <tr class="gradeX">
+                                                                    <td>2015-08-25</td>
+                                                                    <td>经营范围变更（含业务范围变更）</td>
+                                                                    <td>计算机软硬件的技术开发、技术服务、技术咨询；计算机系统集成；信息系统的技术开发及相关技术服务；依托互联网等技术手段，提供金融中介服务（根据国家规定需要审批的，获得审批后方可经营）。（以上各项涉及法律、行政法规、国务院决定禁止的项目除外，限制的项目须取得许可后方可经营）^人才中介服务。</td>
+                                                                    <td>计算机软硬件的技术开发、技术服务、技术咨询；计算机系统集成；信息系统的技术开发及相关技术服务；信息系统的租赁；依托互联网等技术手段，提供金融中介服务（根据国家规定需要审批的，获得审批后方可经营）。（以上各项涉及法律、行政法规、国务院决定禁止的项目除外，限制的项目须取得许可后方可经营）^人力外包服务。</td>
+                                                                </tr>
+                                                                <tr class="gradeX">
+                                                                    <td>2015-08-25</td>
+                                                                    <td>经营范围</td>
+                                                                    <td>计算机软硬件的技术开发、技术服务、技术咨询；计算机系统集成；信息系统的技术开发及相关技术服务；依托互联网等技术手段，提供金融中介服务（根据国家规定需要审批的，获得审批后方可经营）。（以上各项涉及法律、行政法规、国务院决定禁止的项目除外，限制的项目须取得许可后方可经营）^人才中介服务。</td>
+                                                                    <td>计算机软硬件的技术开发、技术服务、技术咨询；计算机系统集成；信息系统的技术开发及相关技术服务；信息系统的租赁；依托互联网等技术手段，提供金融中介服务（根据国家规定需要审批的，获得审批后方可经营）。（以上各项涉及法律、行政法规、国务院决定禁止的项目除外，限制的项目须取得许可后方可经营）^人力外包服务。</td>
+                                                                </tr>
+                                                                <!-- more data -->
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="am-tab-panel am-fade" id="tab2">
+                                <div class="row">
+                                    <div class="am-u-sm-12 am-u-md-12 am-u-lg-8">
+                                        <div class="widget am-cf">
+                                            <div class="widget-head am-cf">
+                                                <div class="widget-title am-fl">发行产品情况</div>
+                                                <div class="widget-function am-fr">
+                                                    <a href="javascript:;" class="am-icon-cog"></a>
+                                                </div>
+                                            </div>
+                                            <div class="widget-body am-fr">
+                                                <div class="am-scrollable-horizontal ">
+                                                    <table width="100%" class="am-table am-table-compact am-table-bordered am-table-radius tpl-table-black ">
+                                                        <tbody>
+                                                            <tr>
+                                                                <th>产品ID</th>
+                                                                <th>产品名称</th>
+                                                                <th>产品分类</th>
+                                                            </tr>
+                                                        </tbody>
+                                                        <tbody>
+                                                            <tr class="gradeX">
+                                                                <td>351000182463</td>
+                                                                <td><a href="pf_product_detail.html?id=351000182463">中信景泰复利回报银信宝三期证券投资集合资金信托计划</a>
+                                                                </td>
+                                                                <td>1</td>
+                                                            </tr>
+                                                            <tr class="gradeX">
+                                                                <td>351000129524</td>
+                                                                <td><a href="pf_product_detail.html?id=351000129524">国投景泰复利回报证券投资集合资金信托计划二期</a>
+                                                                </td>
+                                                                <td>1</td>
+                                                            </tr>
+                                                            <tr class="gradeX">
+                                                                <td>351000129540</td>
+                                                                <td><a href="pf_product_detail.html?id=351000129540">平安财富-景泰复利回报第五期证券投资集合资金信托计划</a>
+                                                                </td>
+                                                                <td>1</td>
+                                                            </tr>
+                                                            <tr class="gradeX">
+                                                                <td>351000129526</td>
+                                                                <td><a href="pf_product_detail.html?id=351000129526">中信景泰复利回报证券投资集合资金信托计划一期</a>
+                                                                </td>
+                                                                <td>1</td>
+                                                            </tr>
+                                                            <tr class="gradeX">
+                                                                <td>351000182471</td>
+                                                                <td><a href="pf_product_detail.html?id=351000182471">中信景泰复利回报十期证券投资集合资金信托计划</a>
+                                                                </td>
+                                                                <td>1</td>
+                                                            </tr>
+                                                            <tr class="gradeX">
+                                                                <td>351000129523</td>
+                                                                <td><a href="pf_product_detail.html?id=351000129523">国投景泰复利回报证券投资集合资金信托计划一期</a>
+                                                                </td>
+                                                                <td>1</td>
+                                                            </tr>
+                                                            <tr class="gradeX">
+                                                                <td>351000129539</td>
+                                                                <td><a href="pf_product_detail.html?id=351000129539">兴业信托景泰复利回报第四期证券投资集合资金信托计划</a>
+                                                                </td>
+                                                                <td>1</td>
+                                                            </tr>
+                                                            <tr class="gradeX">
+                                                                <td>351000143752</td>
+                                                                <td><a href="pf_product_detail.html?id=351000143752">景泰复利回报第十二期投资基金 </a>
+                                                                </td>
+                                                                <td>2</td>
+                                                            </tr>
+                                                            <tr class="gradeX">
+                                                                <td>351000141124</td>
+                                                                <td><a href="pf_product_detail.html?id=351000141124">景泰复利回报第十一期投资基金 </a>
+                                                                </td>
+                                                                <td>2</td>
+                                                            </tr>
+                                                            <tr class="gradeX">
+                                                                <td>351000269956</td>
+                                                                <td><a href="pf_product_detail.html?id=351000269956">景泰海外中国成长股投资母基金 </a>
+                                                                </td>
+                                                                <td>2</td>
+                                                            </tr>
+                                                            <tr class="gradeX">
+                                                                <td>1709291511102893</td>
+                                                                <td><a href="pf_product_detail.html?id=1709291511102893">景泰复利回报第十六期私募证券投资基金 </a>
+                                                                </td>
+                                                                <td>2</td>
+                                                            </tr>
+                                                            <tr class="gradeX">
+                                                                <td>351000269957</td>
+                                                                <td><a href="pf_product_detail.html?id=351000269957">景泰环球绝对回报投资母基金 </a>
+                                                                </td>
+                                                                <td>2</td>
+                                                            </tr>
+                                                            <tr class="gradeX">
+                                                                <td>351000182561</td>
+                                                                <td><a href="pf_product_detail.html?id=351000182561">中信景泰复利回报银信宝四期证券投资集合资金信托计划 </a>
+                                                                </td>
+                                                                <td>2</td>
+                                                            </tr>
+                                                            <tr class="gradeX">
+                                                                <td>351000184161</td>
+                                                                <td><a href="pf_product_detail.html?id=351000184161">外贸信托睿远景泰复利回报第七期证券投资集合资金信托计划 </a>
+                                                                </td>
+                                                                <td>2</td>
+                                                            </tr>
+                                                            <tr class="gradeX">
+                                                                <td>351000256770</td>
+                                                                <td><a href="pf_product_detail.html?id=351000256770">中信景泰富尊一期管理型证券投资集合资金信托计划 </a>
+                                                                </td>
+                                                                <td>2</td>
+                                                            </tr>
+                                                            <tr class="gradeX">
+                                                                <td>351000351388</td>
+                                                                <td><a href="pf_product_detail.html?id=351000351388">景泰海外中国成长股投资1号子基金 </a>
+                                                                </td>
+                                                                <td>2</td>
+                                                            </tr>
+                                                            <tr class="gradeX">
+                                                                <td>351000180930</td>
+                                                                <td><a href="pf_product_detail.html?id=351000180930">景泰复利回报第十五期证券投资基金 </a>
+                                                                </td>
+                                                                <td>2</td>
+                                                            </tr>
+                                                            <tr class="gradeX">
+                                                                <td>351000421600</td>
+                                                                <td><a href="pf_product_detail.html?id=351000421600">元达信资本-恒丰景泰1期资产管理计划 </a>
+                                                                </td>
+                                                                <td>2</td>
+                                                            </tr>
+                                                            <tr class="gradeX">
+                                                                <td>351000600005</td>
+                                                                <td><a href="pf_product_detail.html?id=351000600005">景泰稳健收益一期私募证券投资基金 </a>
+                                                                </td>
+                                                                <td>2</td>
+                                                            </tr>
+                                                            <tr class="gradeX">
+                                                                <td>351000140125</td>
+                                                                <td><a href="pf_product_detail.html?id=351000140125">景泰复利回报第八期投资基金 </a>
+                                                                </td>
+                                                                <td>2</td>
+                                                            </tr>
+                                                            <tr class="gradeX">
+                                                                <td>351000263900</td>
+                                                                <td><a href="pf_product_detail.html?id=351000263900">景泰复利回报四期证券投资基金 </a>
+                                                                </td>
+                                                                <td>2</td>
+                                                            </tr>
+                                                            <tr class="gradeX">
+                                                                <td>1709141121107396</td>
+                                                                <td><a href="pf_product_detail.html?id=1709141121107396">景泰沪港深精选私募证券投资基金 </a>
+                                                                </td>
+                                                                <td>2</td>
+                                                            </tr>
+                                                            <tr class="gradeX">
+                                                                <td>1710111741100121</td>
+                                                                <td><a href="pf_product_detail.html?id=1710111741100121">方正中期-景泰沪港深精选1号资产管理计划 </a>
+                                                                </td>
+                                                                <td>2</td>
+                                                            </tr>
+                                                            <tr class="gradeX">
+                                                                <td>351000351397</td>
+                                                                <td><a href="pf_product_detail.html?id=351000351397">景泰环球绝对回报投资1号子基金 </a>
+                                                                </td>
+                                                                <td>2</td>
+                                                            </tr>
+                                                            <tr class="gradeX">
+                                                                <td>351000182553</td>
+                                                                <td><a href="pf_product_detail.html?id=351000182553">中信景泰复利回报银信宝一期证券投资集合资金信托计划 </a>
+                                                                </td>
+                                                                <td>2</td>
+                                                            </tr>
+                                                            <tr class="gradeX">
+                                                                <td>351000214229</td>
+                                                                <td><a href="pf_product_detail.html?id=351000214229">景泰新高地一期证券投资基金 </a>
+                                                                </td>
+                                                                <td>2</td>
+                                                            </tr>
+                                                            <!-- more data -->
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="am-tab-panel am-fade" id="tab3">
+                                <div class="row-content am-cf">
+                                    <div class="row">
+                                        <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+                                            <div class="widget am-cf">
+                                                <div class="widget-head am-cf">
+                                                    <div class="widget-title am-fl">融资情况</div>
+                                                    <div class="widget-function am-fr">
+                                                        <a href="javascript:;" class="am-icon-cog"></a>
+                                                    </div>
+                                                </div>
+                                                <div class="widget-body am-fr">
+                                                    <div class="am-scrollable-horizontal ">
+                                                        <table width="100%" class="am-table am-table-compact am-table-bordered am-table-radius tpl-table-black ">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <th>时间</th>
+                                                                    <th>轮次</th>
+                                                                    <th>估值</th>
+                                                                    <th>金额</th>
+                                                                    <th>比例</th>
+                                                                    <th>投资方</th>
+                                                                    <th>新闻来源</th>
+                                                                </tr>
+                                                            </tbody>
+                                                            <tbody>
+                                                                <tr class="gradeX">
+                                                                    <td>2017-09-19</td>
+                                                                    <td>战略融资</td>
+                                                                    <td></td>
+                                                                    <td>8400万人民币</td>
+                                                                    <td></td>
+                                                                    <td>腾讯产业共赢基金</td>
+                                                                    <td>腾讯科技以现金8400万元投资金证财富</td>
+                                                                </tr>
+                                                                <!-- more data -->
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="am-u-sm-12 am-u-md-12 am-u-lg-8">
+                                            <div class="widget am-cf">
+                                                <div class="widget-head am-cf">
+                                                    <div class="widget-title am-fl">核心团队</div>
+                                                    <div class="widget-function am-fr">
+                                                        <a href="javascript:;" class="am-icon-cog"></a>
+                                                    </div>
+                                                </div>
+                                                <div class="widget-body am-fr">
+                                                    <div class="am-scrollable-horizontal ">
+                                                        <table width="100%" class="am-table am-table-compact am-table-bordered am-table-radius tpl-table-black ">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <th>姓名</th>
+                                                                    <th>职位</th>
+                                                                    <th>介绍</th>
+                                                                </tr>
+                                                            </tbody>
+                                                            <tbody>
+                                                                <tr class="gradeX">
+                                                                    <td>徐岷波</td>
+                                                                    <td>执行董事</td>
+                                                                    <td>徐岷波，金证财富执行董事。</td>
+                                                                </tr>
+                                                                <!-- more data -->
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="am-u-sm-12 am-u-md-12 am-u-lg-8">
+                                            <div class="widget am-cf">
+                                                <div class="widget-head am-cf">
+                                                    <div class="widget-title am-fl">竞品信息</div>
+                                                    <div class="widget-function am-fr">
+                                                        <a href="javascript:;" class="am-icon-cog"></a>
+                                                    </div>
+                                                </div>
+                                                <div class="widget-body am-fr">
+                                                    <div class="am-scrollable-horizontal ">
+                                                        <table width="100%" class="am-table am-table-compact am-table-bordered am-table-radius tpl-table-black ">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <th>产品</th>
+                                                                    <th>地区</th>
+                                                                    <th>当前轮次</th>
+                                                                    <th>行业</th>
+                                                                    <th>业务</th>
+                                                                    <th>成立时间</th>
+                                                                    <th>估值情况</th>
+                                                                </tr>
+                                                            </tbody>
+                                                            <tbody>
+                                                                <tr class="gradeX">
+                                                                    <td>商智资讯</td>
+                                                                    <td>北京</td>
+                                                                    <td>战略融资</td>
+                                                                    <td>金融</td>
+                                                                    <td>金融行业软件研发商</td>
+                                                                    <td>2007-12-19</td>
+                                                                    <td>2007-12-</td>
+                                                                </tr>
+                                                                <tr class="gradeX">
+                                                                    <td>商智资讯</td>
+                                                                    <td>北京</td>
+                                                                    <td>战略融资</td>
+                                                                    <td>金融</td>
+                                                                    <td>金融行业软件研发商</td>
+                                                                    <td>2007-12-19</td>
+                                                                    <td>2007-12-</td>
+                                                                </tr>
+                                                                <tr class="gradeX">
+                                                                    <td>商智资讯</td>
+                                                                    <td>北京</td>
+                                                                    <td>战略融资</td>
+                                                                    <td>金融</td>
+                                                                    <td>金融行业软件研发商</td>
+                                                                    <td>2007-12-19</td>
+                                                                    <td>2007-12-</td>
+                                                                </tr>
+                                                                <!-- more data -->
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="am-tab-panel am-fade" id="tab4">
+                                <div class="row">
+                                    <div class="am-u-sm-12 am-u-md-12 am-u-lg-8">
+                                        <div class="widget am-cf">
+                                            <div class="widget-head am-cf">
+                                                <div class="widget-title am-fl">法律诉讼</div>
+                                                <div class="widget-function am-fr">
+                                                    <a href="javascript:;" class="am-icon-cog"></a>
+                                                </div>
+                                            </div>
+                                            <div class="widget-body am-fr">
+                                                <div class="am-scrollable-horizontal ">
+                                                    <table width="100%" class="am-table am-table-compact am-table-bordered am-table-radius tpl-table-black ">
+                                                        <tbody>
+                                                            <tr>
+                                                                <th>日期</th>
+                                                                <th>裁判文书</th>
+                                                                <th>案由</th>
+                                                                <th>案件身份</th>
+                                                                <th>案件号</th>
+                                                            </tr>
+                                                        </tbody>
+                                                        <tbody>
+                                                            <tr class="gradeX">
+                                                                <td>2017-08-24</td>
+                                                                <td><a>苏州科利科技发展有限公司、苏州科利科技发展有限公司向中国国际经济贸易仲裁委员会申请财产保全其他民事裁定书</a>北京</td>
+                                                                <td>买卖合同纠纷</td>
+                                                                <td>原告人</td>
+                                                                <td>（2017）津0116财保54号</td>
+                                                            </tr>
+                                                            <tr class="gradeX">
+                                                                <td>2017-08-24</td>
+                                                                <td><a>苏州科利科技发展有限公司、苏州科利科技发展有限公司向中国国际经济贸易仲裁委员会申请财产保全其他民事裁定书</a>北京</td>
+                                                                <td>买卖合同纠纷</td>
+                                                                <td>原告人</td>
+                                                                <td>（2017）津0116财保54号</td>
+                                                            </tr>
+                                                            <tr class="gradeX">
+                                                                <td>2017-08-24</td>
+                                                                <td><a>苏州科利科技发展有限公司、苏州科利科技发展有限公司向中国国际经济贸易仲裁委员会申请财产保全其他民事裁定书</a>北京</td>
+                                                                <td>买卖合同纠纷</td>
+                                                                <td>原告人</td>
+                                                                <td>（2017）津0116财保54号</td>
+                                                            </tr>
+                                                            <!-- more data -->
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="am-u-sm-12 am-u-md-12 am-u-lg-8">
+                                        <div class="widget am-cf">
+                                            <div class="widget-head am-cf">
+                                                <div class="widget-title am-fl">法院公告</div>
+                                                <div class="widget-function am-fr">
+                                                    <a href="javascript:;" class="am-icon-cog"></a>
+                                                </div>
+                                            </div>
+                                            <div class="widget-body am-fr">
+                                                <div class="am-scrollable-horizontal ">
+                                                    <table width="100%" class="am-table am-table-compact am-table-bordered am-table-radius tpl-table-black ">
+                                                        <tbody>
+                                                            <tr>
+                                                                <th>公告时间</th>
+                                                                <th>上诉方</th>
+                                                                <th>被诉方</th>
+                                                                <th>公告类型</th>
+                                                                <th>法院</th>
+                                                                <th>详情</th>
+                                                            </tr>
+                                                        </tbody>
+                                                        <tbody>
+                                                            <tr class="gradeX">
+                                                                <td>2017-07-25</td>
+                                                                <td><a>深圳市赢众通非融资性担保有限公司</a>
+                                                                </td>
+                                                                <td>贾跃亭</td>
+                                                                <td>起诉状副本及开庭传票</td>
+                                                                <td>（2017）北京市第三中级人民法院</td>
+                                                                <td><a>详情</a>
+                                                                </td>
+                                                            </tr>
+                                                            <!-- more data -->
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="am-tab-panel am-fade" id="tab5">正在建设中……</div>
+                        </div>
+                    </div>
+                </div>
             </div>
-
             <div class="row-content am-cf">
-                <div class="am-u-sm-12 am-u-md-12 am-u-lg-8">
+                <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
                     <div class="widget am-cf">
                         <div class="widget-head am-cf">
                             <div class="widget-title am-fl">发行产品情况</div>
@@ -29,20 +723,48 @@
                         <div class="widget-body   am-fr">
                             <div class="am-scrollable-horizontal ">
                                 <table width="100%" class="am-table am-table-compact am-table-bordered am-table-radius tpl-table-black " >
-                                      <tr>
-                                        <th>产品ID</th>
-                                        <th>产品名称</th>
-                                        <th>产品分类</th>
-                                      </tr>
-                                    <tbody>
+                                     <tbody>
 
-                                    {% for detail_product in pf_detail_products %}
+
                                         <tr class="gradeX">
-                                            <td>{{detail_product.cpid}}</td>
-                                            <td><a>{{detail_product.cpmc}}</a></td>
-                                            <td>{{detail_product.cpfl}}</td>
+                                            <td>产品名称：</td>
+                                            <td colspan="3"><a>{{pf_product_bases.pf_cpmc}}</a></td>
                                         </tr>
-                                    {% end %}
+                                        <tr>
+                                            <td>基金编码：</td>
+                                            <td colspan="3">{{pf_product_bases.pf_jjbm}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>成立时间：</td>
+                                            <td colspan="3">{{pf_product_bases.pf_clsj}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>备案时间：</td>
+                                            <td colspan="3">{{pf_product_bases.pf_basj}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>基金备案阶段：</td>
+                                            <td colspan="3">{{pf_product_bases.pf_bajd}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>基金类型：</td>
+                                            <td colspan="3">{{pf_product_bases.pf_jjlx}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>币种：</td>
+                                            <td colspan="3">{{pf_product_bases.pf_bz}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>币种：</td>
+                                            <td colspan="3">{{pf_product_bases.pf_bz}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>基金管理人名称：</td>
+                                            <td colspan="3">{{pf_product_bases.pf_jjglrmc}}</td>
+                                        </tr>
+
+
+
                                         <!-- more data -->
                                     </tbody>
                                 </table>

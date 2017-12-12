@@ -281,7 +281,7 @@
                                     </div>
                                     <div class="am-tab-panel am-fade" id="tab2">
                                       <div class="row">
-                                                 <div class="am-u-sm-12 am-u-md-12 am-u-lg-8">
+                                                 <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
                                                     <div class="widget am-cf">
                                                         <div class="widget-head am-cf">
                                                             <div class="widget-title am-fl">发行产品情况</div>
@@ -296,14 +296,28 @@
                                                                         <th>产品ID</th>
                                                                         <th>产品名称</th>
                                                                         <th>产品分类</th>
+                                                                        <th>管理类型</th>
+                                                                        <th>成立时间</th>
+                                                                        <th>运作状态</th>
+                                                                        <th>备案时间</th>
                                                                       </tr>
                                                                     <tbody>
 
                                                                     {% for detail_product in pf_detail_products %}
                                                                         <tr class="gradeX">
                                                                             <td>{{detail_product.cpid}}</td>
-                                                                            <td><a>{{detail_product.cpmc}}</a></td>
-                                                                            <td>{{detail_product.cpfl}}</td>
+                                                                            <td><a href="pf_product_detail.html?id={{detail_product.cpid}}" target="_blank">{{detail_product.cpmc}}</a></td>
+                                                                            <td>{{detail_product.pf_jjlx}}</td>
+                                                                            <td>{{detail_product.pf_gllx}}</td>
+                                                                            <td>{{detail_product.pf_clsj}}</td>
+                                                                            {%if detail_product.pf_yzzt=='正在运作'%}
+                                                                                <td><button type="button" class="am-btn am-btn-default am-round am-btn-xs am-btn-success">{{detail_product.pf_yzzt}}</button></td>
+                                                                            {%elif detail_product.pf_yzzt=='延期清算' or detail_product.pf_yzzt=='提前清算'%}
+                                                                                <td><button type="button" class="am-btn am-btn-default am-round am-btn-xs am-btn-warning">{{detail_product.pf_yzzt}}</button></td>
+                                                                            {%else%}
+                                                                                <td><button type="button" class="am-btn am-btn-default am-round am-btn-xs">{{detail_product.pf_yzzt}}</button></td>
+                                                                            {%end%}
+                                                                            <td>{{detail_product.pf_basj}}</td>
                                                                         </tr>
                                                                     {% end %}
                                                                         <!-- more data -->
