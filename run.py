@@ -38,7 +38,7 @@ define("port", default=8080, help="run on the given port", type=int)
 define("mysql_host", default="192.168.0.34:8635", help="blog database host")
 define("mysql_database", default="bigdata", help="blog database name")
 define("mysql_user", default="root", help="blog database user")
-define("mysql_password", default="mingrifei01@RHTJ", help="blog database password")
+define("mysql_password", default="", help="blog database password")
 
 
 # A thread pool to be used for password hashing with bcrypt.
