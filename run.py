@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #
-# Copyright 2009 Facebook
-#
+# Copyright 2017 Facebook
+#author:lius@futouzs.com
 # Licensed under the Apache License, Version 2.0 (the "License"); you may
 # not use this file except in compliance with the License. You may obtain
 # a copy of the License at
@@ -35,10 +35,10 @@ import json
 from tornado.options import define, options
 
 define("port", default=8080, help="run on the given port", type=int)
-define("mysql_host", default="192.168.0.34:8635", help="blog database host")
-define("mysql_database", default="bigdata", help="blog database name")
-define("mysql_user", default="root", help="blog database user")
-define("mysql_password", default="", help="blog database password")
+define("mysql_host", default="127.0.0.1:4407", help=" database host")
+define("mysql_database", default="bigdata", help=" database name")
+define("mysql_user", default="root", help="database user")
+define("mysql_password", default="kingdom88", help="database password")
 
 
 # A thread pool to be used for password hashing with bcrypt.
