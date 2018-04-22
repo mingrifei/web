@@ -1,13 +1,17 @@
 <!DOCTYPE html>
-{% block head %}
+
 <html lang="en">
 
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    {% block head %}
     <title>{{ escape(handler.settings["blog_title"]) }}</title>
-    <meta name="description" content="{{ escape(handler.settings["blog_title"])}}">
-    <meta name="keywords" content="index">
+    <meta name="description" content="{{ escape(handler.settings["description"])}}">
+    <meta name="keywords" content="{{ escape(handler.settings["keywords"])}}">
+    {%end%}
+    <meta name="baidu-site-verification" content="bzZHUmnB8G" />
+    <meta name="sogou_site_verification" content="ZeBWnzLJCQ"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="renderer" content="webkit">
     <meta http-equiv="Cache-Control" content="no-siteapp" />
@@ -22,7 +26,7 @@
     <script src="{{ static_url("assets/js/jquery.min.js")}}"></script>
 
 </head>
-
+{% block body %}
 <body data-type="index">
     <script src="{{static_url("assets/js/theme.js")}}"></script>
     <div class="am-g tpl-g">
@@ -194,38 +198,63 @@
                         <i class="am-icon-table sidebar-nav-link-logo"></i> 企业查询
                     </a>
                 </li>
-                                <li class="sidebar-nav-link">
+
+                 <li class="sidebar-nav-link">
                     <a href="javascript:;" class="sidebar-nav-sub-title">
-                        <i class="am-icon-table sidebar-nav-link-logo"></i> 私募专区
+                        <i class="am-icon-table sidebar-nav-link-logo"></i> 金融企业
                         <span class="am-icon-chevron-down am-fr am-margin-right-sm sidebar-nav-sub-ico"></span>
                     </a>
                     <ul class="sidebar-nav sidebar-nav-sub">
                         <li class="sidebar-nav-link">
                             <a href="pf_company.html">
-                                <span class="am-icon-angle-right sidebar-nav-link-logo"></span> 私募基金管理人
+                                <span class="am-icon-angle-right sidebar-nav-link-logo"></span> 基金公司查询
                             </a>
                         </li>
 
                         <li class="sidebar-nav-link">
                             <a href="pf_map.html">
-                                <span class="am-icon-angle-right sidebar-nav-link-logo"></span> 私募地图
+                                <span class="am-icon-angle-right sidebar-nav-link-logo"></span> 基金公司迁徙
                             </a>
                         </li>
                     </ul>
                 </li>
+               <li class="sidebar-nav-link">
+                    <a href="javascript:;" class="sidebar-nav-sub-title">
+                        <i class="am-icon-table sidebar-nav-link-logo"></i> 金融人才
+                        <span class="am-icon-chevron-down am-fr am-margin-right-sm sidebar-nav-sub-ico"></span>
+                    </a>
+                    <ul class="sidebar-nav sidebar-nav-sub">
+                        <li class="sidebar-nav-link">
+                            <a href="stock_personal.html?personal_name=李军">
+                                <span class="am-icon-angle-right sidebar-nav-link-logo"></span> 证券从业查询
+                            </a>
+                        </li>
+                        <li class="sidebar-nav-link">
+                            <a href="securities_company.html">
+                                <span class="am-icon-angle-right sidebar-nav-link-logo"></span> 证券公司从业查询
+                            </a>
+                        </li>
+                        <li class="sidebar-nav-link">
+                            <a href="pf_map.html">
+                                <span class="am-icon-angle-right sidebar-nav-link-logo"></span> 基金从业查询
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
                 <li class="sidebar-nav-link">
-                    <a href="calendar.html">
+                    <a href="authdeny.html">
                         <i class="am-icon-calendar sidebar-nav-link-logo"></i> 批量查询
                     </a>
                 </li>
                 <li class="sidebar-nav-link">
-                    <a href="form.html">
+                    <a href="authdeny.html">
                         <i class="am-icon-wpforms sidebar-nav-link-logo"></i> 企业监控
 
                     </a>
                 </li>
                 <li class="sidebar-nav-link">
-                    <a href="chart.html">
+                    <a href="authdeny.html">
                         <i class="am-icon-bar-chart sidebar-nav-link-logo"></i> 企业舆情
 
                     </a>
@@ -239,13 +268,13 @@
                     </a>
                     <ul class="sidebar-nav sidebar-nav-sub">
                         <li class="sidebar-nav-link">
-                            <a href="table-list.html">
+                            <a href="authdeny.html">
                                 <span class="am-icon-angle-right sidebar-nav-link-logo"></span> 推送设置
                             </a>
                         </li>
 
                         <li class="sidebar-nav-link">
-                            <a href="table-list-img.html">
+                            <a href="authdeny.html">
                                 <span class="am-icon-angle-right sidebar-nav-link-logo"></span> 企业管理
                             </a>
                         </li>
@@ -258,26 +287,26 @@
                     </a>
                     <ul class="sidebar-nav sidebar-nav-sub">
                         <li class="sidebar-nav-link">
-                            <a href="table-list.html">
+                            <a href="authdeny.html">
                                 <span class="am-icon-angle-right sidebar-nav-link-logo"></span> 基本信息
                             </a>
                         </li>
 
                         <li class="sidebar-nav-link">
-                            <a href="table-list-img.html">
+                            <a href="authdeny.html">
                                 <span class="am-icon-angle-right sidebar-nav-link-logo"></span> 修改密码
                             </a>
                         </li>
 
                         <li class="sidebar-nav-link">
-                            <a href="table-list-img.html">
+                            <a href="authdeny.html">
                                 <span class="am-icon-angle-right sidebar-nav-link-logo"></span> 帐户状态
                             </a>
                         </li>
                     </ul>
                 </li>
                 <li class="sidebar-nav-link">
-                    <a href="sign-up.html">
+                    <a href="/auth/create">
                         <i class="am-icon-clone sidebar-nav-link-logo"></i> 注册
                         <span class="am-badge am-badge-secondary sidebar-nav-link-logo-ico am-round am-fr am-margin-right-sm">6</span>
                     </a>
@@ -287,12 +316,15 @@
                         <i class="am-icon-key sidebar-nav-link-logo"></i> 登录
                     </a>
                 </li>
+                <!--
                 <li class="sidebar-nav-link">
                     <a href="404.html">
                         <i class="am-icon-tv sidebar-nav-link-logo"></i> 404错误
                     </a>
                 </li>
-				<li class="sidebar-nav-heading">Aboutus<span class="sidebar-nav-heading-info"> 关于我们</span></li>
+                -->
+				<li class="sidebar-nav-heading">Aboutus<span class="sidebar-nav-heading-info"> 关于我们</span>
+                    <br><span><a target="_blank" href="http://www.miitbeian.gov.cn" style="color: #999;"> 粤ICP备18002167号-1</a></span></li>
 
             </ul>
         </div>
@@ -307,6 +339,12 @@
     <script src="{{ static_url("assets/js/amazeui.datatables.min.js")}}"></script>
     <script src="{{ static_url("assets/js/dataTables.responsive.min.js")}}"></script>
     <script src="{{ static_url("assets/js/app.js")}}"></script>
+    <script type="text/javascript" src="http://tajs.qq.com/stats?sId=65637178" charset="UTF-8"></script>
+	<script>(function(){
+var src = (document.location.protocol == "http:") ? "http://js.passport.qihucdn.com/11.0.1.js?6e403e9c3c8ccd7a9e04492faf53a29c":"https://jspassport.ssl.qhimg.com/11.0.1.js?6e403e9c3c8ccd7a9e04492faf53a29c";
+document.write('<script src="' + src + '" id="sozz"><\/script>');
+})();
+</script>
     {% end %}
 </body>
 

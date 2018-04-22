@@ -31,14 +31,16 @@ import tornado.options
 import tornado.web
 import unicodedata
 import json
-
+import requests
+from bs4 import BeautifulSoup
+import lxml
 from tornado.options import define, options
 
 define("port", default=8080, help="run on the given port", type=int)
-define("mysql_host", default="127.0.0.1:3306", help="blog database host")
+define("mysql_host", default="127.0.0.1:4407", help="blog database host")
 define("mysql_database", default="bigdata", help="blog database name")
 define("mysql_user", default="root", help="blog database user")
-define("mysql_password", default="root", help="blog database password")
+define("mysql_password", default="kingdom88", help="blog database password")
 
 
 # A thread pool to be used for password hashing with bcrypt.
@@ -75,9 +77,21 @@ class Application(tornado.web.Application):
             (r"/auth/login", AuthLoginHandler),
             (r"/auth/logout", AuthLogoutHandler),
             (r"/router/rest", api_rest),
+
+            # 查询金融人才证券人才
+            (r"/stock_personal.html", Stock_personal_Handler),
+            # 查询金融人才证券人才详情
+            (r"/stock_personal_info.html", Stock_personal_info_Handler),
+            # 查询证券公司从业情况
+            (r"/securities_company.html", Securities_company_Handler),
+
+            # 无权限页面
+            (r"/authdeny.html", authdeny),
         ]
         settings = dict(
-            blog_title=u"企业信息服务平台",
+            blog_title=u"辅投助手_企业信息查询_公司查询_工商查询_企业信用信息查询系统",
+            description=u"辅助投资助手专注服务于个人与企业信息查询,为您提供证券、基金、银行、阳光私募公司查询,工商信息查询,企业查询,工商查询,企业信用信息查询等相关信息,帮您快速了解企业信息,企业工商信息,企业信用信息等企业经营和人员投资状况,查询更多信息请到辅助投资助手！",
+            keywords=u"辅投助手，天眼查,企业查询,公司查询,工商查询,信用查询,企业信息查询,企业工商信息查询,企业信用查询,企业信用信息查询系统,启信宝,企查查,红盾网",
             template_path=os.path.join(os.path.dirname(__file__), "template"),
             static_path=os.path.join(os.path.dirname(__file__), "statics"),
             ui_modules={"Entry": EntryModule},
@@ -112,12 +126,13 @@ class BaseHandler(tornado.web.RequestHandler):
         return self.application.db
 
     def get_current_user(self):
-        user_id = self.get_secure_cookie("login_user")
+        #user_id = self.get_secure_cookie("login_user")
+        user_id = 2
         if not user_id: return None
         return self.db.get("SELECT * FROM authors WHERE id = %s", int(user_id))
 
     def any_author_exists(self):
-        return bool(self.db.get("SELECT * FROM bigdata.authors LIMIT 1"))
+        return bool(self.db.get("select * from (SELECT COUNT(*) as cnt FROM bigdata.authors) s where s.cnt>1000 "))
 
     def create_log(self,operate_type='200',operate_event='',operate_detail=''):
         self.db.execute(
@@ -201,12 +216,12 @@ class pf_company_list(BaseHandler):
                 business_list=self.db.query("SELECT c.registerNo, a.business_id, a.business_name, a.business_legal_name, a.business_reg_capital, a.business_reg_time, a.business_industry, a.business_scope, a.business_phone, b.jglx FROM `business_base` a INNER JOIN pf_base_info  b ON a.business_reg_number = b.gszch INNER JOIN pf_base c ON c.registerNo = b.djbm WHERE c.registerCity = %s limit 10",business_city)
             else:
                 business_list=self.db.query("SELECT c.registerNo, a.business_id, a.business_name, a.business_legal_name, a.business_reg_capital, a.business_reg_time, a.business_industry, a.business_scope, a.business_phone, b.jglx FROM `business_base` a INNER JOIN pf_base_info  b ON a.business_reg_number = b.gszch INNER JOIN pf_base c ON c.registerNo = b.djbm WHERE c.officecity = %s limit 10",business_city)
-            self.render("pf_company_list.html", userinfo=self.current_user, business_list=business_list)
+            self.render("pf_company_list.html", userinfo=self.current_user, business_list=business_list,business_citys=business_city,business_names=v_business_name)
         if v_business_name is not None:
             business_list = self.db.query("select b.djbm registerNo,b.jglx, business_id,business_name,business_legal_name,business_reg_capital,business_reg_time,business_industry,business_scope  from `bigdata`.`business_base` inner join pf_base_info b on b.gszch=business_base.business_id where match(business_name,business_legal_name) against (%s IN BOOLEAN MODE) limit 10",business_name)
             if len(business_list) > 0:
                 self.create_log(operate_type='300', operate_event=self.get_argument("business_name", None))
-            self.render("pf_company_list.html", userinfo=self.current_user,business_list=business_list)
+            self.render("pf_company_list.html", userinfo=self.current_user,business_list=business_list,business_citys=business_city,business_names=v_business_name)
 #私募基金详情
 class pf_detail(BaseHandler):
     def get(self):
@@ -253,6 +268,86 @@ class api_rest(BaseHandler):
         #self.write(json.dumps({'message': 'ok','data':'+resultapi+''}))
         self.write(resultapi)
         self.finish()
+
+# 金融人才证券从业查询
+class Stock_personal_Handler(BaseHandler):
+
+    def get(self):
+        personal_name=self.get_argument("personal_name",None)
+        aoid=self.get_argument("aoid",None)
+        userinfo = self.current_user
+        if aoid is None:
+
+            url='http://person.sac.net.cn/pages/registration/train-line-register!gsUDDIsearch.action'
+            data={'filter_EQS_PPP_NAME':personal_name,'sqlkey':'registration','sqlval':'SEARCH_FINISH_NAME'}
+            headers = [
+                {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.101 Safari/537.36"}
+            ]
+            response=requests.post(url=url,data=data,headers=headers[0],timeout=5)
+            res=response.json()
+        else:
+            vtype = self.get_argument("type", None)
+            url = 'http://person.sac.net.cn/pages/registration/train-line-register!gsUDDIsearch.action'
+            data = {'filter_LES_ROWNUM': '100', 'filter_GTS_RNUM':'0','filter_EQS_PTI_ID':vtype,'filter_EQS_AOI_ID':aoid,'ORDERNAME':'PP#PTI_ID,PP#PPP_NAME','ORDER':'ASC','sqlkey': 'registration', 'sqlval': 'SEARCH_FINISH_PUBLICITY'}
+            headers = [
+                {
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.101 Safari/537.36"}
+            ]
+            response = requests.post(url=url, data=data, headers=headers[0], timeout=5)
+            res = response.json()
+        self.render("stock_personal.html", userinfo=userinfo,personal_list=res)
+
+# 金融人才证券从业人员详情
+class Stock_personal_info_Handler(BaseHandler):
+    def get(self):
+        id = self.get_argument("id", None)
+        userinfo = self.current_user
+        url = 'http://person.sac.net.cn/pages/registration/train-line-register!gsUDDIsearch.action'
+        data = {'filter_EQS_PPP_ID': id, 'sqlkey': 'registration', 'sqlval': 'SD_A02Leiirkmuexe_b9ID'}
+        headers = [
+            {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.101 Safari/537.36"}
+        ]
+        response = requests.post(url=url, data=data, headers=headers[0],timeout=5)
+
+        if response.status_code==200:
+            res = response.json()
+            print(res)
+            filter_EQS_RPI_ID=res[0]['RPI_ID']
+            surl='http://person.sac.net.cn/pages/registration/train-line-register!gsUDDIsearch.action'
+            sdata = {'filter_EQS_RH#RPI_ID': filter_EQS_RPI_ID, 'sqlkey': 'registration', 'sqlval': 'SEARCH_LIST_BY_PERSON'}
+            sresponse = requests.post(url=surl, data=sdata, headers=headers[0],timeout=5)
+            if sresponse.status_code ==200:
+                personal_info_chg=sresponse.json()
+
+            vurl='http://person.sac.net.cn/pages/registration/train-line-register!gsUDDIsearch.action'
+            data = {'filter_EQS_RPI_ID': filter_EQS_RPI_ID, 'sqlkey': 'registration', 'sqlval': 'SELECT_PERSON_INFO'}
+            vresponse = requests.post(url=vurl, data=data, headers=headers[0],timeout=5)
+            if vresponse.status_code ==200:
+                vres=vresponse.json()
+                self.render("stock_personal_info.html", userinfo=userinfo, personal_info=vres,personal_info_chg=personal_info_chg)
+
+# 证券公司从业人员详情
+class Securities_company_Handler(BaseHandler):
+    def get(self):
+        personal_name=self.get_argument("personal_name",None)
+        userinfo = self.current_user
+        url='http://person.sac.net.cn/pages/registration/train-line-register!orderSearch.action'
+        data={'filter_EQS_OTC_ID':'10','ORDERNAME':'AOI#AOI_NAME','ORDER':'ASC','sqlkey':'registration','sqlval':'SELECT_LINE_PERSON'}
+        headers = [
+            {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.101 Safari/537.36",'X-Requested-With':'XMLHttpRequest'}
+        ]
+        response=requests.post(url=url,data=data,headers=headers[0],timeout=15)
+        if response.status_code == 200:
+            res=response.json()
+            self.render("securities_company.html", userinfo=userinfo,securities_company_list=res)
+
+
+#无权限页面
+class authdeny(BaseHandler):
+    def get(self):
+        self.render("authdeny.html", userinfo=self.current_user)
+
 
 class EntryHandler(BaseHandler):
     def get(self, slug):
@@ -336,7 +431,7 @@ class AuthCreateHandler(BaseHandler):
 
 
 class AuthLoginHandler(BaseHandler):
-    def get(self):
+    def post(self):
         # If there are no authors, redirect to the account creation page.
         if not self.any_author_exists():
             self.redirect("/auth/create")
@@ -344,15 +439,17 @@ class AuthLoginHandler(BaseHandler):
             self.render("login.html", error=None)
 
     @gen.coroutine
-    def post(self):
-        author = self.db.get("SELECT * FROM authors WHERE email = %s",
-                             self.get_argument("email"))
+    def get(self):
+        self.email='guest@futouzs.com'
+        self.password='1'
+        #author = self.db.get("SELECT * FROM authors WHERE email = %s",self.get_argument("email"))
+        author = self.db.get("SELECT * FROM authors WHERE email = %s",self.email)
         if not author:
             self.render("login.html", error="邮箱或密码不正确")
             return
         hashed_password = yield executor.submit(
-            bcrypt.hashpw, tornado.escape.utf8(self.get_argument("password")),
-            tornado.escape.utf8(author.hashed_password))
+            #bcrypt.hashpw, tornado.escape.utf8(self.get_argument("password")),tornado.escape.utf8(author.hashed_password))
+            bcrypt.hashpw, tornado.escape.utf8(self.password),tornado.escape.utf8(author.hashed_password))
         if str(hashed_password, encoding = "utf-8") == author.hashed_password:
             self.set_secure_cookie("login_user", str(author.id))
             self.redirect(self.get_argument("next", "/"))

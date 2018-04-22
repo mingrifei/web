@@ -1,4 +1,9 @@
 {% extends "frame.html" %}
+{% block head %}
+    <title>{{business_detail_base.business_name }}_{{ escape(handler.settings["blog_title"]) }}</title>
+    <meta name="description" content="辅投助手为您免费提供{{business_detail_base.business_name }}工商信息查询、注册信息查询、企业信用报告、财务报告查询、电话地址查询、招聘信息等企业信息查询服务,了解{{business_detail_base.business_name }}股东法人、经营状况等详细信息,就到辅投助手！">
+    <meta name="keywords" content="{{business_detail_base.business_name }}工商注册信息查询,{{business_detail_base.business_name }}信用报告查询,{{business_detail_base.business_name }}财务报告查询,{{business_detail_base.business_name }}电话地址查询">
+{% end %}
 
 {% block main %}
 
@@ -33,7 +38,7 @@
                                             <tr>
                                                 <td></td>
                                                 <td>网址：</td>
-                                                <td>{{ business_detail_base.business_url}}</td>
+                                                <td><a href="http://{{business_detail_base.business_url}}" target="_blank">{{business_detail_base.business_url}}</a></td>
                                                 <td>地址：</td>
                                                 <td>{{ business_detail_base.business_addres}}</td>
 
@@ -255,14 +260,13 @@
                                                                       </tr>
 
                                                                     <tbody>
-                                                                    {% for business_detail_change in business_detail_changes %}
+
                                                                         <tr class="gradeX">
-                                                                            <td>{{business_detail_change.change_time}}</td>
-                                                                            <td>{{business_detail_change.change_name}}</td>
-                                                                            <td>{{business_detail_change.change_before}}</td>
-                                                                            <td>{{business_detail_change.change_after}}</td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
                                                                         </tr>
-                                                                    {%end%}
 
                                                                         <!-- more data -->
                                                                     </tbody>
@@ -301,13 +305,13 @@
 
                                                                     <tbody>
                                                                         <tr class="gradeX">
-                                                                            <td>2017-09-19</td>
-                                                                            <td>战略融资</td>
                                                                             <td></td>
-                                                                            <td>8400万人民币</td>
                                                                             <td></td>
-                                                                            <td>腾讯产业共赢基金</td>
-                                                                            <td>腾讯科技以现金8400万元投资金证财富</td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
                                                                         </tr>
                                                                         <!-- more data -->
                                                                     </tbody>
@@ -337,9 +341,9 @@
                                                                       </tr>
                                                                     <tbody>
                                                                         <tr class="gradeX">
-                                                                            <td>徐岷波</td>
-                                                                            <td>执行董事</td>
-                                                                            <td>徐岷波，金证财富执行董事。</td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
                                                                         </tr>
                                                                         <!-- more data -->
                                                                     </tbody>
@@ -373,32 +377,16 @@
                                                                       </tr>
                                                                     <tbody>
                                                                         <tr class="gradeX">
-                                                                            <td>商智资讯</td>
-                                                                            <td>北京</td>
-                                                                            <td>战略融资</td>
-                                                                            <td>金融</td>
-                                                                            <td>金融行业软件研发商</td>
-                                                                            <td>2007-12-19</td>
-                                                                            <td>2007-12-</td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
                                                                         </tr>
-                                                                        <tr class="gradeX">
-                                                                            <td>商智资讯</td>
-                                                                            <td>北京</td>
-                                                                            <td>战略融资</td>
-                                                                            <td>金融</td>
-                                                                            <td>金融行业软件研发商</td>
-                                                                            <td>2007-12-19</td>
-                                                                            <td>2007-12-</td>
-                                                                        </tr>
-                                                                        <tr class="gradeX">
-                                                                            <td>商智资讯</td>
-                                                                            <td>北京</td>
-                                                                            <td>战略融资</td>
-                                                                            <td>金融</td>
-                                                                            <td>金融行业软件研发商</td>
-                                                                            <td>2007-12-19</td>
-                                                                            <td>2007-12-</td>
-                                                                        </tr>
+
+
                                                                         <!-- more data -->
                                                                     </tbody>
                                                                 </table>
@@ -432,26 +420,13 @@
                                                                       </tr>
                                                                     <tbody>
                                                                         <tr class="gradeX">
-                                                                            <td>2017-08-24</td>
-                                                                            <td><a>苏州科利科技发展有限公司、苏州科利科技发展有限公司向中国国际经济贸易仲裁委员会申请财产保全其他民事裁定书</a>北京</td>
-                                                                            <td>买卖合同纠纷</td>
-                                                                            <td>原告人</td>
-                                                                            <td>（2017）津0116财保54号</td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
                                                                         </tr>
-                                                                        <tr class="gradeX">
-                                                                            <td>2017-08-24</td>
-                                                                            <td><a>苏州科利科技发展有限公司、苏州科利科技发展有限公司向中国国际经济贸易仲裁委员会申请财产保全其他民事裁定书</a>北京</td>
-                                                                            <td>买卖合同纠纷</td>
-                                                                            <td>原告人</td>
-                                                                            <td>（2017）津0116财保54号</td>
-                                                                        </tr>
-                                                                        <tr class="gradeX">
-                                                                            <td>2017-08-24</td>
-                                                                            <td><a>苏州科利科技发展有限公司、苏州科利科技发展有限公司向中国国际经济贸易仲裁委员会申请财产保全其他民事裁定书</a>北京</td>
-                                                                            <td>买卖合同纠纷</td>
-                                                                            <td>原告人</td>
-                                                                            <td>（2017）津0116财保54号</td>
-                                                                        </tr>
+
                                                                         <!-- more data -->
                                                                     </tbody>
                                                                 </table>
@@ -483,12 +458,12 @@
                                                                       </tr>
                                                                     <tbody>
                                                                         <tr class="gradeX">
-                                                                            <td>2017-07-25</td>
-                                                                            <td><a>深圳市赢众通非融资性担保有限公司</a></td>
-                                                                            <td>贾跃亭</td>
-                                                                            <td>起诉状副本及开庭传票</td>
-                                                                            <td>（2017）北京市第三中级人民法院</td>
-                                                                            <td><a>详情</a></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
                                                                         </tr>
 
                                                                         <!-- more data -->
@@ -502,19 +477,19 @@
                                             </div>
                                     </div>
                                      <div class="am-tab-panel am-fade" id="tab4">
-                                      正在建设中……
+                                      暂未查询到相关信息
                                     </div>
                                      <div class="am-tab-panel am-fade" id="tab5">
-                                      正在建设中……
+                                      暂未查询到相关信息
                                     </div>
                                      <div class="am-tab-panel am-fade" id="tab6">
-                                      正在建设中……
+                                      暂未查询到相关信息
                                     </div>
                                      <div class="am-tab-panel am-fade" id="tab7">
-                                      正在建设中……
+                                      暂未查询到相关信息
                                     </div>
                                      <div class="am-tab-panel am-fade" id="tab8">
-                                      正在建设中……
+                                      暂未查询到相关信息
                                     </div>
 
                                   </div>

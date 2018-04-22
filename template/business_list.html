@@ -21,14 +21,16 @@
 
                                   <div class="am-tabs-bd">
                                     <div class="am-tab-panel am-fade am-in am-active" id="tab1">
+                                        <form action="business_list.html">
                                         <div class="am-u-sm-12 am-u-md-12 am-u-lg-3">
                                             <div class="am-input-group am-input-group-sm tpl-form-border-form cl-p">
-                                                <input type="text" class="am-form-field ">
+                                                <input type="text" name="business_name" class="am-form-field ">
                                                 <span class="am-input-group-btn">
-                                                <button class="am-btn  am-btn-default am-btn-success tpl-table-list-field am-icon-search" type="button"></button>
+                                                <button class="am-btn  am-btn-default am-btn-success tpl-table-list-field am-icon-search" id="btn" type='submit'></button>
                                                  </span>
                                             </div>
                                         </div>
+                                        </form>
                                     </div>
                                     <div class="am-tab-panel am-fade" id="tab2">
                                         <div class="am-u-sm-12 am-u-md-12 am-u-lg-3">
@@ -46,11 +48,7 @@
                                   </div>
                                 </div>
                               <div data-am-widget="list_news" class="am-list-news am-list-news-default" >
-                                  <!--列表标题-->
-                                    <div class="am-list-news-hd am-cf">
-                                       <!--带更多链接-->
-                                          <h2>为你找到相关公司</h2><h2>2744</h2><h2>家</h2>
-                                    </div>
+
                                   {% for busi_list in business_list %}
                                   <div class="am-list-news-bd">
                                   <ul class="am-list">

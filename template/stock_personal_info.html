@@ -1,0 +1,102 @@
+{% extends "frame.html" %}
+{% block head %}
+    <title>{{personal_info[0]['RPI_NAME']}}_{{personal_info[0]['AOI_NAME']}}_证券基金从业信息查询_[{{ escape(handler.settings["blog_title"]) }}]</title>
+    <meta name="description" content="辅投助手为您免费提供证券公司人员信息，证券公司，基金公司从业人员信息！">
+    <meta name="keywords" content="{{personal_info[0]['RPI_NAME']}}_{{personal_info[0]['AOI_NAME']}}证券从业资格查询,{{personal_info[0]['RPI_NAME']}}_{{personal_info[0]['AOI_NAME']}}基金从业资格查询，{{personal_info[0]['RPI_NAME']}}_{{personal_info[0]['AOI_NAME']}}私募基金从业资格查询,资产管理公司从业资格查询，证券公司信息">
+{% end %}
+{% block main %}
+        <div class="tpl-content-wrapper" >
+
+            <div class="container-fluid am-cf">
+                <div class="row">
+                    <div class="am-u-sm-12 am-u-md-12 am-u-lg-9">
+                        <div class="page-header-heading"><span class="am-icon-home page-header-heading-icon"></span> 账户状态和声明 <small>Account status</small></div>
+                        <p class="page-header-description">您现在使用的为大众版本，使用本系统数据无任何限制，不收取任何费用。平台上的信息均来自网络公开信息，由信息来源方对信息真实性等负相应责任，平台所展示信息出于传递更多信息之目的，并不意味平台赞同其观点或已经证实其内容的真实性。</p>
+						<p class="page-header-description">数据来源包括但不限于：中国证券业协会 全国企业信用信息公示系统 中国裁判文书网 中国执行信息公开网 国家知识产权局 商标局 版权局。</p>
+                    </div>
+                    <div class="am-u-lg-3 tpl-index-settings-button">
+                        <button type="button" class="page-header-button"><span class="am-icon-paint-brush"></span> 设置</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row-content am-cf">
+                <div class="row  am-u-sm-12 am-u-md-12 am-u-lg-10">
+                    <div class="widget-body widget-body-lg am-fr">
+                        <div class="am-scrollable-horizontal ">
+                        <table width="100%" class="am-table am-table-compact tpl-table-black ">
+                        <tbody>
+                        <tr class="gradeX">
+                        <td></td>
+                        <td>姓名：</td>
+                        <td>{{personal_info[0]['RPI_NAME']}}</td>
+                        <td>性别:</td>
+                        <td>{{personal_info[0]['SCO_NAME']}}</td>
+                        <td rowspan="4">
+                            <img  width="120px" height="160px" src="http://person.sac.net.cn/photo/images/{{personal_info[0]['RPI_PHOTO_PATH']}}"></td>
+                        <td></td>
+                        </tr>
+                        <tr class="even gradeC">
+                        <td></td>
+                        <td>学历：</td>
+                        <td>{{personal_info[0]['ECO_NAME']}}</td>
+                        <td>执业机构:</td>
+                        <td><a  href="business_list.html?business_name={{personal_info[0]['AOI_NAME']}}" target="_blank" >{{personal_info[0]['AOI_NAME']}}</a></td>
+                        <td></td>
+                        </tr>
+                        <tr class="even gradeX">
+                        <td></td>
+                        <td>证书编号：</td>
+                        <td>{{personal_info[0]['CER_NUM']}}</td>
+                        <td>执业岗位:</td>
+                        <td>{{personal_info[0]['PTI_NAME']}}</td>
+                        <td></td>
+                        </tr>
+                        <tr class="even gradeC">
+                        <td></td>
+                        <td>证书取得日期：</td>
+                        <td>{{personal_info[0]['OBTAIN_DATE']}}</td>
+                        <td>证书有效截止日期:</td>
+                        <td>{{personal_info[0]['ARRIVE_DATE']}}</td>
+                        <td></td>
+                        </tr>
+
+                        <tr class="even gradeX">
+                        <td></td>
+                        <td colspan="6">注册变更记录：</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>序号</td>
+                            <td>证书编号</td>
+                            <td>取得日期</td>
+                            <td>执业机构</td>
+                            <td>执业岗位</td>
+                            <td>证书状态</td>
+                        </tr>
+                        {% for index, vpersonal_info_chg in enumerate(personal_info_chg)%}
+                        <tr>
+                            <td></td>
+                            <td>{{index}}</td>
+                            <td>{{vpersonal_info_chg['CER_NUM']}}</td>
+                            <td>{{vpersonal_info_chg['OBTAIN_DATE']}}</td>
+                            <td><a href="business_list.html?business_name={{vpersonal_info_chg['AOI_NAME']}}" target="_blank" >{{vpersonal_info_chg['AOI_NAME']}}</a></td>
+                            <td>{{vpersonal_info_chg['PTI_NAME']}}</td>
+                            <td>{{vpersonal_info_chg['CERTC_NAME']}}</td>
+                        </tr>
+                        {% end %}
+
+                        <!-- more data -->
+                        </tbody>
+                        </table>
+                        </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+
+<script>
+
+</script>
+{% end %}

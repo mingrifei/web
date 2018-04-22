@@ -1,5 +1,17 @@
 {% extends "frame.html" %}
+{% block head %}
+    {% if None != business_citys %}
+        <title>{{business_citys}}_{{ escape(handler.settings["blog_title"]) }}</title>
+        <meta name="description" content="辅投助手为您免费提供{{business_citys}}工商信息查询、注册信息查询、企业信用报告、财务报告查询、电话地址查询、招聘信息等企业信息查询服务,了解{{business_citys}}股东法人、经营状况等详细信息,就到辅投助手！">
+        <meta name="keywords" content="{{business_citys }}工商注册信息查询,{{business_citys}}信用报告查询,{{business_citys}}财务报告查询,{{business_citys}}电话地址查询">
+    {% end %}
+    {% if None != business_names %}
+        <title>{{business_names}}_{{ escape(handler.settings["blog_title"]) }}</title>
+        <meta name="description" content="辅投助手为您免费提供{{business_names}}工商信息查询、注册信息查询、企业信用报告、财务报告查询、电话地址查询、招聘信息等企业信息查询服务,了解{{business_names}}股东法人、经营状况等详细信息,就到辅投助手！">
+        <meta name="keywords" content="{{business_names }}工商注册信息查询,{{business_names}}信用报告查询,{{business_names}}财务报告查询,{{business_names}}电话地址查询">
 
+    {% end %}
+{% end %}
 {% block main %}
 
         <div class="tpl-content-wrapper">
