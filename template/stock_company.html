@@ -1,0 +1,99 @@
+{% extends "frame.html" %}
+{% block main %}
+        <div class="tpl-content-wrapper" data-type="pf_search">
+
+            <div class="container-fluid am-cf">
+                <div class="row">
+                    <div class="am-u-sm-12 am-u-md-12 am-u-lg-9">
+                        <div class="page-header-heading"><span class="am-icon-home page-header-heading-icon"></span> 账户状态和声明 <small>Account status</small></div>
+                        <p class="page-header-description">您现在使用的为大众版本，使用本系统数据无任何限制，不收取任何费用。平台上的信息均来自网络公开信息，由信息来源方对信息真实性等负相应责任，平台所展示信息出于传递更多信息之目的，并不意味平台赞同其观点或已经证实其内容的真实性。</p>
+						<p class="page-header-description">数据来源包括但不限于：全国企业信用信息公示系统 中国裁判文书网 中国执行信息公开网 国家知识产权局 商标局 版权局。</p>
+                    </div>
+                    <div class="am-u-lg-3 tpl-index-settings-button">
+                        <button type="button" class="page-header-button"><span class="am-icon-paint-brush"></span> 设置</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row-content am-cf">
+                <div class="row  am-cf">
+                    <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+                        <div class="widget am-cf">
+                            <div class="widget-head am-cf ">
+                                <div class="widget-title am-fl">输入要查询的企业名称</div>
+                                <div class="widget-function am-fr">
+                                    <a href="javascript:;" class="am-icon-cog"></a>
+                                </div>
+                            </div>
+                            <div class="widget-body am-fr">
+                                <form action="stock_company_list.html">
+                                <div class="am-fl">
+                                    <div class="row">
+										<div class="am-u-sm-12 am-u-md-12 am-u-lg-8">
+											<div class="am-input-group am-input-group-sm tpl-form-border-form cl-p">
+												<input type="text" name="business_name" class="am-form-field "  placeholder="请输入证券公司名称或其它关键词 ..." required>
+												<span class="am-input-group-btn">
+													<button id="btn" type='submit' class="am-btn  am-btn-default am-btn-success tpl-table-list-field am-icon-search" type="button"></button>
+												</span>
+											</div>
+										</div>
+									</div>
+                                </div>
+                                </form>
+                                <div class="am-fr am-cf">
+                                    <div class="widget-fluctuation-description-amount text-success" am-cf>
+                                        +23014
+
+                                    </div>
+                                    <div class="widget-fluctuation-description-text am-text-right">
+                                        本月新增加
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="widget-body am-fl">
+								<div class="am-fl">
+									<div class="widget-title am-fl">大家都在搜索的企业：</div>
+								</div>
+							</div>
+                            <div class="widget-body am-fl">
+                            {% for  business_search_hot in business_search_hots%}
+                                <div class="m-u-sm-12 am-u-md-12 am-u-lg-4">
+
+                                        <div class="widget-title am-fl"><a href="pf_company_list.html?business_name={{business_search_hot.system_operate_business_name}}">{{business_search_hot.system_operate_business_name}}</a></div>
+
+                                </div>
+                            {%end%}
+                            </div>
+                            <div class="widget-head am-cf ">
+                                <div class="widget-title am-fl">按注册地址查询</div>
+                            </div>
+                            <div class="widget-body am-fl">
+                             {% for  pf_company_province in pf_company_provinces%}
+
+								<div class="am-u-sm-12 am-u-lg-4">
+                                    <div class="widget-title am-fl"><a href="pf_company_list.html?business_city={{pf_company_province.registerCity}}&search_type=reg">{{pf_company_province.registerProvince}}--{{pf_company_province.registerCity}}({{pf_company_province.vcount}})</a></div>
+								</div>
+
+                            {%end%}
+                            </div>
+                            <div class="widget-head am-cf ">
+                                <div class="widget-title am-fl">按办公地址查询</div>
+                            </div>
+                            <div class="widget-body am-fl">
+                             {% for  pf_company_office_province in pf_company_office_provinces%}
+
+								<div class="am-u-sm-12 am-u-lg-4">
+                                    <div class="widget-title am-fl"><a href="pf_company_list.html?business_city={{pf_company_office_province.officeCity}}&search_type=office">{{pf_company_office_province.officeProvince}}--{{pf_company_office_province.officeCity}}({{pf_company_office_province.vcount}})</a></div>
+								</div>
+
+                            {%end%}
+
+                            </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+{% end %}

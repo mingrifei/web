@@ -1,0 +1,482 @@
+{% extends "frame.html" %}
+{% block head %}
+    <title>{{business_detail_base.business_name }}_{{ escape(handler.settings["blog_title"]) }}</title>
+    <meta name="description" content="辅投助手为您免费提供{{business_detail_base.business_name }}工商信息查询、注册信息查询、企业信用报告、财务报告查询、电话地址查询、招聘信息等企业信息查询服务,了解{{business_detail_base.business_name }}股东法人、经营状况等详细信息,就到辅投助手！">
+    <meta name="keywords" content="{{business_detail_base.business_name }}工商注册信息查询,{{business_detail_base.business_name }}信用报告查询,{{business_detail_base.business_name }}财务报告查询,{{business_detail_base.business_name }}电话地址查询">
+{% end %}
+{% block main %}
+
+        <div class="tpl-content-wrapper">
+           <div class="row-content am-cf">
+                <div class="row">
+                    <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+                        <div class="widget am-cf">
+                            <div class="widget-head am-cf">
+                                <div class="am-u-sm-12 am-u-md-12 am-u-lg-8 widget-title  am-cf">
+                                    <h2>{{business_detail_base.business_name }}</h2>
+                                    <button type="button" class="am-btn am-btn-default am-round am-btn-xs">{{ business_detail_base.business_reg_state }}</button>
+                                    <button type="button" class="am-btn am-btn-default am-round am-btn-xs">{{ business_detail_base.business_industry }}</button>
+                                </div>
+                                <div class="am-u-sm-12 am-u-md-12 am-u-lg-4 widget-title  am-fr">
+                                    <button type="button" class="am-btn am-btn-default am-round am-btn-xs am-btn-primary">发送报告</button>
+                                    <button type="button" class="am-btn am-btn-default am-round am-btn-xs am-btn-warning">加入监控</button>
+                                    <button type="button" class="am-btn am-btn-default am-round am-btn-xs am-btn-success">更新数据</button>
+                                </div>
+                            </div>
+                            <div class="widget-body am-fr">
+                                 <div class="am-scrollable-horizontal ">
+                                    <table width="100%" class="am-table am-table-compact tpl-table-black " id="example-r">
+                                        <tbody>
+                                            <tr >
+                                                <td width="20"></td>
+                                                <td width="60">电话：</td>
+                                                <td>{{ business_detail_base.business_phone }}</td>
+                                                <td>邮箱：</td>
+                                                <td>{{ business_detail_base.business_email }}</td>
+
+                                                </tr>
+                                            <tr>
+                                                <td></td>
+                                                <td>网址：</td>
+                                                <td><a  href="http://{{business_detail_base.business_url}}" target="_blank">{{ business_detail_base.business_url}}</a></td>
+                                                <td>地址：</td>
+                                                <td>{{ business_detail_base.business_addres}}</td>
+
+
+                                            </tr>
+                                            <tr class="gradeC">
+                                                <td></td>
+                                                <td>简介：</td>
+                                                <td colspan="3">{{ business_detail_base.business_summary}}</td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="widget-body  am-fr">
+                                <div class="am-tabs" data-am-tabs>
+                                  <ul class="am-tabs-nav am-nav am-nav-tabs">
+                                    <li class="am-active"><a href="#tab1">企业概况</a></li>
+                                    <li><a href="#tab2">经营情况</a></li>
+                                    <li><a href="#tab3">营业部情况</a></li>
+                                    <li><a href="#tab4">风险信息</a></li>
+                                    <li><a href="#tab5">企业图谱</a></li>
+                                    <li><a href="#tab6">涉诉信息</a></li>
+                                    <li><a href="#tab7">高管信息</a></li>
+                                    <li><a href="#tab8">舆情信息</a></li>
+
+                                  </ul>
+
+                                  <div class="am-tabs-bd">
+                                    <div class="am-tab-panel am-fade am-in am-active" id="tab1">
+                                        <div class="row-content am-cf">
+                                            <div class="row">
+                                                 <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+                                                    <div class="widget am-cf">
+                                                        <div class="widget-head am-cf">
+                                                            <div class="widget-title am-fl">工商信息</div>
+                                                            <div class="widget-function am-fr">
+                                                                <a href="javascript:;" class="am-icon-cog"></a>
+                                                            </div>
+                                                        </div>
+                                                        <div class="widget-body  widget-body-lg am-fr">
+                                                            <div class="am-scrollable-horizontal ">
+                                                                <table width="100%" class="am-table am-table-compact tpl-table-black" >
+                                                                    <tbody>
+                                                                        <tr class="gradeX">
+                                                                            <td></td>
+                                                                            <td>法人信息：</td>
+                                                                            <td>{{ business_detail_base.business_legal_name}}</td>
+                                                                            <td>注册资本:</td>
+                                                                            <td>{{ business_detail_base.business_reg_capital}}</td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                        </tr>
+                                                                        <tr class="even gradeC">
+                                                                            <td></td>
+                                                                            <td>工商注册号：</td>
+                                                                            <td>{{ business_detail_base.business_reg_number}}</td>
+                                                                            <td>组织机构代码:</td>
+                                                                            <td>{{ business_detail_base.business_organization_number}}</td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                        </tr>
+                                                                        <tr class="even gradeX">
+                                                                            <td></td>
+                                                                            <td>统一信用代码：</td>
+                                                                            <td>{{ business_detail_base.business_unite_number}}</td>
+                                                                            <td>企业类型:</td>
+                                                                            <td>有限责任公司</td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                        </tr>
+                                                                        <tr class="even gradeC">
+                                                                            <td></td>
+                                                                            <td>纳税人识别号：</td>
+                                                                            <td>{{ business_detail_base.business_payment_number}}</td>
+                                                                            <td>行业:</td>
+                                                                            <td>{{ business_detail_base.business_industry}}</td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                        </tr>
+                                                                        <tr class="even gradeX">
+                                                                            <td></td>
+                                                                            <td>营业期限：</td>
+                                                                            <td>{{ business_detail_base.business_cycle_time}}</td>
+                                                                            <td>核准日期:</td>
+                                                                            <td>{{ business_detail_base.business_approved_time}}</td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                        </tr>
+                                                                        <tr class="even gradeC">
+                                                                            <td></td>
+                                                                            <td>登记机关：</td>
+                                                                            <td>{{ business_detail_base.business_reg_Institute}}</td>
+                                                                            <td>英文名称:</td>
+                                                                            <td>{{ business_detail_base.business_en_name}}</td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                        </tr>
+                                                                        <tr class="even gradeC">
+                                                                            <td></td>
+                                                                            <td>注册地址：</td>
+                                                                            <td colspan="5">{{ business_detail_base.business_en_name}}</td>
+
+                                                                        </tr>
+                                                                        <tr class="even gradeX">
+                                                                            <td></td>
+                                                                            <td colspan="4">经营范围：</td>
+                                                                        </tr>
+                                                                        <tr class="even gradeC">
+                                                                            <td></td>
+                                                                            <td colspan="4">{{ business_detail_base.business_scope}}</td>
+                                                                        </tr>
+                                                                        <!-- more data -->
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+
+                                                         </div>
+                                                    </div>
+                                                 </div>
+                                            </div>
+                                            <div class="row">
+                                                 <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+                                                    <div class="widget am-cf">
+                                                        <div class="widget-head am-cf">
+                                                            <div class="widget-title am-fl">股东信息</div>
+                                                            <div class="widget-function am-fr">
+                                                                <a href="javascript:;" class="am-icon-cog"></a>
+                                                            </div>
+                                                        </div>
+                                                        <div class="widget-body   am-fr">
+                                                            <div class="am-scrollable-horizontal ">
+                                                                <table width="100%" class="am-table am-table-compact am-table-bordered am-table-radius tpl-table-black " >
+                                                                      <tr>
+                                                                        <th>股东</th>
+                                                                        <th>出资比例</th>
+                                                                        <th>认缴出资</th>
+                                                                      </tr>
+
+                                                                    <tbody>
+                                                                    {% for business_detail_holde in business_detail_holdes %}
+                                                                        <tr class="gradeX">
+                                                                            <td>{{ business_detail_holde.men_name }}</td>
+                                                                            <td>{{ business_detail_holde.holder_percent }}</td>
+                                                                            <td>{{ business_detail_holde.holder_amomon }}</td>
+                                                                        </tr>
+                                                                    {%end%}
+
+                                                                        <!-- more data -->
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+
+                                                         </div>
+                                                    </div>
+                                                 </div>
+                                            </div>
+                                            <div class="row">
+                                                 <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+                                                    <div class="widget am-cf">
+                                                        <div class="widget-head am-cf">
+                                                            <div class="widget-title am-fl">对外投资</div>
+                                                            <div class="widget-function am-fr">
+                                                                <a href="javascript:;" class="am-icon-cog"></a>
+                                                            </div>
+                                                        </div>
+                                                        <div class="widget-body   am-fr">
+                                                            <div class="am-scrollable-horizontal ">
+                                                                <table width="100%" class="am-table am-table-compact am-table-bordered am-table-radius tpl-table-black " >
+                                                                      <tr>
+                                                                        <th>对外投资</th>
+                                                                        <th>被投资法定代表人</th>
+                                                                        <th>注册资本</th>
+                                                                        <th>投资数额</th>
+                                                                        <th>投资占比</th>
+                                                                        <th>注册时间</th>
+                                                                        <th>状态</th>
+                                                                      </tr>
+
+                                                                    <tbody>
+                                                                    {% for business_detail_invest in business_detail_invests %}
+                                                                        <tr class="gradeX">
+                                                                            <td>{{ business_detail_invest.invest_name }}</td>
+                                                                            <td>{{ business_detail_invest.legal_name }}</td>
+                                                                            <td>{{ business_detail_invest.invest_reg_capital }}</td>
+                                                                            <td>{{ business_detail_invest.invest_amount}}</td>
+                                                                            <td>{{ business_detail_invest.invest_amomon}}</td>
+                                                                            <td>{{ business_detail_invest.invest_reg_time}}</td>
+                                                                            <td>{{ business_detail_invest.invest_state}}</td>
+                                                                        </tr>
+                                                                    {% end %}
+
+                                                                        <!-- more data -->
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+
+                                                         </div>
+                                                    </div>
+                                                 </div>
+                                            </div>
+                                            <div class="row">
+                                                 <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+                                                    <div class="widget am-cf">
+                                                        <div class="widget-head am-cf">
+                                                            <div class="widget-title am-fl">变更记录</div>
+                                                            <div class="widget-function am-fr">
+                                                                <a href="javascript:;" class="am-icon-cog"></a>
+                                                            </div>
+                                                        </div>
+                                                        <div class="widget-body   am-fr">
+                                                            <div class="am-scrollable-horizontal ">
+                                                                <table width="100%" class="am-table am-table-compact am-table-bordered am-table-radius tpl-table-black " >
+                                                                      <tr>
+                                                                        <th>变更时间</th>
+                                                                        <th>变更项目</th>
+                                                                        <th>变更前</th>
+                                                                        <th>变更后</th>
+                                                                      </tr>
+
+                                                                    <tbody>
+                                                                        <tr class="gradeX">
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                        </tr>
+
+                                                                        <!-- more data -->
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+
+                                                         </div>
+                                                    </div>
+                                                 </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="am-tab-panel am-fade" id="tab2">
+                                      <div class="row">
+                                                   {% for stk_sub_base in stk_sub_bases %}
+                                                 <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+                                                    <div class="widget am-cf">
+                                                        <div class="widget-head am-cf">
+                                                            <div class="widget-title am-fl">{{stk_sub_base.MBOI_BRANCH_FULL_NAME}}<button type="button" class="am-btn am-btn-default am-round am-btn-xs am-btn-warning">分公司</button></div>
+                                                            <div class="widget-function am-fr">
+                                                                <a href="javascript:;" class="am-icon-cog"></a>
+                                                            </div>
+                                                        </div>
+                                                        <div class="widget-body   am-fr">
+                                                            <div class="am-scrollable-horizontal ">
+
+                                                                <table width="80%" class="am-table am-table-compact tpl-table-black " id="example-r">
+                                                                    <tbody>
+                                                                        <tr >
+                                                                            <td></td>
+                                                                            <td width="120">联系人：</td>
+                                                                            <td>{{stk_sub_base.MBOI_PERSON_IN_CHARGE}}</td>
+                                                                            <td>客户服务电话：</td>
+                                                                            <td>{{ stk_sub_base.MBOI_CS_TEL }}</td>
+                                                                            <td></td>
+
+                                                                            </tr>
+                                                                        <tr>
+                                                                            <td></td>
+                                                                            <td >分公司地址：</td>
+                                                                            <td colspan="3">{{ stk_sub_base.MBOI_OFF_ADDRESS}}</td>
+                                                                            <td></td>
+                                                                        </tr>
+                                                                        <tr class="gradeC">
+                                                                            <td></td>
+                                                                            <td>营业范围：</td>
+                                                                            <td colspan="3">{{stk_sub_base.MBOI_BUSINESS_SCOPE}}<td>
+                                                                            <td></td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+
+                                                            </div>
+
+                                                         </div>
+                                                    </div>
+                                                 </div>
+                                                    {% end %}
+                                      </div>
+
+                                    </div>
+                                    <div class="am-tab-panel am-fade" id="tab3">
+                                      <div class="row">
+                                                   {% for stk_sub_base in stk_sub_bases %}
+                                                 <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+                                                    <div class="widget am-cf">
+                                                        <div class="widget-head am-cf">
+                                                            <div class="widget-title am-fl">{{stk_sub_base.MBOI_BRANCH_FULL_NAME}}<button type="button" class="am-btn am-btn-default am-round am-btn-xs am-btn-success">营业部</button></div>
+                                                            <div class="widget-function am-fr">
+                                                                <a href="javascript:;" class="am-icon-cog"></a>
+                                                            </div>
+                                                        </div>
+                                                        <div class="widget-body   am-fr">
+                                                            <div class="am-scrollable-horizontal ">
+
+                                                                <table width="80%" class="am-table am-table-compact tpl-table-black " id="example-r">
+                                                                    <tbody>
+                                                                        <tr >
+                                                                            <td></td>
+                                                                            <td width="120">联系人：</td>
+                                                                            <td>{{stk_sub_base.MBOI_PERSON_IN_CHARGE}}</td>
+                                                                            <td>客户服务电话：</td>
+                                                                            <td>{{ stk_sub_base.MBOI_CS_TEL }}</td>
+                                                                            <td></td>
+
+                                                                            </tr>
+                                                                        <tr>
+                                                                            <td></td>
+                                                                            <td >分公司地址：</td>
+                                                                            <td colspan="3">{{ stk_sub_base.MBOI_OFF_ADDRESS}}</td>
+                                                                            <td></td>
+                                                                        </tr>
+                                                                        <tr class="gradeC">
+                                                                            <td></td>
+                                                                            <td>营业范围：</td>
+                                                                            <td colspan="3">{{stk_sub_base.MBOI_BUSINESS_SCOPE}}<td>
+                                                                            <td></td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+
+                                                            </div>
+
+                                                         </div>
+                                                    </div>
+                                                 </div>
+                                                    {% end %}
+                                      </div>
+
+                                    </div>
+                                    <div class="am-tab-panel am-fade" id="tab4">
+                                      <div class="row">
+                                                 <div class="am-u-sm-12 am-u-md-12 am-u-lg-8">
+                                                    <div class="widget am-cf">
+                                                        <div class="widget-head am-cf">
+                                                            <div class="widget-title am-fl">法律诉讼</div>
+                                                            <div class="widget-function am-fr">
+                                                                <a href="javascript:;" class="am-icon-cog"></a>
+                                                            </div>
+                                                        </div>
+                                                        <div class="widget-body   am-fr">
+                                                            <div class="am-scrollable-horizontal ">
+                                                                <table width="100%" class="am-table am-table-compact am-table-bordered am-table-radius tpl-table-black " >
+                                                                      <tr>
+                                                                        <th>日期</th>
+                                                                        <th>裁判文书</th>
+                                                                        <th>案由</th>
+                                                                        <th>案件身份</th>
+                                                                        <th>案件号</th>
+                                                                      </tr>
+                                                                    <tbody>
+                                                                        <tr class="gradeX">
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                        </tr>
+
+                                                                        <!-- more data -->
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+
+                                                         </div>
+                                                    </div>
+                                                 </div>
+                                            </div>
+                                      <div class="row">
+                                                 <div class="am-u-sm-12 am-u-md-12 am-u-lg-8">
+                                                    <div class="widget am-cf">
+                                                        <div class="widget-head am-cf">
+                                                            <div class="widget-title am-fl">法院公告</div>
+                                                            <div class="widget-function am-fr">
+                                                                <a href="javascript:;" class="am-icon-cog"></a>
+                                                            </div>
+                                                        </div>
+                                                        <div class="widget-body   am-fr">
+                                                            <div class="am-scrollable-horizontal ">
+                                                                <table width="100%" class="am-table am-table-compact am-table-bordered am-table-radius tpl-table-black " >
+                                                                      <tr>
+                                                                        <th>公告时间</th>
+                                                                        <th>上诉方</th>
+                                                                        <th>被诉方</th>
+                                                                        <th>公告类型</th>
+                                                                        <th>法院</th>
+                                                                        <th>详情</th>
+                                                                      </tr>
+                                                                    <tbody>
+                                                                        <tr class="gradeX">
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                        </tr>
+
+                                                                        <!-- more data -->
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+
+                                                         </div>
+                                                    </div>
+                                                 </div>
+                                            </div>
+                                    </div>
+                                     <div class="am-tab-panel am-fade" id="tab5">
+                                      暂未查询到相关信息
+                                    </div>
+                                     <div class="am-tab-panel am-fade" id="tab6">
+                                      暂未查询到相关信息
+                                    </div>
+                                     <div class="am-tab-panel am-fade" id="tab7">
+                                      暂未查询到相关信息
+                                    </div>
+                                     <div class="am-tab-panel am-fade" id="tab8">
+                                      暂未查询到相关信息
+                                    </div>
+
+                                  </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+{% end %}

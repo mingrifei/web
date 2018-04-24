@@ -85,7 +85,12 @@ class Application(tornado.web.Application):
             # 查询证券公司从业情况
             (r"/securities_company.html", Securities_company_Handler),
             # 查询证券公司信息
-            (r"/stock_company_list.html", Stock_company_Handler),
+            (r"/stock_company.html", Stock_company_Handler),
+            # 搜索证券公司列表
+            (r"/stock_company_list.html", Stock_company_list_Handler),
+            # 证券公司详细情况
+            (r"/stock_company_detail.html", Stock_company_detail_Handler),
+
             # 无权限页面
             (r"/authdeny.html", authdeny),
         ]
@@ -194,15 +199,44 @@ class Business_detail(BaseHandler):
 class Stock_company_Handler(BaseHandler):
     def get(self):
         v_business_name=self.get_argument("business_name", None)
+        userinfo = self.current_user
+        stock_company_provinces=self.db.query("SELECT b.registerProvince,b.registerCity,  COUNT(b.registerCity) AS vcount FROM  pf_base_info a   right JOIN  pf_base b ON  a.djbm=b.registerNo WHERE  b.registerCity <>'' GROUP BY b.registerProvince,b.registerCity order by vcount desc limit 60")
+        stock_company_office_provinces=self.db.query("SELECT b.officeProvince,b.officeCity,  COUNT(b.officeCity) AS vcount FROM  pf_base_info a   right JOIN  pf_base b ON  a.djbm=b.registerNo WHERE  b.registerCity <>'' GROUP BY b.officeProvince,b.officeCity order by vcount desc limit 60")
+
+        business_search_hiss=self.db.query("SELECT SUBSTRING_INDEX(GROUP_CONCAT(system_operate_time ORDER BY system_operate_time DESC), ',',1)  as sort,   system_operate_business_name FROM bigdata.system_user_log where system_operate_user=%s and system_operate_type=400  group by system_operate_business_name order by  sort desc",self.current_user.id)
+        business_search_hots=self.db.query("SELECT SUBSTRING_INDEX(GROUP_CONCAT(system_operate_time ORDER BY system_operate_time DESC), ',',1)  as sort,   system_operate_business_name FROM bigdata.system_user_log where system_operate_type=400  group by system_operate_business_name order by  sort desc ")
+        self.render("stock_company.html", userinfo=userinfo, business_search_hiss=business_search_hiss,business_search_hots=business_search_hots,pf_company_provinces=stock_company_provinces,pf_company_office_provinces=stock_company_office_provinces)
+
+class Stock_company_list_Handler(BaseHandler):
+    def get(self):
+        v_business_name = self.get_argument("business_name",None)
         if v_business_name is not None:
             business_name = '*' + v_business_name + '*'
         business_city = self.get_argument("business_city", None)
-        search_type = self.get_argument("search_type", None)
         if v_business_name is not None:
-            business_list = self.db.query("select b.djbm registerNo,b.jglx, business_id,business_name,business_legal_name,business_reg_capital,business_reg_time,business_industry,business_scope  from `bigdata`.`business_base` inner join pf_base_info b on b.gszch=business_base.business_id where match(business_name,business_legal_name) against (%s IN BOOLEAN MODE) limit 10",business_name)
+            business_list = self.db.query("select  business_id,business_name,business_legal_name,business_reg_capital,business_reg_time,business_industry,business_scope  from `bigdata`.`business_base` where match(business_name,business_legal_name) against (%s IN BOOLEAN MODE) limit 10",
+                business_name)
             if len(business_list) > 0:
                 self.create_log(operate_type='400', operate_event=self.get_argument("business_name", None))
-            self.render("stock_company_list.html", userinfo=self.current_user,business_list=business_list,business_citys=business_city,business_names=v_business_name)
+            self.render("stock_company_list.html", userinfo=self.current_user, business_list=business_list,
+                        business_citys=business_city, business_names=v_business_name)
+        else:
+            business_list = self.db.query(
+                "select  business_id,business_name,business_legal_name,business_reg_capital,business_reg_time,business_industry,business_scope  from `bigdata`.`business_base` a  inner join bigdata.company_stock b on a.business_name=b.AOI_NAME  inner join bigdata.company_stock_base c on c.AOI_ID=b.AOI_ID order by c.MRI_REG_CAPITAL desc")
+            business_count=len(business_list)
+            self.render("stock_company_list.html", userinfo=self.current_user, business_list=business_list,
+                        business_names=v_business_name,business_count=business_count)
+#证券公司详细信息
+class Stock_company_detail_Handler(BaseHandler):
+    def get(self):
+        business_id =self.get_argument("id", None)
+        business_detail_base=self.db.get("SELECT `business_id`, `business_name`, `business_logo`, `business_phone`, `business_email`, `business_url`, `business_addres`, `busines_tags`, `business_summary`, `business_update_time`, `business_legal_id`, `business_legal_name`, `business_reg_capital`, `business_reg_time`, `business_reg_state`, `business_reg_number`, `business_organization_number`, `business_unite_number`, `business_type`, `business_payment_number`, `business_industry`, `business_cycle_time`, `business_approved_time`, `business_reg_Institute`, `business_reg_addres`, `business_en_name`, `business_scope`, `business_score`, `business_plate` FROM `bigdata`.`business_base` where business_id=%s LIMIT 1",business_id)
+        business_detail_holdes=self.db.query("SELECT business_id,men_id,men_name,holder_percent,holder_amomon FROM `bigdata`.`business_holder` where business_id=%s group by business_id,men_id,men_name,holder_percent,holder_amomon",business_id)
+        business_detail_invests=self.db.query("SELECT `business_id`, `invest_name`, `invest_id`, `legal_name`, `legal_id`, `invest_reg_capital`, `invest_amount`, `invest_amomon`, DATE_FORMAT(invest_reg_time,'%%Y-%%m') `invest_reg_time`, `invest_state` FROM `bigdata`.`business_invest` where business_id=%s",business_id)
+        stk_sub_base=self.db.query("SELECT a.AOI_ID,a.MBOI_BRANCH_FULL_NAME,a.MBOI_BUSINESS_SCOPE,a.MBOI_OFF_ADDRESS,a.MBOI_CS_TEL,a.MBOI_PERSON_IN_CHARGE FROM `bigdata`.`company_stock_sub_base` a INNER JOIN `bigdata`.`company_stock` b ON a.AOI_ID = b.AOI_ID inner join `bigdata`.`business_base` c on c.business_name=b.AOI_NAME   where c.business_id=%s",business_id)
+        if len(business_detail_base)>0:
+            self.create_log(operate_type='400', operate_event=business_detail_base['business_name'])
+        self.render("stock_company_detail.html",stk_sub_bases=stk_sub_base,userinfo=self.current_user,business_detail_base=business_detail_base,business_detail_holdes=business_detail_holdes,business_detail_invests=business_detail_invests)
 
 
 #私募基金公司查询

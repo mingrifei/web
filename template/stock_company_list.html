@@ -1,11 +1,12 @@
 {% extends "frame.html" %}
 {% block head %}
-    {% if None != business_names %}
-        <title>{{business_names}}_{{ escape(handler.settings["blog_title"]) }}</title>
+
+
+        <title>{% if None != business_names %}{{business_names}}_{% end %}证券公司信息_{{ escape(handler.settings["blog_title"]) }}</title>
         <meta name="description" content="辅投助手为您免费提供{{business_names}}工商信息查询、注册信息查询、企业信用报告、财务报告查询、电话地址查询、招聘信息等企业信息查询服务,了解{{business_names}}股东法人、经营状况等详细信息,就到辅投助手！">
         <meta name="keywords" content="{{business_names }}工商注册信息查询,{{business_names}}信用报告查询,{{business_names}}财务报告查询,{{business_names}}电话地址查询">
 
-    {% end %}
+
 {% end %}
 {% block main %}
 
@@ -15,15 +16,13 @@
                     <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
                         <div class="widget am-cf">
                             <div class="widget-head am-cf">
-                                <div class="widget-title  am-cf">证券公司查询</div>
+                                <div class="widget-title  am-cf">证券公司列表</div>
 
                             </div>
                             <div class="widget-body  am-fr">
                                 <div class="am-tabs" data-am-tabs>
                                   <ul class="am-tabs-nav am-nav am-nav-tabs">
                                     <li class="am-active"><a href="#tab1">查公司</a></li>
-                                    <li><a href="#tab2">查人名</a></li>
-                                    <li><a href="#tab3">查地区</a></li>
                                   </ul>
 
                                   <div class="am-tabs-bd">
@@ -37,26 +36,13 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="am-tab-panel am-fade" id="tab2">
-                                        <div class="am-u-sm-12 am-u-md-12 am-u-lg-3">
-                                            <div class="am-input-group am-input-group-sm tpl-form-border-form cl-p">
-                                                <input type="text" class="am-form-field ">
-                                                <span class="am-input-group-btn">
-                                                <button class="am-btn  am-btn-default am-btn-success tpl-table-list-field am-icon-search" type="button"></button>
-                                                 </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="am-tab-panel am-fade" id="tab3">
-                                      正在建设中……
-                                    </div>
                                   </div>
                                 </div>
                               <div data-am-widget="list_news" class="am-list-news am-list-news-default" >
                                   <!--列表标题-->
                                     <div class="am-list-news-hd am-cf">
                                        <!--带更多链接-->
-                                          <h2>为你找到相关公司</h2><h2>2744</h2><h2>家</h2>
+                                          <h2>为你找到相关公司</h2><h2>{{ business_count}}</h2><h2>家</h2>
                                     </div>
                                   {% for busi_list in business_list %}
                                   <div class="am-list-news-bd">
@@ -69,7 +55,7 @@
                                           </a>
                                         </div>
                                         <div class="am-u-sm-12 am-u-md-12 am-u-lg-9 am-list-main">
-                                            <h3 class="am-list-item-hd"><a href="pf_detail.html?id={{busi_list.business_id}}" class="">{{busi_list.business_name}}</a><button type="button" class="am-btn am-btn-default am-round am-btn-xs am-btn-primary">{{busi_list.jglx}}</button></h3>
+                                            <h3 class="am-list-item-hd"><a href="stock_company_detail.html?id={{busi_list.business_id}}" class="">{{busi_list.business_name}}</a></h3>
                                             <div class="am-list-item-text">
                                                 <ul>
                                                     <span>法定代表人：{{busi_list.business_legal_name}}</span>
