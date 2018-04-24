@@ -84,7 +84,8 @@ class Application(tornado.web.Application):
             (r"/stock_personal_info.html", Stock_personal_info_Handler),
             # 查询证券公司从业情况
             (r"/securities_company.html", Securities_company_Handler),
-
+            # 查询证券公司信息
+            (r"/stock_company_list.html", Stock_company_Handler),
             # 无权限页面
             (r"/authdeny.html", authdeny),
         ]
@@ -165,8 +166,8 @@ class Business_search(BaseHandler):
 
     def get(self):
         userinfo = self.current_user
-        business_search_hiss=self.db.query("SELECT SUBSTRING_INDEX(GROUP_CONCAT(system_operate_time ORDER BY system_operate_time DESC), ',',1)  as sort,   system_operate_business_name FROM bigdata.system_user_log where system_operate_user=%s and system_operate_type=200  group by system_operate_business_name order by  sort desc",self.current_user.id)
-        business_search_hots=self.db.query("SELECT SUBSTRING_INDEX(GROUP_CONCAT(system_operate_time ORDER BY system_operate_time DESC), ',',1)  as sort,   system_operate_business_name FROM bigdata.system_user_log where system_operate_type=200 group by system_operate_business_name order by  sort desc ")
+        business_search_hiss=self.db.query("SELECT SUBSTRING_INDEX(GROUP_CONCAT(system_operate_time ORDER BY system_operate_time DESC), ',',1)  as sort,   system_operate_business_name FROM bigdata.system_user_log where system_operate_user=%s and system_operate_type=200  group by system_operate_business_name order by  sort desc limit 20",self.current_user.id)
+        business_search_hots=self.db.query("SELECT SUBSTRING_INDEX(GROUP_CONCAT(system_operate_time ORDER BY system_operate_time DESC), ',',1)  as sort,   system_operate_business_name FROM bigdata.system_user_log where system_operate_type=200 group by system_operate_business_name order by  sort desc limit 20")
 
         self.render("business_search.html", userinfo=userinfo,business_search_hiss=business_search_hiss,business_search_hots=business_search_hots)
 #企业列表查询
@@ -188,6 +189,22 @@ class Business_detail(BaseHandler):
         if len(business_detail_base)>0:
             self.create_log(operate_type='200', operate_event=business_detail_base['business_name'])
         self.render("business_detail.html", userinfo=self.current_user,business_detail_base=business_detail_base,business_detail_holdes=business_detail_holdes,business_detail_invests=business_detail_invests)
+
+# 证券公司查询
+class Stock_company_Handler(BaseHandler):
+    def get(self):
+        v_business_name=self.get_argument("business_name", None)
+        if v_business_name is not None:
+            business_name = '*' + v_business_name + '*'
+        business_city = self.get_argument("business_city", None)
+        search_type = self.get_argument("search_type", None)
+        if v_business_name is not None:
+            business_list = self.db.query("select b.djbm registerNo,b.jglx, business_id,business_name,business_legal_name,business_reg_capital,business_reg_time,business_industry,business_scope  from `bigdata`.`business_base` inner join pf_base_info b on b.gszch=business_base.business_id where match(business_name,business_legal_name) against (%s IN BOOLEAN MODE) limit 10",business_name)
+            if len(business_list) > 0:
+                self.create_log(operate_type='400', operate_event=self.get_argument("business_name", None))
+            self.render("stock_company_list.html", userinfo=self.current_user,business_list=business_list,business_citys=business_city,business_names=v_business_name)
+
+
 #私募基金公司查询
 class pf_company_search(BaseHandler):
 
