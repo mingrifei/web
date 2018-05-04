@@ -79,10 +79,10 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                  {% for index, vpersonal_list in enumerate(personal_list)%}
+                                                  {% for index, vpersonal_list in enumerate(personal_lists)%}
                                                 <tr class="gradeX">
                                                     <td>{{index}}</td>
-                                                    <td><a href="stock_personal_info.html?id={{vpersonal_list['PPP_ID']}}" target="_blank">{{vpersonal_list['RPI_NAME']}}</a></td>
+                                                    <td><a href="stock_personal_detail.html?cerid={{vpersonal_list['vcer_num']}}" target="_blank">{{vpersonal_list['RPI_NAME']}}</a></td>
                                                     <td>{{vpersonal_list['SCO_NAME']}}</td>
                                                     <td>{{vpersonal_list['ECO_NAME']}}</td>
                                                     <td>{{vpersonal_list['CER_NUM']}}</td>

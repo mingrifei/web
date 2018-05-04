@@ -79,9 +79,13 @@ class Application(tornado.web.Application):
             (r"/router/rest", api_rest),
 
             # 查询金融人才证券人才
-            (r"/stock_personal.html", Stock_personal_Handler),
+            #(r"/stock_personal.html", Stock_personal_Handler),
+            (r"/stock_personal.html", Stock_personal_local_Handler),
             # 查询金融人才证券人才详情
             (r"/stock_personal_info.html", Stock_personal_info_Handler),
+            # 查询金融人才证券人才本地详情
+            (r"/stock_personal_detail.html", Stock_personal_info_local_Handler),
+
             # 查询证券公司从业情况
             (r"/securities_company.html", Securities_company_Handler),
             # 查询证券公司信息
@@ -96,7 +100,7 @@ class Application(tornado.web.Application):
         ]
         settings = dict(
             blog_title=u"辅投助手_企业信息查询_公司查询_工商查询_企业信用信息查询系统",
-            description=u"辅助投资助手专注服务于个人与企业信息查询,为您提供证券、基金、银行、阳光私募公司查询,工商信息查询,企业查询,工商查询,企业信用信息查询等相关信息,帮您快速了解企业信息,企业工商信息,企业信用信息等企业经营和人员投资状况,查询更多信息请到辅助投资助手！",
+            description=u"辅投助手专注服务于个人与企业信息查询,为您提供证券、基金、银行、阳光私募公司查询,工商信息查询,企业查询,工商查询,企业信用信息查询等相关信息,帮您快速了解企业信息,企业工商信息,企业信用信息等企业经营和人员投资状况,查询更多信息请到辅助投资助手！",
             keywords=u"辅投助手，天眼查,企业查询,公司查询,工商查询,信用查询,企业信息查询,企业工商信息查询,企业信用查询,企业信用信息查询系统,启信宝,企查查,红盾网",
             template_path=os.path.join(os.path.dirname(__file__), "template"),
             static_path=os.path.join(os.path.dirname(__file__), "statics"),
@@ -234,9 +238,11 @@ class Stock_company_detail_Handler(BaseHandler):
         business_detail_holdes=self.db.query("SELECT business_id,men_id,men_name,holder_percent,holder_amomon FROM `bigdata`.`business_holder` where business_id=%s group by business_id,men_id,men_name,holder_percent,holder_amomon",business_id)
         business_detail_invests=self.db.query("SELECT `business_id`, `invest_name`, `invest_id`, `legal_name`, `legal_id`, `invest_reg_capital`, `invest_amount`, `invest_amomon`, DATE_FORMAT(invest_reg_time,'%%Y-%%m') `invest_reg_time`, `invest_state` FROM `bigdata`.`business_invest` where business_id=%s",business_id)
         stk_sub_base=self.db.query("SELECT a.AOI_ID,a.MBOI_BRANCH_FULL_NAME,a.MBOI_BUSINESS_SCOPE,a.MBOI_OFF_ADDRESS,a.MBOI_CS_TEL,a.MBOI_PERSON_IN_CHARGE FROM `bigdata`.`company_stock_sub_base` a INNER JOIN `bigdata`.`company_stock` b ON a.AOI_ID = b.AOI_ID inner join `bigdata`.`business_base` c on c.business_name=b.AOI_NAME   where c.business_id=%s",business_id)
+        stk_branch_base=self.db.query("SELECT a.AOI_ID,a.MSDI_ZJJ_COMPLAINTS_TEL as MSDI_ZJJ_COMPLAINTS_TEL ,a.MSDI_NAME,a.MSDI_REG_PCC,a.MSDI_SALES_MANAGER,a.MSDI_REG_ADDRESS,a.MSDI_CS_TEL FROM `bigdata`.`company_stock_branch_base` a INNER JOIN `bigdata`.`company_stock` b ON a.AOI_ID = b.AOI_ID inner join `bigdata`.`business_base` c on c.business_name=b.AOI_NAME   where c.business_id=%s",business_id)
+        stk_person_info=self.db.query("SELECT `person_stock_info`.`AOI_ID`,     `person_stock_info`.`PPP_ID`,     `person_stock_info`.`RPI_NAME`,     `person_stock_info`.`SCO_NAME`,     `person_stock_info`.`ECO_NAME`,     `person_stock_info`.`AOI_NAME`,     `person_stock_info`.`PTI_NAME`,     `person_stock_info`.`CTI_NAME`,     `person_stock_info`.`CER_NUM`,     `person_stock_info`.`PPP_GET_DATE`,     `person_stock_info`.`PPP_END_DATE`,     `person_stock_info`.`COUNTCER`,     `person_stock_info`.`COUNTCX`,     `person_stock_info`.`RPI_ID`,     `person_stock_info`.`RPI_PHOTO_PATH`,     `person_stock_info`.`ADI_ID`,     `person_stock_info`.`ADI_NAME` FROM `bigdata`.`person_stock_info` where `bigdata`.`person_stock_info`.AOI_NAME=%s limit 20",business_detail_base['business_name'])
         if len(business_detail_base)>0:
             self.create_log(operate_type='400', operate_event=business_detail_base['business_name'])
-        self.render("stock_company_detail.html",stk_sub_bases=stk_sub_base,userinfo=self.current_user,business_detail_base=business_detail_base,business_detail_holdes=business_detail_holdes,business_detail_invests=business_detail_invests)
+        self.render("stock_company_detail.html",stk_sub_bases=stk_sub_base,stk_branch_bases=stk_branch_base,userinfo=self.current_user,business_detail_base=business_detail_base,business_detail_holdes=business_detail_holdes,business_detail_invests=business_detail_invests,stk_person_infos=stk_person_info)
 
 
 #私募基金公司查询
@@ -348,6 +354,21 @@ class Stock_personal_Handler(BaseHandler):
             res = response.json()
         self.render("stock_personal.html", userinfo=userinfo,personal_list=res)
 
+#金融人才证券从业本地查询
+class Stock_personal_local_Handler(BaseHandler):
+
+    def get(self):
+        personal_name = self.get_argument("personal_name", None)
+        userinfo = self.current_user
+        if personal_name is not None:
+            personal_list = self.db.query(
+                "SELECT `person_stock_info`.`AOI_ID`,  md5( `person_stock_info`.`cer_num`)  vcer_num,   `person_stock_info`.`PPP_ID`,     `person_stock_info`.`RPI_NAME`,     `person_stock_info`.`SCO_NAME`,     `person_stock_info`.`ECO_NAME`,     `person_stock_info`.`AOI_NAME`,     `person_stock_info`.`PTI_NAME`,     `person_stock_info`.`CTI_NAME`,     `person_stock_info`.`CER_NUM`,     `person_stock_info`.`PPP_GET_DATE`,     `person_stock_info`.`PPP_END_DATE`,     `person_stock_info`.`COUNTCER`,     `person_stock_info`.`COUNTCX`,     `person_stock_info`.`RPI_ID`,     `person_stock_info`.`RPI_PHOTO_PATH`,     `person_stock_info`.`ADI_ID`,     `person_stock_info`.`ADI_NAME` FROM `bigdata`.`person_stock_info` where `bigdata`.`person_stock_info`.`RPI_NAME`=%s",personal_name)
+        else:
+            personal_list = self.db.query(
+                "SELECT `person_stock_info`.`AOI_ID`,  md5( `person_stock_info`.`cer_num`)  vcer_num,   `person_stock_info`.`PPP_ID`,     `person_stock_info`.`RPI_NAME`,     `person_stock_info`.`SCO_NAME`,     `person_stock_info`.`ECO_NAME`,     `person_stock_info`.`AOI_NAME`,     `person_stock_info`.`PTI_NAME`,     `person_stock_info`.`CTI_NAME`,     `person_stock_info`.`CER_NUM`,     `person_stock_info`.`PPP_GET_DATE`,     `person_stock_info`.`PPP_END_DATE`,     `person_stock_info`.`COUNTCER`,     `person_stock_info`.`COUNTCX`,     `person_stock_info`.`RPI_ID`,     `person_stock_info`.`RPI_PHOTO_PATH`,     `person_stock_info`.`ADI_ID`,     `person_stock_info`.`ADI_NAME` FROM `bigdata`.`person_stock_info` limit 30")
+        self.render("stock_personal.html", userinfo=userinfo, personal_lists=personal_list)
+
+
 # 金融人才证券从业人员详情
 class Stock_personal_info_Handler(BaseHandler):
     def get(self):
@@ -377,6 +398,17 @@ class Stock_personal_info_Handler(BaseHandler):
             if vresponse.status_code ==200:
                 vres=vresponse.json()
                 self.render("stock_personal_info.html", userinfo=userinfo, personal_info=vres,personal_info_chg=personal_info_chg)
+
+            # 金融人才证券从业人员详情
+class Stock_personal_info_local_Handler(BaseHandler):
+    def get(self):
+        cer_num = self.get_argument("cerid", None)
+        userinfo = self.current_user
+        personal_info_chg={}
+        res = self.db.get("SELECT `person_stock_info`.`AOI_ID`,    md5( `person_stock_info`.`cer_num`)  vcer_num,     `person_stock_info`.`RPI_NAME`,     `person_stock_info`.`SCO_NAME`,     `person_stock_info`.`ECO_NAME`,     `person_stock_info`.`AOI_NAME`,     `person_stock_info`.`PTI_NAME`,     `person_stock_info`.`CTI_NAME`,     `person_stock_info`.`CER_NUM`,     `person_stock_info`.`PPP_GET_DATE`,     `person_stock_info`.`PPP_END_DATE`,     `person_stock_info`.`COUNTCER`,     `person_stock_info`.`COUNTCX`,     `person_stock_info`.`RPI_ID`,     `person_stock_info`.`RPI_PHOTO_PATH` FROM `bigdata`.`person_stock_info` where md5(CER_NUM)=%s",cer_num)
+        self.render("stock_personal_detail.html", userinfo=userinfo, personal_info=res,
+                            personal_info_chg=personal_info_chg)
+
 
 # 证券公司从业人员详情
 class Securities_company_Handler(BaseHandler):

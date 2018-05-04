@@ -1,7 +1,7 @@
 {% extends "frame.html" %}
 {% block head %}
     <title>{{business_detail_base.business_name }}_{{ escape(handler.settings["blog_title"]) }}</title>
-    <meta name="description" content="辅投助手为您免费提供{{business_detail_base.business_name }}工商信息查询、注册信息查询、企业信用报告、财务报告查询、电话地址查询、招聘信息等企业信息查询服务,了解{{business_detail_base.business_name }}股东法人、经营状况等详细信息,就到辅投助手！">
+    <meta name="description" content="辅投助手为您免费提供{{business_detail_base.business_name }}工商信息查询、注册信息查询、公司情况、营业部情况、财务报告查询、电话地址查询、招聘信息等企业信息查询服务,了解{{business_detail_base.business_name }}股东法人、经营状况等详细信息,就到辅投助手！">
     <meta name="keywords" content="{{business_detail_base.business_name }}工商注册信息查询,{{business_detail_base.business_name }}信用报告查询,{{business_detail_base.business_name }}财务报告查询,{{business_detail_base.business_name }}电话地址查询">
 {% end %}
 {% block main %}
@@ -59,11 +59,11 @@
                                 <div class="am-tabs" data-am-tabs>
                                   <ul class="am-tabs-nav am-nav am-nav-tabs">
                                     <li class="am-active"><a href="#tab1">企业概况</a></li>
-                                    <li><a href="#tab2">经营情况</a></li>
-                                    <li><a href="#tab3">营业部情况</a></li>
+                                    <li><a href="#tab2">分公司情况({{ len(stk_sub_bases) }})</a></li>
+                                    <li><a href="#tab3">营业部情况({{ len(stk_branch_bases) }})</a></li>
                                     <li><a href="#tab4">风险信息</a></li>
                                     <li><a href="#tab5">企业图谱</a></li>
-                                    <li><a href="#tab6">涉诉信息</a></li>
+                                    <li><a href="#tab6">从业人员</a></li>
                                     <li><a href="#tab7">高管信息</a></li>
                                     <li><a href="#tab8">舆情信息</a></li>
 
@@ -282,11 +282,11 @@
                                     </div>
                                     <div class="am-tab-panel am-fade" id="tab2">
                                       <div class="row">
-                                                   {% for stk_sub_base in stk_sub_bases %}
+                                                   {% for index, stk_sub_base in enumerate(stk_sub_bases) %}
                                                  <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
                                                     <div class="widget am-cf">
                                                         <div class="widget-head am-cf">
-                                                            <div class="widget-title am-fl">{{stk_sub_base.MBOI_BRANCH_FULL_NAME}}<button type="button" class="am-btn am-btn-default am-round am-btn-xs am-btn-warning">分公司</button></div>
+                                                            <div class="widget-title am-fl">{{stk_sub_base.MBOI_BRANCH_FULL_NAME}}<button type="button" class="am-btn am-btn-default am-round am-btn-xs am-btn-warning">分公司{{ index+1 }}</button></div>
                                                             <div class="widget-function am-fr">
                                                                 <a href="javascript:;" class="am-icon-cog"></a>
                                                             </div>
@@ -331,11 +331,11 @@
                                     </div>
                                     <div class="am-tab-panel am-fade" id="tab3">
                                       <div class="row">
-                                                   {% for stk_sub_base in stk_sub_bases %}
+                                                   {% for index,stk_branch_base in  enumerate(stk_branch_bases) %}
                                                  <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
                                                     <div class="widget am-cf">
                                                         <div class="widget-head am-cf">
-                                                            <div class="widget-title am-fl">{{stk_sub_base.MBOI_BRANCH_FULL_NAME}}<button type="button" class="am-btn am-btn-default am-round am-btn-xs am-btn-success">营业部</button></div>
+                                                            <div class="widget-title am-fl">{{stk_branch_base.MSDI_NAME}}<button type="button" class="am-btn am-btn-default am-round am-btn-xs am-btn-success">营业部{{ index+1 }}</button></div>
                                                             <div class="widget-function am-fr">
                                                                 <a href="javascript:;" class="am-icon-cog"></a>
                                                             </div>
@@ -347,23 +347,30 @@
                                                                     <tbody>
                                                                         <tr >
                                                                             <td></td>
-                                                                            <td width="120">联系人：</td>
-                                                                            <td>{{stk_sub_base.MBOI_PERSON_IN_CHARGE}}</td>
+                                                                            <td width="20%">联系人：</td>
+                                                                            <td>{{stk_branch_base.MSDI_SALES_MANAGER}}</td>
                                                                             <td>客户服务电话：</td>
-                                                                            <td>{{ stk_sub_base.MBOI_CS_TEL }}</td>
+                                                                            <td>{{ stk_branch_base.MSDI_CS_TEL }}</td>
                                                                             <td></td>
 
                                                                             </tr>
-                                                                        <tr>
-                                                                            <td></td>
-                                                                            <td >分公司地址：</td>
-                                                                            <td colspan="3">{{ stk_sub_base.MBOI_OFF_ADDRESS}}</td>
-                                                                            <td></td>
-                                                                        </tr>
                                                                         <tr class="gradeC">
                                                                             <td></td>
-                                                                            <td>营业范围：</td>
-                                                                            <td colspan="3">{{stk_sub_base.MBOI_BUSINESS_SCOPE}}<td>
+                                                                            <td>营业部注册地址：</td>
+                                                                            <td colspan="3">{{stk_branch_base.MSDI_REG_ADDRESS}}<td>
+                                                                            <td></td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td></td>
+                                                                            <td >营业部办公地址：</td>
+                                                                            <td colspan="3">{{ stk_branch_base.MSDI_REG_PCC}}<a href="https://map.baidu.com">查看地图</a> </td>
+                                                                            <td></td>
+                                                                        </tr>
+
+                                                                        <tr>
+                                                                            <td></td>
+                                                                            <td >当地证监局电话：</td>
+                                                                            <td colspan="3">{{ stk_branch_base.MSDI_ZJJ_COMPLAINTS_TEL}}</td>
                                                                             <td></td>
                                                                         </tr>
                                                                     </tbody>
@@ -460,7 +467,67 @@
                                       暂未查询到相关信息
                                     </div>
                                      <div class="am-tab-panel am-fade" id="tab6">
-                                      暂未查询到相关信息
+                                         <div class="am-u-sm-12 am-u-md-12 am-u-lg-3">
+                                             <form target="_blank" action="stock_personal.html">
+                                                <div class="am-input-group am-input-group-sm tpl-form-border-form cl-p">
+                                                    <input type="text" class="am-form-field " name="personal_name" placeholder="请输入相关人员名称 ...">
+                                                    <span class="am-input-group-btn">
+													<button id="btn" type='submit' class="am-btn  am-btn-default am-btn-success tpl-table-list-field am-icon-search" type="button"></button>
+                                                     </span>
+                                                </div>
+                                             </form>
+                                         </div>
+                                         <div class="row">
+                                                   {% for index, stk_person_info in enumerate(stk_person_infos) %}
+                                                 <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+                                                    <div class="widget am-cf">
+                                                        <div class="widget-head am-cf">
+                                                            <div class="widget-title am-fl">{{stk_person_info.RPI_NAME}}({{ stk_person_info.SCO_NAME }})<button type="button" class="am-btn am-btn-default am-round am-btn-xs am-btn-warning">{{ stk_person_info.PTI_NAME }}{{ index+1 }}</button></div>
+                                                            <div class="widget-function am-fr">
+                                                                <a href="javascript:;" class="am-icon-cog"></a>
+                                                            </div>
+                                                        </div>
+                                                        <div class="widget-body   am-fr">
+                                                            <div class="am-scrollable-horizontal ">
+
+                                                                <table width="80%" class="am-table am-table-compact tpl-table-black " id="example-r">
+                                                                    <tbody>
+                                                                        <tr >
+                                                                            <td></td>
+                                                                            <td width="120">证书类型：</td>
+                                                                            <td>{{stk_person_info.PTI_NAME}}</td>
+                                                                            <td>证书编号：</td>
+                                                                            <td>{{stk_person_info.CER_NUM}}</td>
+                                                                            <td rowspan="3"><img width="80" height="123" src="http://person.sac.net.cn/photo/images/{{ stk_person_info.RPI_PHOTO_PATH }}"></td>
+
+                                                                        </tr>
+                                                                        <tr >
+                                                                            <td></td>
+                                                                            <td width="120">证书取得时间：</td>
+                                                                            <td>{{stk_person_info.PPP_GET_DATE}}</td>
+                                                                            <td>证书到期时间：</td>
+                                                                            <td>{{stk_person_info.PPP_END_DATE}}</td>
+                                                                            
+
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td></td>
+                                                                            <td >所属部门：</td>
+                                                                            <td colspan="3">{{stk_person_info.AOI_NAME}}{{ stk_person_info.ADI_NAME}}</td>
+                                                                            
+                                                                        </tr>
+
+                                                                    </tbody>
+                                                                </table>
+
+                                                            </div>
+
+                                                         </div>
+                                                    </div>
+                                                 </div>
+                                                    {% end %}
+                                         </div>
+
                                     </div>
                                      <div class="am-tab-panel am-fade" id="tab7">
                                       暂未查询到相关信息
