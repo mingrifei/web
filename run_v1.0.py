@@ -108,7 +108,7 @@ class Application(tornado.web.Application):
             xsrf_cookies=True,
             cookie_secret="__TODO:_GENERATE_YOUR_OWN_RANDOM_VALUE_HERE__",
             login_url="/auth/login",
-            debug=True,
+            debug=False,
         )
         super(Application, self).__init__(handlers, **settings)
         # Have one global connection to the blog DB across all handlers
@@ -182,8 +182,10 @@ class Business_search(BaseHandler):
 #企业列表查询
 class Business_list(BaseHandler):
     def get(self):
-        business_name = '*'+self.get_argument("business_name", None)+'*'
-        business_list=self.db.query("select  business_id,business_name,business_legal_name,business_reg_capital,business_reg_time,business_industry,business_scope  from `bigdata`.`business_base` where match(business_name,business_legal_name) against (%s IN BOOLEAN MODE) limit 10",business_name)
+        #business_name = '*'+self.get_argument("business_name", None)+'*'
+        business_name ='%'+self.get_argument("business_name", None)+'%'
+        #business_list=self.db.query("select  business_id,business_name,business_legal_name,business_reg_capital,business_reg_time,business_industry,business_scope  from `bigdata`.`business_base` where match(business_name,business_legal_name) against (%s IN BOOLEAN MODE) limit 10",business_name)
+        business_list=self.db.query("select  business_id,business_name,business_legal_name,business_reg_capital,business_reg_time,business_industry,business_scope  from `bigdata`.`business_base` s where s.business_name like %s limit 50",business_name)
         if len(business_list)>0:
             self.create_log(operate_type='200',operate_event=self.get_argument("business_name", None))
         self.render("business_list.html", userinfo=self.current_user,business_list=business_list)
@@ -192,12 +194,13 @@ class Business_list(BaseHandler):
 class Business_detail(BaseHandler):
     def get(self):
         business_id =self.get_argument("id", None)
-        business_detail_base=self.db.get("SELECT `business_id`, `business_name`, `business_logo`, `business_phone`, `business_email`, `business_url`, `business_addres`, `busines_tags`, `business_summary`, `business_update_time`, `business_legal_id`, `business_legal_name`, `business_reg_capital`, `business_reg_time`, `business_reg_state`, `business_reg_number`, `business_organization_number`, `business_unite_number`, `business_type`, `business_payment_number`, `business_industry`, `business_cycle_time`, `business_approved_time`, `business_reg_Institute`, `business_reg_addres`, `business_en_name`, `business_scope`, `business_score`, `business_plate` FROM `bigdata`.`business_base` where business_id=%s LIMIT 1",business_id)
-        business_detail_holdes=self.db.query("SELECT business_id,men_id,men_name,holder_percent,holder_amomon FROM `bigdata`.`business_holder` where business_id=%s group by business_id,men_id,men_name,holder_percent,holder_amomon",business_id)
-        business_detail_invests=self.db.query("SELECT `business_id`, `invest_name`, `invest_id`, `legal_name`, `legal_id`, `invest_reg_capital`, `invest_amount`, `invest_amomon`, DATE_FORMAT(invest_reg_time,'%%Y-%%m') `invest_reg_time`, `invest_state` FROM `bigdata`.`business_invest` where business_id=%s",business_id)
-        if len(business_detail_base)>0:
-            self.create_log(operate_type='200', operate_event=business_detail_base['business_name'])
-        self.render("business_detail.html", userinfo=self.current_user,business_detail_base=business_detail_base,business_detail_holdes=business_detail_holdes,business_detail_invests=business_detail_invests)
+        business_detail_base=self.db.get("SELECT `business_id`, `business_name`, `business_logo`, `business_phone`, `business_email`, `business_url`, `business_addres`, `busines_tags`, `business_summary`, `business_update_time`, `business_legal_id`, `business_legal_name`, `business_reg_capital`, `business_reg_time`, `business_reg_state`, `business_reg_number`, `business_organization_number`, `business_unite_number`, `business_type`, `business_payment_number`, `business_industry`, `business_cycle_time`, `business_approved_time`, `business_reg_Institute`, `business_reg_addres`, `business_en_name`, `business_scope`, `business_score`, `business_plate` FROM `bigdata`.`business_base` where business_id=%s or md5(business_name)=%s LIMIT 1",business_id,business_id)
+        business_detail_holdes=self.db.query("SELECT     s.business_id,     s.men_id,     s.men_name,     md5(t.business_name) vmen_name,     s.holder_percent,     s.holder_amomon FROM     `bigdata`.`business_holder` s left join bigdata.business_base t on s.men_name=t.business_name where s.business_id=%s GROUP BY s.business_id , s.men_id , s.men_name , s.holder_percent , s.holder_amomon,t.business_name",business_id)
+        business_detail_invests=self.db.query("SELECT     s.`business_id`,     s.`invest_name`,     md5(t.business_name) business_name,     s.`invest_id`,     s.`legal_name`,     s.`legal_id`,     s.`invest_reg_capital`,     s.`invest_amount`,     s.`invest_amomon`,     case when length(s.invest_reg_time)>0 then substr(s.invest_reg_time, 1,10) else s.invest_reg_time end `invest_reg_time`,     s.`invest_state` FROM     `bigdata`.`business_invest` s left join bigdata.business_base t on s.invest_name=t.business_name where s.business_id=%s",business_id)
+        if business_detail_base is not None:
+            if len(business_detail_base)>0:
+                self.create_log(operate_type='200', operate_event=business_detail_base['business_name'])
+            self.render("business_detail.html", userinfo=self.current_user,business_detail_base=business_detail_base,business_detail_holdes=business_detail_holdes,business_detail_invests=business_detail_invests)
 
 # 证券公司查询
 class Stock_company_Handler(BaseHandler):
@@ -235,7 +238,7 @@ class Stock_company_detail_Handler(BaseHandler):
     def get(self):
         business_id =self.get_argument("id", None)
         business_detail_base=self.db.get("SELECT `business_id`, `business_name`, `business_logo`, `business_phone`, `business_email`, `business_url`, `business_addres`, `busines_tags`, `business_summary`, `business_update_time`, `business_legal_id`, `business_legal_name`, `business_reg_capital`, `business_reg_time`, `business_reg_state`, `business_reg_number`, `business_organization_number`, `business_unite_number`, `business_type`, `business_payment_number`, `business_industry`, `business_cycle_time`, `business_approved_time`, `business_reg_Institute`, `business_reg_addres`, `business_en_name`, `business_scope`, `business_score`, `business_plate` FROM `bigdata`.`business_base` where business_id=%s LIMIT 1",business_id)
-        business_detail_holdes=self.db.query("SELECT business_id,men_id,men_name,holder_percent,holder_amomon FROM `bigdata`.`business_holder` where business_id=%s group by business_id,men_id,men_name,holder_percent,holder_amomon",business_id)
+        business_detail_holdes=self.db.query("SELECT business_id,men_id,men_name,md5(men_name) vmen_name,holder_percent,holder_amomon FROM `bigdata`.`business_holder` where business_id=%s group by business_id,men_id,men_name,holder_percent,holder_amomon",business_id)
         business_detail_invests=self.db.query("SELECT `business_id`, `invest_name`, `invest_id`, `legal_name`, `legal_id`, `invest_reg_capital`, `invest_amount`, `invest_amomon`, DATE_FORMAT(invest_reg_time,'%%Y-%%m') `invest_reg_time`, `invest_state` FROM `bigdata`.`business_invest` where business_id=%s",business_id)
         stk_sub_base=self.db.query("SELECT a.AOI_ID,a.MBOI_BRANCH_FULL_NAME,a.MBOI_BUSINESS_SCOPE,a.MBOI_OFF_ADDRESS,a.MBOI_CS_TEL,a.MBOI_PERSON_IN_CHARGE FROM `bigdata`.`company_stock_sub_base` a INNER JOIN `bigdata`.`company_stock` b ON a.AOI_ID = b.AOI_ID inner join `bigdata`.`business_base` c on c.business_name=b.AOI_NAME   where c.business_id=%s",business_id)
         stk_branch_base=self.db.query("SELECT a.AOI_ID,a.MSDI_ZJJ_COMPLAINTS_TEL as MSDI_ZJJ_COMPLAINTS_TEL ,a.MSDI_NAME,a.MSDI_REG_PCC,a.MSDI_SALES_MANAGER,a.MSDI_REG_ADDRESS,a.MSDI_CS_TEL FROM `bigdata`.`company_stock_branch_base` a INNER JOIN `bigdata`.`company_stock` b ON a.AOI_ID = b.AOI_ID inner join `bigdata`.`business_base` c on c.business_name=b.AOI_NAME   where c.business_id=%s",business_id)

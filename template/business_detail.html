@@ -181,7 +181,13 @@
                                                                     <tbody>
                                                                     {% for business_detail_holde in business_detail_holdes %}
                                                                         <tr class="gradeX">
-                                                                            <td>{{ business_detail_holde.men_name }}</td>
+                                                                            <td>
+                                                                                {% if business_detail_holde.vmen_name!=None %}
+                                                                                <a target="_blank" href="business_detail.html?id={{business_detail_holde.vmen_name}}">{{ business_detail_holde.men_name }}</a>
+                                                                                {% else %}
+                                                                                    {{ business_detail_holde.men_name }}
+                                                                                {% end %}
+                                                                            </td>
                                                                             <td>{{ business_detail_holde.holder_percent }}</td>
                                                                             <td>{{ business_detail_holde.holder_amomon }}</td>
                                                                         </tr>
@@ -221,7 +227,12 @@
                                                                     <tbody>
                                                                     {% for business_detail_invest in business_detail_invests %}
                                                                         <tr class="gradeX">
-                                                                            <td>{{ business_detail_invest.invest_name }}</td>
+                                                                            {% if business_detail_invest.invest_name!=None %}
+                                                                            <td><a href="business_detail.html?id={{ business_detail_invest.business_name }}"></a>{{ business_detail_invest.invest_name }}</td>
+                                                                            {% else %}
+                                                                                <td>{{ business_detail_invest.invest_name }}</td>
+                                                                            {% end %}
+
                                                                             <td>{{ business_detail_invest.legal_name }}</td>
                                                                             <td>{{ business_detail_invest.invest_reg_capital }}</td>
                                                                             <td>{{ business_detail_invest.invest_amount}}</td>
