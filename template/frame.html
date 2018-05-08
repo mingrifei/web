@@ -24,7 +24,20 @@
     <link rel="stylesheet" href="{{static_url("assets/css/amazeui.datatables.min.css")}}" />
     <link rel="stylesheet" href="{{static_url("assets/css/app.css")}}">
     <script src="{{ static_url("assets/js/jquery.min.js")}}"></script>
-
+    <script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https'){
+       bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+      }
+      else{
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+      }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+    </script>
 </head>
 {% block body %}
 <body data-type="index">
@@ -220,7 +233,11 @@
                                 <span class="am-icon-angle-right sidebar-nav-link-logo"></span> 基金公司查询
                             </a>
                         </li>
-
+                        <li class="sidebar-nav-link">
+                            <a href="business_list.html?business_name=%E9%93%B6%E8%A1%8C">
+                                <span class="am-icon-angle-right sidebar-nav-link-logo"></span> 非上市银行
+                            </a>
+                        </li>
                         <li class="sidebar-nav-link">
                             <a href="pf_map.html">
                                 <span class="am-icon-angle-right sidebar-nav-link-logo"></span> 基金公司迁徙

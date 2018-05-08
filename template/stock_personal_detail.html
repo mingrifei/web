@@ -1,8 +1,8 @@
 {% extends "frame.html" %}
 {% block head %}
     <title>{{personal_info['RPI_NAME']}}_{{personal_info['AOI_NAME']}}_证券基金从业信息查询_[{{ escape(handler.settings["blog_title"]) }}]</title>
-    <meta name="description" content="辅投助手为您免费提供证券公司人员信息，证券公司，基金公司从业人员信息！">
-    <meta name="keywords" content="{{personal_info['RPI_NAME']}}_{{personal_info['AOI_NAME']}}证券从业资格查询,{{personal_info['RPI_NAME']}}_{{personal_info['AOI_NAME']}}基金从业资格查询，{{personal_info['RPI_NAME']}}_{{personal_info['AOI_NAME']}}私募基金从业资格查询,资产管理公司从业资格查询，证券公司信息">
+    <meta name="description" content="辅投助手为您提供{{personal_info['AOI_NAME']}}{{personal_info['RPI_NAME']}}人员信息，证券公司，基金公司从业人员信息！">
+    <meta name="keywords" content="{{personal_info['AOI_NAME']}}{{personal_info['RPI_NAME']}}证券从业资格查询，执业岗位{{personal_info['PTI_NAME']}}，证书编号{{personal_info['CER_NUM']}}，{{personal_info['AOI_NAME']}}从业资格查询，{{personal_info['RPI_NAME']}}_{{personal_info['AOI_NAME']}}私募基金从业资格查询,资产管理公司从业资格查询，{{personal_info['AOI_NAME']}}信息">
 {% end %}
 {% block main %}
         <div class="tpl-content-wrapper" >
@@ -12,7 +12,7 @@
                     <div class="am-u-sm-12 am-u-md-12 am-u-lg-9">
                         <div class="page-header-heading"><span class="am-icon-home page-header-heading-icon"></span> 账户状态和声明 <small>Account status</small></div>
                         <p class="page-header-description">您现在使用的为大众版本，使用本系统数据无任何限制，不收取任何费用。平台上的信息均来自网络公开信息，由信息来源方对信息真实性等负相应责任，平台所展示信息出于传递更多信息之目的，并不意味平台赞同其观点或已经证实其内容的真实性。</p>
-						<p class="page-header-description">数据来源包括但不限于：中国证券业协会 全国企业信用信息公示系统 中国裁判文书网 中国执行信息公开网 国家知识产权局 商标局 版权局。</p>
+						<p class="page-header-description">数据来源包括但不限于：中国证券业协会www.sac.net.cn 全国企业信用信息公示系统 中国裁判文书网 中国执行信息公开网 国家知识产权局 商标局 版权局。</p>
                     </div>
                     <div class="am-u-lg-3 tpl-index-settings-button">
                         <button type="button" class="page-header-button"><span class="am-icon-paint-brush"></span> 设置</button>
