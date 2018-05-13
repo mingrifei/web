@@ -1,0 +1,59 @@
+{% extends "frame.html" %}
+{% block head %}
+    <title>{{newsdetail.title}}_金融文章_行业研报_[{{ escape(handler.settings["blog_title"]) }}]</title>
+    <meta name="description" content="辅投助手为您提供{{newsdetail.title}}信息，金融文章、行业研报尽在futouzs.com！">
+    <meta name="keywords" content="辅投助手,{{newsdetail.title}}信息，金融文章,行业研报">
+{% end %}
+{% block main %}
+        <div class="tpl-content-wrapper" >
+
+            <div class="row-content am-cf">
+
+
+                <div class="row">
+
+                    <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+                        <div class="widget am-cf">
+                            <div class="widget-head am-cf">
+                                <div class="widget-title am-fl">文章正文</div>
+                                <div class="widget-function am-fr">
+                                    <a href="javascript:;" class="am-icon-cog"></a>
+                                </div>
+                            </div>
+                            <div class="widget-body am-fr">
+                                 <div class="am-form-group">
+                                        <label for="user-name" class="am-u-sm-3 am-form-label"></label>
+                                        <div class="am-u-sm-9"><label>{{ newsdetail.title }}</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="am-form-group">
+                                        <label for="user-email" class="am-u-sm-3 am-form-label"></label>
+                                        <div class="am-u-sm-9">
+                                            <span class="tpl-form-line-small-title">发布时间：{{ newsdetail.pubtime }}</span>
+                                            <span class="tpl-form-line-small-title">文章来源：{{ newsdetail.refer }}</span>
+                                            <span class="tpl-form-line-small-title"><a target="_blank" href="{{ newsdetail.url }}" >文章原文</a></span>
+                                        </div>
+                                    </div>
+                                    <div class="am-form-group">
+                                        <div class="am-u-sm-12">
+                                            <pre>
+                                               {{ newsdetail.body }}
+                                            </pre>
+                                        </div>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+            </div>
+        </div>
+
+<script>
+
+</script>
+{% end %}

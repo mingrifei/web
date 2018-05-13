@@ -5,14 +5,12 @@
             
             <div class="container-fluid am-cf">
                 <div class="row">
-                    <div class="am-u-sm-12 am-u-md-12 am-u-lg-9">
-                        <div class="page-header-heading"><span class="am-icon-home page-header-heading-icon"></span> 账户状态和声明 <small>Account status</small></div>
+                    <div class="am-u-sm-12 am-u-md-12 am-u-lg-10">
+                        <div class="page-header-heading"><span class="am-icon-home page-header-heading-icon"></span> 辅投助手声明 <small>Futouzs.COM</small></div>
                         <p class="page-header-description">您现在使用的为大众版本，使用本系统数据无任何限制，不收取任何费用。平台上的信息均来自网络公开信息，由信息来源方对信息真实性等负相应责任，平台所展示信息出于传递更多信息之目的，并不意味平台赞同其观点或已经证实其内容的真实性。</p>
-						<p class="page-header-description">数据来源包括但不限于：全国企业信用信息公示系统 中国裁判文书网 中国执行信息公开网 国家知识产权局 商标局 版权局。</p>
+						<p class="page-header-description">数据来源包括但不限于：全国企业信用信息公示系统 中国证券业协会  中国裁判文书网 中国执行信息公开网 国家知识产权局 商标局 版权局。</p>
                     </div>
-                    <div class="am-u-lg-3 tpl-index-settings-button">
-                        <button type="button" class="page-header-button"><span class="am-icon-paint-brush"></span> 设置</button>
-                    </div>
+
                 </div>
 
             </div>
@@ -63,7 +61,7 @@
                             </div>
                             <div class="widget-statistic-body">
                                 <div class="widget-statistic-value">
-                                    ￥{{business_count.business_reg_capital}}亿元
+                                    ￥{{business_count.business_reg_capital}}亿
                                 </div>
                                 <div class="widget-statistic-description">
                                     其中新三板企业注册资本为 <strong>2,940,355亿</strong> 人民币
@@ -75,7 +73,7 @@
                     <div class="am-u-sm-12 am-u-md-6 am-u-lg-4">
                         <div class="widget widget-purple am-cf">
                             <div class="widget-statistic-header">
-                                共收录的基金公司信息
+                                共收录的优质公司信息
                             </div>
                             <div class="widget-statistic-body">
                                 <div class="widget-statistic-value">
@@ -133,7 +131,53 @@
                     </div>
                 </div>
 
+                                <div class="row am-cf">
+                    <div class="am-u-sm-12 am-u-md-12 am-u-lg-6 widget-margin-bottom-lg">
+                        <div class="widget am-cf widget-body-lg">
+                            <div class="widget-head am-cf">
+                                <div class="widget-title am-fl">金融文章</div>
 
+                            </div>
+                            <div class="widget-body  am-fr">
+                                <div class="am-scrollable-horizontal ">
+                                    <table width="100%" class="am-table am-table-compact am-text-nowrap tpl-table-black " >
+                                        <tbody>
+                                        {% for newslist_finance in newslist_finances %}
+
+                                            <tr class="gradeX">
+                                                <td><a target="_blank" href="news_detail.html?id={{ newslist_finance.id }}">{{newslist_finance.title}}</a></td>
+                                            </tr>
+                                         {% end %}
+                                            <!-- more data -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="am-u-sm-12 am-u-md-12 am-u-lg-6 widget-margin-bottom-lg">
+                        <div class="widget am-cf widget-body-lg">
+                            <div class="widget-head am-cf">
+                                <div class="widget-title am-fl">科技文章</div>
+                            </div>
+                            <div class="widget-body  am-fr">
+                                <div class="am-scrollable-horizontal ">
+                                    <table width="100%" class="am-table am-table-compact am-text-nowrap tpl-table-black " >
+                                        <tbody>
+                                        {% for newslist_tech in newslist_techs %}
+
+                                            <tr class="gradeX">
+                                                <td><a target="_blank" href="news_detail.html?id={{ newslist_tech.id }}">{{newslist_tech.title}}</a></td>
+                                            </tr>
+                                         {% end %}
+                                            <!-- more data -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="row am-cf">
                     <div class="am-u-sm-12 am-u-md-12 am-u-lg-4 widget-margin-bottom-lg ">
                         <div class="tpl-user-card am-text-center widget-body-lg">
@@ -159,7 +203,7 @@
                         </div>
                     </div>
 
-                    <div class="am-u-sm-12 am-u-md-12 am-u-lg-8 widget-margin-bottom-lg">
+                                        <div class="am-u-sm-12 am-u-md-12 am-u-lg-8 widget-margin-bottom-lg">
 
                         <div class="widget am-cf widget-body-lg">
 
@@ -169,89 +213,17 @@
                                         <thead>
                                             <tr>
                                                 <th>文章标题</th>
-                                                <th>作者</th>
-
-                                                <th>操作</th>
+                                                <th>文章来源</th>
                                             </tr>
                                         </thead>
                                         <tbody>
+                                        {% for newslist in newslists %}
+
                                             <tr class="gradeX">
-                                                <td>新加坡大数据初创公司 Latize 获 150 万美元风险融资</td>
-                                                <td>张鹏飞</td>
-
-                                                <td>
-                                                    <div class="tpl-table-black-operation">
-                                                        <a href="javascript:;">
-                                                            <i class="am-icon-pencil"></i> 编辑
-                                                        </a>
-                                                        <a href="javascript:;" class="tpl-table-black-operation-del">
-                                                            <i class="am-icon-trash"></i> 删除
-                                                        </a>
-                                                    </div>
-                                                </td>
+                                                <td><a target="_blank" href="news_detail.html?id={{ newslist.id }}">{{newslist.title}}</a></td>
+                                                <td>{{newslist.refer}}</td>
                                             </tr>
-                                            <tr class="even gradeC">
-                                                <td>自拍的“政治角色”：观众背对希拉里自拍合影表示“支持”</td>
-                                                <td>天纵之人</td>
-
-                                                <td>
-                                                    <div class="tpl-table-black-operation">
-                                                        <a href="javascript:;">
-                                                            <i class="am-icon-pencil"></i> 编辑
-                                                        </a>
-                                                        <a href="javascript:;" class="tpl-table-black-operation-del">
-                                                            <i class="am-icon-trash"></i> 删除
-                                                        </a>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <tr class="gradeX">
-                                                <td>关于创新管理，我想和你当面聊聊。</td>
-                                                <td>王宽师</td>
-
-                                                <td>
-                                                    <div class="tpl-table-black-operation">
-                                                        <a href="javascript:;">
-                                                            <i class="am-icon-pencil"></i> 编辑
-                                                        </a>
-                                                        <a href="javascript:;" class="tpl-table-black-operation-del">
-                                                            <i class="am-icon-trash"></i> 删除
-                                                        </a>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <tr class="even gradeC">
-                                                <td>究竟是趋势带动投资，还是投资引领趋势？</td>
-                                                <td>着迷</td>
-
-                                                <td>
-                                                    <div class="tpl-table-black-operation">
-                                                        <a href="javascript:;">
-                                                            <i class="am-icon-pencil"></i> 编辑
-                                                        </a>
-                                                        <a href="javascript:;" class="tpl-table-black-operation-del">
-                                                            <i class="am-icon-trash"></i> 删除
-                                                        </a>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <tr class="even gradeC">
-                                                <td>Docker领域再添一员，网易云发布“蜂巢”，加入云计算之争</td>
-                                                <td>醉里挑灯看键</td>
-
-                                                <td>
-                                                    <div class="tpl-table-black-operation">
-                                                        <a href="javascript:;">
-                                                            <i class="am-icon-pencil"></i> 编辑
-                                                        </a>
-                                                        <a href="javascript:;" class="tpl-table-black-operation-del">
-                                                            <i class="am-icon-trash"></i> 删除
-                                                        </a>
-                                                    </div>
-                                                </td>
-                                            </tr>
-
-
+                                         {% end %}
                                             <!-- more data -->
                                         </tbody>
                                     </table>

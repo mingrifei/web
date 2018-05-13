@@ -227,8 +227,8 @@
                                                                     <tbody>
                                                                     {% for business_detail_invest in business_detail_invests %}
                                                                         <tr class="gradeX">
-                                                                            {% if business_detail_invest.invest_name!=None %}
-                                                                            <td><a href="business_detail.html?id={{ business_detail_invest.business_name }}"></a>{{ business_detail_invest.invest_name }}</td>
+                                                                            {% if business_detail_invest.vbusiness_name!='' %}
+                                                                            <td><a target="_blank" href="business_detail.html?id={{ business_detail_invest.vbusiness_name }}">{{ business_detail_invest.invest_name }}</a></td>
                                                                             {% else %}
                                                                                 <td>{{ business_detail_invest.invest_name }}</td>
                                                                             {% end %}
@@ -271,14 +271,16 @@
                                                                       </tr>
 
                                                                     <tbody>
+                                                                         {% autoescape None %}
+                                                                         {% for business_detail_change in business_detail_changes %}
 
                                                                         <tr class="gradeX">
-                                                                            <td></td>
-                                                                            <td></td>
-                                                                            <td></td>
-                                                                            <td></td>
+                                                                            <td>{{ business_detail_change.change_time }}</td>
+                                                                            <td>{{ business_detail_change.change_name }}</td>
+                                                                            <td>{{ business_detail_change.change_before }}</td>
+                                                                            <td>{{business_detail_change.change_after }}</td>
                                                                         </tr>
-
+                                                                         {% end %}
                                                                         <!-- more data -->
                                                                     </tbody>
                                                                 </table>
