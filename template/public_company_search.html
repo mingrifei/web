@@ -1,0 +1,86 @@
+{% extends "frame.html" %}
+{% block main %}
+        <div class="tpl-content-wrapper" data-type="pf_search">
+            <div class="row-content am-cf">
+                <div class="row  am-cf">
+                    <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+                        <div class="widget am-cf">
+                            <div class="widget-head am-cf ">
+                                <div class="widget-title am-fl">输入要查询的企业名称</div>
+                                <div class="widget-function am-fr">
+                                    <a href="javascript:;" class="am-icon-cog"></a>
+                                </div>
+                            </div>
+                            <div class="widget-body am-fr">
+                                <form action="business_list.html">
+                                <div class="am-fl">
+                                    <div class="row">
+										<div class="am-u-sm-12 am-u-md-12 am-u-lg-8">
+											<div class="am-input-group am-input-group-sm tpl-form-border-form cl-p">
+												<input type="text" name="business_name" class="am-form-field "  placeholder="请输入公司名称 ..." required>
+												<span class="am-input-group-btn">
+													<button id="btn" type='submit' class="am-btn  am-btn-default am-btn-success tpl-table-list-field am-icon-search" type="button"></button>
+												</span>
+											</div>
+										</div>
+									</div>
+                                </div>
+                                </form>
+                                <div class="am-fr am-cf">
+                                    <div class="widget-fluctuation-description-amount text-success" am-cf>
+                                        +23014
+
+                                    </div>
+                                    <div class="widget-fluctuation-description-text am-text-right">
+                                        本月新增加
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="widget-body am-fl">
+								<div class="am-fl">
+									<div class="widget-title am-fl">大家都在搜索的企业：</div>
+								</div>
+							</div>
+                            <div class="widget-body am-fl">
+                            {% for  business_search_hot in business_search_hots%}
+                                <div class="m-u-sm-12 am-u-md-12 am-u-lg-4">
+
+                                        <div class="widget-title am-fl"><a href="business_list.html?business_name={{business_search_hot.system_operate_business_name}}">{{business_search_hot.system_operate_business_name}}</a></div>
+
+                                </div>
+                            {%end%}
+                            </div>
+                            <div class="widget-head am-cf ">
+                                <div class="widget-title am-fl">沪深交易所上市企业</div>
+                            </div>
+                            <div class="widget-body am-fl">
+                             {% for  public_company_list in public_company_lists%}
+
+								<div class="am-u-sm-12 am-u-lg-4">
+                                    <div class="widget-title am-fl">
+                                        <a href="business_detail.html?id={{public_company_list.business_id}}">{{public_company_list.business_name}}</a>
+                                        </div>
+								</div>
+
+                            {%end%}
+                            </div>
+                            <div class="widget-head am-cf">
+                                <div class="widget-title am-fl">新三板上市企业</div>
+                            </div>
+                            <div class="widget-body am-fl">
+                             {% for  public_company_list_xsb in public_company_lists_xsb%}
+
+								<div class="am-u-sm-12 am-u-lg-4">
+                                    <div class="widget-title am-fl"><a href="business_detail.html?id={{public_company_list_xsb.business_id}}">{{public_company_list_xsb.business_name}}</a></div>
+								</div>
+
+                            {%end%}
+
+                            </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+{% end %}

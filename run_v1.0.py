@@ -95,6 +95,9 @@ class Application(tornado.web.Application):
             # 证券公司详细情况
             (r"/stock_company_detail.html", Stock_company_detail_Handler),
 
+            # 上市公司查询
+            (r"/public_company_search.html", Public_Company_search_Handler),
+
             # 新闻详细信息
             (r"/news_detail.html", News_detail_Handler),
             # 无权限页面
@@ -238,7 +241,7 @@ class Stock_company_list_Handler(BaseHandler):
             self.render("stock_company_list.html", userinfo=self.current_user, business_list=business_list,
                         business_citys=business_city, business_names=v_business_name)
         else:
-            business_list = self.db.query("SELECT     a.business_id,     a.business_name, 	case when a.business_legal_name is null then t.men_name else a.business_legal_name end business_legal_name ,     a.business_reg_capital,     a.business_reg_time,     a.business_industry,     a.business_scope FROM     `bigdata`.`business_base` a         INNER JOIN     bigdata.company_stock b ON a.business_name = b.AOI_NAME         INNER JOIN     bigdata.company_stock_base c ON c.AOI_ID = b.AOI_ID left join `bigdata`.`business_men_base` t on a.business_legal_id=t.men_id  ORDER BY c.MRI_REG_CAPITAL DESC")
+            business_list = self.db.query("SELECT     a.business_id,     a.business_name, 	case when LENGTH(a.business_legal_name)<1 then t.men_name else a.business_legal_name end business_legal_name ,     a.business_reg_capital,     a.business_reg_time,     a.business_industry,     a.business_scope FROM     `bigdata`.`business_base` a         INNER JOIN     bigdata.company_stock b ON a.business_name = b.AOI_NAME         INNER JOIN     bigdata.company_stock_base c ON c.AOI_ID = b.AOI_ID left join `bigdata`.`business_men_base` t on a.business_legal_id=t.men_id  ORDER BY c.MRI_REG_CAPITAL DESC")
             business_count=len(business_list)
             self.render("stock_company_list.html", userinfo=self.current_user, business_list=business_list,
                         business_names=v_business_name,business_count=business_count)
@@ -246,7 +249,7 @@ class Stock_company_list_Handler(BaseHandler):
 class Stock_company_detail_Handler(BaseHandler):
     def get(self):
         business_id =self.get_argument("id", None)
-        business_detail_base=self.db.get("SELECT `business_id`, `business_name`, `business_logo`, `business_phone`, `business_email`, `business_url`, `business_addres`, `busines_tags`, `business_summary`, `business_update_time`, `business_legal_id`, case when business_legal_name is null then t.men_name else business_legal_name end business_legal_name , `business_reg_capital`, `business_reg_time`, `business_reg_state`, `business_reg_number`, `business_organization_number`, `business_unite_number`, `business_type`, `business_payment_number`, `business_industry`, `business_cycle_time`, `business_approved_time`, `business_reg_Institute`, `business_reg_addres`, `business_en_name`, `business_scope`, `business_score`, `business_plate` FROM `bigdata`.`business_base`s left join `bigdata`.`business_men_base` t on s.business_legal_id=t.men_id where s.business_id=%s LIMIT 1",business_id)
+        business_detail_base=self.db.get("SELECT `business_id`, `business_name`, `business_logo`, `business_phone`, `business_email`, `business_url`, `business_addres`, `busines_tags`, `business_summary`, `business_update_time`, `business_legal_id`, case when LENGTH(business_legal_name)<1 then t.men_name else business_legal_name end business_legal_name , `business_reg_capital`, `business_reg_time`, `business_reg_state`, `business_reg_number`, `business_organization_number`, `business_unite_number`, `business_type`, `business_payment_number`, `business_industry`, `business_cycle_time`, `business_approved_time`, `business_reg_Institute`, `business_reg_addres`, `business_en_name`, `business_scope`, `business_score`, `business_plate` FROM `bigdata`.`business_base`s left join `bigdata`.`business_men_base` t on s.business_legal_id=t.men_id where s.business_id=%s LIMIT 1",business_id)
         business_detail_holdes=self.db.query("SELECT business_id,men_id,men_name,md5(men_name) vmen_name,holder_percent,holder_amomon FROM `bigdata`.`business_holder` where business_id=%s group by business_id,men_id,men_name,holder_percent,holder_amomon",business_id)
         business_detail_invests=self.db.query("SELECT `business_id`, `invest_name`, `invest_id`, `legal_name`, `legal_id`, `invest_reg_capital`, `invest_amount`, `invest_amomon`, DATE_FORMAT(invest_reg_time,'%%Y-%%m') `invest_reg_time`, `invest_state` FROM `bigdata`.`business_invest` where business_id=%s",business_id)
         stk_sub_base=self.db.query("SELECT a.AOI_ID,a.MBOI_BRANCH_FULL_NAME,a.MBOI_BUSINESS_SCOPE,a.MBOI_OFF_ADDRESS,a.MBOI_CS_TEL,a.MBOI_PERSON_IN_CHARGE FROM `bigdata`.`company_stock_sub_base` a INNER JOIN `bigdata`.`company_stock` b ON a.AOI_ID = b.AOI_ID inner join `bigdata`.`business_base` c on c.business_name=b.AOI_NAME   where c.business_id=%s",business_id)
@@ -282,12 +285,12 @@ class pf_company_list(BaseHandler):
         search_type = self.get_argument("search_type", None)
         if business_city is not None:
             if search_type=="reg":
-                business_list=self.db.query("SELECT c.registerNo, a.business_id, a.business_name, case when a.business_legal_name is null then t.men_name else a.business_legal_name end business_legal_name, a.business_reg_capital, a.business_reg_time, a.business_industry, a.business_scope, a.business_phone, b.jglx FROM `business_base` a INNER JOIN pf_base_info  b ON a.business_reg_number = b.gszch INNER JOIN pf_base c ON c.registerNo = b.djbm left join `bigdata`.`business_men_base` t on a.business_legal_id=t.men_id WHERE c.registerCity = %s limit 200",business_city)
+                business_list=self.db.query("SELECT c.registerNo, a.business_id, a.business_name, case when lenght(a.business_legal_name)<1 t.men_name else a.business_legal_name end business_legal_name, a.business_reg_capital, a.business_reg_time, a.business_industry, a.business_scope, a.business_phone, b.jglx FROM `business_base` a INNER JOIN pf_base_info  b ON a.business_reg_number = b.gszch INNER JOIN pf_base c ON c.registerNo = b.djbm left join `bigdata`.`business_men_base` t on a.business_legal_id=t.men_id WHERE c.registerCity = %s limit 200",business_city)
             else:
-                business_list=self.db.query("SELECT c.registerNo, a.business_id, a.business_name,case when a.business_legal_name is null then t.men_name else business_legal_name end business_legal_name ,a.business_reg_capital, a.business_reg_time, a.business_industry, a.business_scope, a.business_phone, b.jglx FROM `business_base` a INNER JOIN pf_base_info  b ON a.business_reg_number = b.gszch INNER JOIN pf_base c ON c.registerNo = b.djbm left join `bigdata`.`business_men_base` t on a.business_legal_id=t.men_id WHERE c.officecity = %s limit 200",business_city)
+                business_list=self.db.query("SELECT c.registerNo, a.business_id, a.business_name,case when length(a.business_legal_name)<1 t.men_name else business_legal_name end business_legal_name ,a.business_reg_capital, a.business_reg_time, a.business_industry, a.business_scope, a.business_phone, b.jglx FROM `business_base` a INNER JOIN pf_base_info  b ON a.business_reg_number = b.gszch INNER JOIN pf_base c ON c.registerNo = b.djbm left join `bigdata`.`business_men_base` t on a.business_legal_id=t.men_id WHERE c.officecity = %s limit 200",business_city)
             self.render("pf_company_list.html", userinfo=self.current_user, business_list=business_list,business_citys=business_city,business_names=v_business_name)
         if v_business_name is not None:
-            business_list = self.db.query("SELECT     b.djbm registerNo,     b.jglx,     a.business_id,     a.business_name,     CASE         WHEN a.business_legal_name IS NULL THEN t.men_name         ELSE a.business_legal_name     END business_legal_name,     a.business_reg_capital,     a.business_reg_time,     a.business_industry,     a.business_scope,     a.business_score FROM     `bigdata`.`business_base` a         INNER JOIN 	bigdata.pf_base_info b ON b.gszch = a.business_id         LEFT JOIN     `bigdata`.`business_men_base` t ON a.business_legal_id = t.men_id WHERE     a.business_name LIKE %s  limit 10",business_name)
+            business_list = self.db.query("SELECT     b.djbm registerNo,     b.jglx,     a.business_id,     a.business_name,     CASE         WHEN length(a.business_legal_name)<1 then t.men_name         ELSE a.business_legal_name     END business_legal_name,     a.business_reg_capital,     a.business_reg_time,     a.business_industry,     a.business_scope,     a.business_score FROM     `bigdata`.`business_base` a         left JOIN 	bigdata.pf_base_info b ON b.gszch = a.business_id         LEFT JOIN     `bigdata`.`business_men_base` t ON a.business_legal_id = t.men_id WHERE     a.business_name LIKE %s  limit 10",business_name)
             if len(business_list) > 0:
                 self.create_log(operate_type='300', operate_event=self.get_argument("business_name", None))
             self.render("pf_company_list.html", userinfo=self.current_user,business_list=business_list,business_citys=business_city,business_names=v_business_name)
@@ -295,7 +298,7 @@ class pf_company_list(BaseHandler):
 class pf_detail(BaseHandler):
     def get(self):
         business_id =self.get_argument("id", None)
-        business_detail_base=self.db.get("SELECT `business_id`, `business_name`, `business_logo`, `business_phone`, `business_email`, `business_url`, `business_addres`, `busines_tags`, `business_summary`, `business_update_time`, `business_legal_id`, case when business_legal_name is null then t.men_name else business_legal_name end business_legal_name, `business_reg_capital`, `business_reg_time`, `business_reg_state`, `business_reg_number`, `business_organization_number`, `business_unite_number`, `business_type`, `business_payment_number`, `business_industry`, `business_cycle_time`, `business_approved_time`, `business_reg_Institute`, `business_reg_addres`, `business_en_name`, `business_scope`, `business_score`, `business_plate` FROM `bigdata`.`business_base` left join `bigdata`.`business_men_base` t on business_legal_id=t.men_id where business_id=%s LIMIT 1",business_id)
+        business_detail_base=self.db.get("SELECT `business_id`, `business_name`, `business_logo`, `business_phone`, `business_email`, `business_url`, `business_addres`, `busines_tags`, `business_summary`, `business_update_time`, `business_legal_id`, case when length(business_legal_name)<1 then t.men_name else business_legal_name end business_legal_name, `business_reg_capital`, `business_reg_time`, `business_reg_state`, `business_reg_number`, `business_organization_number`, `business_unite_number`, `business_type`, `business_payment_number`, `business_industry`, `business_cycle_time`, `business_approved_time`, `business_reg_Institute`, `business_reg_addres`, `business_en_name`, `business_scope`, `business_score`, `business_plate` FROM `bigdata`.`business_base` left join `bigdata`.`business_men_base` t on business_legal_id=t.men_id where business_id=%s LIMIT 1",business_id)
         business_detail_holdes=self.db.query("SELECT business_id,men_id,men_name,holder_percent,holder_amomon FROM `bigdata`.`business_holder` where business_id=%s group by business_id,men_id,men_name,holder_percent,holder_amomon",business_id)
         business_detail_invests=self.db.query("SELECT `business_id`, `invest_name`, `invest_id`, `legal_name`, `legal_id`, `invest_reg_capital`, `invest_amount`, `invest_amomon`, DATE_FORMAT(invest_reg_time,'%%Y-%%m') `invest_reg_time`, `invest_state` FROM `bigdata`.`business_invest` where business_id=%s",business_id)
         pf_detail_product=self.db.query("SELECT a.pf_id,a.cpmc,a.cpid,a.cpfl,c.pf_gllx,c.pf_jjlx,c.pf_clsj,c.pf_yzzt,c.pf_basj FROM bigdata.pf_product_info  a left join bigdata.pf_base_info b on a.pf_id=b.pf_id left join pf_product_base c on c.pf_cpid=a.cpid where b.gszch=%s order by c.pf_clsj desc",business_id)
@@ -319,6 +322,15 @@ class pf_map_list(BaseHandler):
         #print(pf_map_list)
         self.render("pf_map.html", userinfo=self.current_user)
 
+#上市公司查询
+class Public_Company_search_Handler(BaseHandler):
+
+    def get(self):
+        userinfo = self.current_user
+        public_company_list=self.db.query("SELECT  `business_base`.`business_id`, `business_base`.`business_name` FROM `bigdata`.`business_base`  where business_plate='A'")
+        public_company_list_xsb=self.db.query("SELECT  `business_base`.`business_id`, `business_base`.`business_name` FROM `bigdata`.`business_base`  where business_plate='C'")
+        business_search_hots=self.db.query("SELECT SUBSTRING_INDEX(GROUP_CONCAT(system_operate_time ORDER BY system_operate_time DESC), ',',1)  as sort,   system_operate_business_name FROM bigdata.system_user_log where system_operate_type=600  group by system_operate_business_name order by  sort desc limit 20 ")
+        self.render("public_company_search.html", userinfo=userinfo, business_search_hots=business_search_hots,public_company_lists=public_company_list,public_company_lists_xsb=public_company_list_xsb)
 
 
 
