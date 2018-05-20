@@ -1,0 +1,121 @@
+{% extends "frame.html" %}
+{% block head %}
+    <title>金融文章_行业研报_[{{ escape(handler.settings["blog_title"]) }}]</title>
+    <meta name="description" content="辅投助手为您提供行情信息，金融文章、行业研报尽在futouzs.com！">
+    <meta name="keywords" content="辅投助手,金融信息，金融文章,行业研报">
+{% end %}
+{% block main %}
+{% autoescape None %}<!--全局不转义-->
+        <div class="tpl-content-wrapper" >
+
+            <div class="row-content am-cf">
+                <div class="row">
+                    <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+                        <div class="widget am-cf">
+
+                            <div class="widget-head am-cf">
+                                <div class="widget-title  am-cf">文章列表</div>
+                            </div>
+
+                            <div class="widget-body  am-fr">
+                                <div class="am-u-sm-12 am-u-md-6 am-u-lg-6">
+                                    <div class="am-form-group">
+                                        <div class="am-btn-toolbar">
+                                            <div class="am-btn-group am-btn-group-xs">
+                                                <a href="news_list.html?type=finance" class="am-btn am-btn-default am-btn-success"><span class="am-icon-plus"></span>金融</a>
+                                                <a href="news_list.html?type=tech" class="am-btn am-btn-default am-btn-secondary"><span class="am-icon-plus"></span>科技</a>
+                                                <a href="news_list.html?type=sport" class="am-btn am-btn-default am-btn-warning"><span class="am-icon-plus"></span>体育</a>
+                                                <a href="news_list.html?type=ent" class="am-btn am-btn-default am-btn-danger"><span class="am-icon-plus"></span>娱乐</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                 <div class="am-u-sm-12 am-u-md-12 am-u-lg-3">
+
+                                     {%if news_search!=''%}
+                                        <form action="news_list.html" method="post">
+                                             {% module xsrf_form_html() %}
+                                            <div class="am-input-group am-input-group-sm tpl-form-border-form cl-p">
+                                                <input type="text" name="news_search" id="news_search" value="{{news_search}}" class="am-form-field ">
+                                                <span class="am-input-group-btn">
+                                                    <button class="am-btn  am-btn-default am-btn-success tpl-table-list-field am-icon-search" type='submit'></button>
+                                                </span>
+                                            </div>
+                                         </form>
+                                        <div class="widget-title  am-cf">以下为关键字"<font color="red">{{news_search}}</font> "查询结果</div>
+                                     {%else%}
+                                        <form action="news_list.html" method="post">
+                                         {% module xsrf_form_html() %}
+                                        <div class="am-input-group am-input-group-sm tpl-form-border-form cl-p">
+                                            <input type="text" name="news_search" id="news_search" class="am-form-field ">
+                                            <span class="am-input-group-btn">
+                                                <button class="am-btn  am-btn-default am-btn-success tpl-table-list-field am-icon-search" type='submit'></button>
+                                            </span>
+                                        </div>
+                                     </form>
+
+                                    {%end%}
+                                </div>
+
+                                <div class="am-u-sm-12">
+                                    <table width="100%" class="am-table am-table-compact am-table-striped tpl-table-black ">
+                                        <thead>
+                                            <tr>
+                                                <th>文章标题</th>
+                                                <th>文章类型</th>
+                                                <th>文章来源</th>
+                                                <th>发布时间</th>
+                                                <th>操作</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for newslist in newslists %}
+                                            <tr class="gradeX">
+                                                <td><a href="news_detail.html?id={{newslist.id}}">{{newslist.title}}</a> </td>
+                                                <td>{{newslist.tag_dict_name}}</td>
+                                                <td>{{newslist.refer}}</td>
+                                                <td>{{newslist.pubtime}}</td>
+                                                <td>
+                                                    <div class="tpl-table-black-operation">
+                                                        <a href="javascript:;">
+                                                            <i class="am-icon-pencil"></i> 订阅
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {%end%}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="am-u-lg-12 am-cf">
+
+                                    <div class="am-fr">
+                                        <ul class="am-pagination tpl-pagination">
+
+                                            {%if news_page>0%}
+                                                {%set previous_page=news_page-1%}
+                                                {% set nextpage=news_page+1 %}
+                                            {%elif news_page==0%}
+                                                {% set nextpage=news_page+1 %}
+                                                {%set previous_page=news_page%}
+                                            {%else%}
+                                                {%set previous_page=news_page%}
+                                            {%end%}
+                                            <li><a href="news_list.html?page={{previous_page}}&type=all">上一页</a></li>
+                                            <li><a href="news_list.html?page={{nextpage}}&type=all">下一页</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+
+<script>
+
+</script>
+{% end %}

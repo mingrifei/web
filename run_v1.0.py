@@ -98,6 +98,8 @@ class Application(tornado.web.Application):
             # 上市公司查询
             (r"/public_company_search.html", Public_Company_search_Handler),
 
+            # 新闻列表
+            (r"/news_list.html", News_list_Handler),
             # 新闻详细信息
             (r"/news_detail.html", News_detail_Handler),
             # 无权限页面
@@ -176,12 +178,17 @@ class HomeHandler(BaseHandler):
                                             "then replace(business_reg_capital,'万','')*10000 "
                                            "else business_reg_capital end)/100000000,2) `business_reg_capital`, "
                                            "format(count(*),0) `business_count` FROM business_base LIMIT 5")
+            business_list = self.db.query("SELECT    `business_base`.`business_id`,    `business_base`.`business_name`,    `business_base`.`business_industry`,    `business_base`.`business_score`FROM `bigdata`.`business_base` where business_name!='' and business_id!='' order by rand() desc limit 10 ")
+            business_public_list = self.db.query("SELECT    `business_base`.`business_id`,    `business_base`.`business_name`,    `business_base`.`business_industry`,    `business_base`.`business_score`FROM `bigdata`.`business_base` where business_name!='' and business_plate='A' and business_id!='' order by rand()  limit 10")
+
             self.render("index.html", userinfo=userinfo,
                         business_count=business_count,
                         newslists=newslist,
                         newslist_finances=newslist_finance,
                         newslist_techs=newslist_tech,
-                        newslist_ents=newslist_ent)
+                        newslist_ents=newslist_ent,
+                        business_lists=business_list,
+                        business_public_lists=business_public_list)
 #企业搜索查询
 class Business_search(BaseHandler):
 
@@ -459,6 +466,29 @@ class News_detail_Handler(BaseHandler):
         id = self.get_argument("id", None)
         newsdetail=self.db.get("SELECT `t_news`.`id`, `t_news`.`title`, `t_news`.`pubtime`, `t_news`.`url`, `t_news`.`tag`, `t_news`.`refer`, `t_news`.`body`, `t_news`.`link_business_id` FROM `bigdata`.`t_news` where id=%s",id)
         self.render("news_detail.html", userinfo=self.current_user,newsdetail=newsdetail)
+#新闻列表
+class News_list_Handler(BaseHandler):
+    def get(self):
+        news_type = self.get_argument("type", None)
+        news_page = self.get_argument("page", 0)
+        page_count = 20
+        if news_type=='all':
+            sql="SELECT `t_news`.`id`, `t_news`.`title`, `t_news`.`pubtime`, `t_news`.`url`, `t_news`.`tag`,`t_news_tag_dict`.`tag_dict_name`, `t_news`.`refer`, `t_news`.`body`, `t_news`.`link_business_id` FROM `bigdata`.`t_news` left join `bigdata`.`t_news_tag_dict` on `t_news`.`tag`=`t_news_tag_dict`.`tag_dictid` order by `t_news`.`newsid` limit {}, 20".format(news_page)
+            newslist=self.db.query(sql)
+        else:
+            sql="SELECT `t_news`.`id`, `t_news`.`title`, `t_news`.`pubtime`, `t_news`.`url`, `t_news`.`tag`,`t_news_tag_dict`.`tag_dict_name`, `t_news`.`refer`, `t_news`.`body`, `t_news`.`link_business_id` FROM `bigdata`.`t_news` left join `bigdata`.`t_news_tag_dict` on `t_news`.`tag`=`t_news_tag_dict`.`tag_dictid`   where `t_news`.`tag`=%s  order by `t_news`.`newsid` limit {}, 20".format(news_page)
+            newslist=self.db.query(sql,news_type)
+        self.render("news_list.html", userinfo=self.current_user,newslists=newslist,page_count=page_count,news_page=int(news_page),news_search='')
+    def post(self):
+        vnews_search = self.get_argument("news_search", None)
+        if vnews_search != None:
+            news_search='%'+vnews_search+'%'
+            page_count=0
+            news_page=20
+            #sql = "SELECT `t_news`.`id`, `t_news`.`title`, `t_news`.`pubtime`, `t_news`.`url`, `t_news`.`tag`, `t_news`.`refer`, `t_news`.`body`, `t_news`.`link_business_id` FROM `bigdata`.`t_news` where title like {} or content {} order by newsid limit 0, 200"%(news_search,news_search)
+            sql = "SELECT `t_news`.`id`, `t_news`.`title`, `t_news`.`pubtime`, `t_news`.`url`, `t_news`.`tag`, `t_news`.`refer`, `t_news`.`body`, `t_news`.`link_business_id` FROM `bigdata`.`t_news` where title like %s or body like %s order by newsid limit 0, 200"
+            newslist = self.db.query(sql,news_search,news_search)
+            self.render("news_list.html", userinfo=self.current_user, newslists=newslist, page_count=page_count,news_page=int(news_page),news_search=vnews_search)
 #无权限页面
 class authdeny(BaseHandler):
     def get(self):

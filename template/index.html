@@ -131,12 +131,11 @@
                     </div>
                 </div>
 
-                                <div class="row am-cf">
+                <div class="row am-cf">
                     <div class="am-u-sm-12 am-u-md-12 am-u-lg-6 widget-margin-bottom-lg">
                         <div class="widget am-cf widget-body-lg">
                             <div class="widget-head am-cf">
                                 <div class="widget-title am-fl">金融文章</div>
-
                             </div>
                             <div class="widget-body  am-fr">
                                 <div class="am-scrollable-horizontal ">
@@ -203,19 +202,19 @@
                         </div>
                     </div>
 
-                                        <div class="am-u-sm-12 am-u-md-12 am-u-lg-8 widget-margin-bottom-lg">
+                     <div class="am-u-sm-12 am-u-md-12 am-u-lg-8 widget-margin-bottom-lg">
 
                         <div class="widget am-cf widget-body-lg">
+                            <div class="widget-head am-cf">
+                                <div class="widget-title am-fl">最新文章</div>
+                                <div class="widget-function am-fr">
+                                    <a href="news_list.html?type=all" class="am-icon-cog">查看更多</a>
+                                </div>
+                            </div>
 
                             <div class="widget-body  am-fr">
                                 <div class="am-scrollable-horizontal ">
-                                    <table width="100%" class="am-table am-table-compact am-text-nowrap tpl-table-black " id="example-r">
-                                        <thead>
-                                            <tr>
-                                                <th>文章标题</th>
-                                                <th>文章来源</th>
-                                            </tr>
-                                        </thead>
+                                    <table width="100%" class="am-table am-table-compact am-text-nowrap tpl-table-black ">
                                         <tbody>
                                         {% for newslist in newslists %}
 
@@ -233,6 +232,60 @@
 
                     </div>
                 </div>
+                <div class="row am-cf">
+                    <div class="am-u-sm-12 am-u-md-12 am-u-lg-6 widget-margin-bottom-lg">
+                        <div class="widget am-cf widget-body-lg">
+                            <div class="widget-head am-cf">
+                                <div class="widget-title am-fl">金融企业</div>
+                                <div class="widget-function am-fr">
+                                    <a href="stock_company_list.html" class="am-icon-cog">查看更多</a>
+                                </div>
+                            </div>
+                            <div class="widget-body  am-fr">
+                                <div class="am-scrollable-horizontal ">
+                                    <table width="100%" class="am-table am-table-compact am-text-nowrap tpl-table-black " >
+                                        <tbody>
+                                         {% for business_list in business_lists %}
+                                            <tr class="gradeX">
+                                                <td><a target="_blank" href="business_detail.html?id={{ business_list.business_id }}">{{business_list.business_name}}</a></td>
+                                                <td><button type="button" class="am-btn am-btn-default am-round am-btn-xs am-btn-primary">{{business_list.business_industry}}</button></td>
+                                            </tr>
+                                         {% end %}
+                                            <!-- more data -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="am-u-sm-12 am-u-md-12 am-u-lg-6 widget-margin-bottom-lg">
+                        <div class="widget am-cf widget-body-lg">
+                            <div class="widget-head am-cf">
+                                <div class="widget-title am-fl">上市企业</div>
+                                <div class="widget-function am-fr">
+                                    <a href="public_company_search.html" class="am-icon-cog">查看更多</a>
+                                </div>
+                            </div>
+                            <div class="widget-body  am-fr">
+                                <div class="am-scrollable-horizontal ">
+                                    <table width="100%" class="am-table am-table-compact am-text-nowrap tpl-table-black " >
+                                        <tbody>
+                                        {% for business_public_list in business_public_lists %}
+
+                                            <tr class="gradeX">
+                                                <td><a target="_blank" href="business_detail.html?id={{ business_public_list.business_id }}">{{business_public_list.business_name}}</a></td>
+                                                <td><button type="button" class="am-btn am-btn-default am-round am-btn-xs am-btn-success">{{business_public_list.business_industry}}</button></td>
+                                            </tr>
+                                         {% end %}
+                                            <!-- more data -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
 {% end %}
