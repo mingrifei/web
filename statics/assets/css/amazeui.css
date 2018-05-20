@@ -434,11 +434,11 @@ button {
  * links
  */
 a {
-  color: #0e90d2;
+  color: #3bb4f2;
 }
 a:hover,
 a:focus {
-  color: #095f8a;
+  color: #68b3d8;
 }
 a:focus {
   outline: thin dotted;
