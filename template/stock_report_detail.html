@@ -1,0 +1,64 @@
+{% extends "frame.html" %}
+{% block head %}
+    <title>{{ stock_report_detail.stkcode }}_研报_{{stock_report_detail.stkname}}_研究报告正文_[{{ escape(handler.settings["blog_title"]) }}]</title>
+    <meta name="description" content="辅投助手为您提供股票代码{{ stock_report_detail.stkcode }}_{{stock_report_detail.stkname}}研报信息、预测收益{{ stock_report_detail.ycsy1 }}预测市盈率{{ stock_report_detail.ycsyl1}}、{{ stock_report_detail.pjjg }}行业研报尽在futouzs.com！">
+    <meta name="keywords" content="辅投助手,{{ stock_report_detail.stkcode }}研报,{{stock_report_detail.stkname}}研究报告，{{ stock_report_detail.pjjg }}研究报告,行业研报">
+    <style>
+        .newsContent{
+            text-indent:2em
+        }
+    </style>
+{% end %}
+{% block main %}
+        <div class="tpl-content-wrapper" >
+
+            <div class="row-content am-cf">
+
+
+                <div class="row">
+
+                    <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+                        <div class="widget am-cf">
+                            <div class="widget-head am-cf">
+                                <div class="widget-title am-fl">{{ stock_report_detail.stkcode }}_{{stock_report_detail.stkname}}研究报告正文</div>
+                                <div class="widget-function am-fr">
+                                    <a href="javascript:;" class="am-icon-cog"></a>
+                                </div>
+                            </div>
+                            <div class="widget-body am-fr">
+                                 <div class="am-form-group">
+                                        <label for="user-name" class="am-u-sm-3 am-form-label"></label>
+                                        <div class="am-u-sm-9"><label>{{ stock_report_detail.reportname }}</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="am-form-group">
+                                        <label for="user-email" class="am-u-sm-3 am-form-label"></label>
+                                        <div class="am-u-sm-9">
+                                            <span class="tpl-form-line-small-title">发布时间：{{ stock_report_detail.pubtime }}</span>
+                                            <span class="tpl-form-line-small-title">研报来源：{{ stock_report_detail.pjjg }}</span>
+                                            <span class="tpl-form-line-small-title"><a target="_blank" href="{{ stock_report_detail.url }}" >研究报告原文</a></span>
+                                        </div>
+                                    </div>
+                                    <div class="am-form-group">
+                                        <div class="am-u-sm-12">
+
+                                               {%raw  stock_report_detail.body %}
+
+                                        </div>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+            </div>
+        </div>
+
+<script>
+
+</script>
+{% end %}

@@ -102,6 +102,10 @@ class Application(tornado.web.Application):
             (r"/news_list.html", News_list_Handler),
             # 新闻详细信息
             (r"/news_detail.html", News_detail_Handler),
+            # 研报列表
+            (r"/stock_report_list.html", Stock_report_list_Handler),
+            # 研究报告详细信息
+            (r"/stock_report_detail.html", Stock_report_detail_Handler),
             # 无权限页面
             (r"/authdeny.html", authdeny),
         ]
@@ -166,6 +170,8 @@ class HomeHandler(BaseHandler):
             newslist_finance=self.db.query("SELECT `t_news`.`id`,     `t_news`.`title`,     `t_news`.`pubtime`,     `t_news`.`url`,     `t_news`.`tag`,     `t_news`.`refer`,     `t_news`.`body`,     `t_news`.`link_business_id` FROM `bigdata`.`t_news` where tag='finance' order by  pubtime desc limit 10 ")
             newslist_tech=self.db.query("SELECT `t_news`.`id`,     `t_news`.`title`,     `t_news`.`pubtime`,     `t_news`.`url`,     `t_news`.`tag`,     `t_news`.`refer`,     `t_news`.`body`,     `t_news`.`link_business_id` FROM `bigdata`.`t_news` where tag='tech' order by  pubtime desc limit 10 ")
             newslist_ent=self.db.query("SELECT `t_news`.`id`,     `t_news`.`title`,     `t_news`.`pubtime`,     `t_news`.`url`,     `t_news`.`tag`,     `t_news`.`refer`,     `t_news`.`body`,     `t_news`.`link_business_id` FROM `bigdata`.`t_news` where tag='ent' order by  pubtime desc limit 10 ")
+            stock_report=self.db.query("SELECT `stock_report`.`id`,`stock_report`.`reportname`,`stock_report`.`tag`,`stock_report`.`pubdate`,`stock_report`.`pubtime`,`stock_report`.`refer`,`stock_report`.`stkcode`,`stock_report`.`stkname`,`stock_report`.`body`,`stock_report`.`url`,`stock_report`.`ywpj`,`stock_report`.`pjbd`,`stock_report`.`pjjg`,`stock_report`.`ycsy1`,`stock_report`.`ycsyl1`,`stock_report`.`ycsy2`,`stock_report`.`ycsyl2`,`stock_report`.`instime` FROM `bigdata`.`stock_report` order by pubtime desc limit 10 ")
+
             business_count = self.db.get("SELECT FORMAT(sum(case when business_reg_capital like '%%万元人民币%%' "
                                            "then replace(business_reg_capital,'万元人民币','')*10000 "
                                             "when business_reg_capital like '%%未公开%%' "
@@ -188,7 +194,8 @@ class HomeHandler(BaseHandler):
                         newslist_techs=newslist_tech,
                         newslist_ents=newslist_ent,
                         business_lists=business_list,
-                        business_public_lists=business_public_list)
+                        business_public_lists=business_public_list,
+                        stock_reports=stock_report)
 #企业搜索查询
 class Business_search(BaseHandler):
 
@@ -489,6 +496,53 @@ class News_list_Handler(BaseHandler):
             sql = "SELECT `t_news`.`id`, `t_news`.`title`, `t_news`.`pubtime`, `t_news`.`url`, `t_news`.`tag`, `t_news`.`refer`, `t_news`.`body`, `t_news`.`link_business_id` FROM `bigdata`.`t_news` where title like %s or body like %s order by newsid limit 0, 200"
             newslist = self.db.query(sql,news_search,news_search)
             self.render("news_list.html", userinfo=self.current_user, newslists=newslist, page_count=page_count,news_page=int(news_page),news_search=vnews_search)
+
+# 研报详情页面
+class Stock_report_detail_Handler(BaseHandler):
+    def get(self):
+        id = self.get_argument("id", None)
+        stock_report_detail = self.db.get(
+            "SELECT `stock_report`.`id`,`stock_report`.`reportname`,`stock_report`.`tag`,`stock_report`.`pubdate`,`stock_report`.`pubtime`,`stock_report`.`refer`,`stock_report`.`stkcode`,`stock_report`.`stkname`,replace(replace(replace(body,'[',''),']',''),'}','') body,`stock_report`.`url`,`stock_report`.`ywpj`,`stock_report`.`pjbd`,`stock_report`.`pjjg`,`stock_report`.`ycsy1`,`stock_report`.`ycsyl1`,`stock_report`.`ycsy2`,`stock_report`.`ycsyl2`,`stock_report`.`instime` FROM `bigdata`.`stock_report`  where id=%s",
+            id)
+        self.render("stock_report_detail.html", userinfo=self.current_user, stock_report_detail=stock_report_detail)
+
+# 研报列表
+class Stock_report_list_Handler(BaseHandler):
+    def get(self):
+        vreport_search = self.get_argument("report_search", '')
+        news_type = self.get_argument("type", '')
+        news_page = self.get_argument("page", 0)
+        page_count = 20
+        if news_type == 'all':
+            if vreport_search != None:
+                report_search = '%' + vreport_search + '%'
+                sql = "SELECT `stock_report`.`id`,`stock_report`.`reportname`,`stock_report`.`tag`,`stock_report`.`pubdate`,`stock_report`.`pubtime`,`stock_report`.`refer`,`stock_report`.`stkcode`,`stock_report`.`stkname`,`stock_report`.`body`,`stock_report`.`url`,`stock_report`.`ywpj`,`stock_report`.`pjbd`,`stock_report`.`pjjg`,`stock_report`.`ycsy1`,`stock_report`.`ycsyl1`,`stock_report`.`ycsy2`,`stock_report`.`ycsyl2`,`stock_report`.`instime` FROM `bigdata`.`stock_report` where stkname like %s order by pubtime desc limit {news_page}, 20".format(
+                    news_page=news_page)
+                reportlist = self.db.query(sql,report_search)
+            else:
+                sql = "SELECT `stock_report`.`id`,`stock_report`.`reportname`,`stock_report`.`tag`,`stock_report`.`pubdate`,`stock_report`.`pubtime`,`stock_report`.`refer`,`stock_report`.`stkcode`,`stock_report`.`stkname`,`stock_report`.`body`,`stock_report`.`url`,`stock_report`.`ywpj`,`stock_report`.`pjbd`,`stock_report`.`pjjg`,`stock_report`.`ycsy1`,`stock_report`.`ycsyl1`,`stock_report`.`ycsy2`,`stock_report`.`ycsyl2`,`stock_report`.`instime` FROM `bigdata`.`stock_report` order by pubtime desc limit {}, 20".format(
+                    news_page)
+                reportlist = self.db.query(sql)
+        else:
+            sql = "SELECT `stock_report`.`id`,`stock_report`.`reportname`,`stock_report`.`tag`,`stock_report`.`pubdate`,`stock_report`.`pubtime`,`stock_report`.`refer`,`stock_report`.`stkcode`,`stock_report`.`stkname`,`stock_report`.`body`,`stock_report`.`url`,`stock_report`.`ywpj`,`stock_report`.`pjbd`,`stock_report`.`pjjg`,`stock_report`.`ycsy1`,`stock_report`.`ycsyl1`,`stock_report`.`ycsy2`,`stock_report`.`ycsyl2`,`stock_report`.`instime` FROM `bigdata`.`stock_report` where tag=%s  order by pubtime desc limit {}, 20".format(
+                news_page)
+            reportlist = self.db.query(sql, news_type)
+        self.render("stock_report_list.html", userinfo=self.current_user, reportlists=reportlist, page_count=page_count,
+                    news_page=int(news_page), report_search=vreport_search)
+
+    def post(self):
+        vreport_search = self.get_argument("report_search", None)
+        if vreport_search != None:
+            report_search = '%' + vreport_search + '%'
+            page_count = 0
+            news_page = 20
+            # sql = "SELECT `t_news`.`id`, `t_news`.`title`, `t_news`.`pubtime`, `t_news`.`url`, `t_news`.`tag`, `t_news`.`refer`, `t_news`.`body`, `t_news`.`link_business_id` FROM `bigdata`.`t_news` where title like {} or content {} order by newsid limit 0, 200"%(news_search,news_search)
+            sql = "SELECT `stock_report`.`id`,`stock_report`.`reportname`,`stock_report`.`tag`,`stock_report`.`pubdate`,`stock_report`.`pubtime`,`stock_report`.`refer`,`stock_report`.`stkcode`,`stock_report`.`stkname`,`stock_report`.`body`,`stock_report`.`url`,`stock_report`.`ywpj`,`stock_report`.`pjbd`,`stock_report`.`pjjg`,`stock_report`.`ycsy1`,`stock_report`.`ycsyl1`,`stock_report`.`ycsy2`,`stock_report`.`ycsyl2`,`stock_report`.`instime` FROM `bigdata`.`stock_report`  where reportname like %s or body like %s order by pubtime limit 0, 200"
+            reportlist = self.db.query(sql, report_search, report_search)
+            self.render("stock_report_list.html", userinfo=self.current_user, reportlists=reportlist, page_count=page_count,
+                        news_page=int(news_page), report_search=vreport_search)
+
+
 #无权限页面
 class authdeny(BaseHandler):
     def get(self):

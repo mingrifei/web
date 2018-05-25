@@ -132,6 +132,61 @@
                 </div>
 
                 <div class="row am-cf">
+                    <div class="am-u-sm-12 am-u-md-12 am-u-lg-12 widget-margin-bottom-lg">
+                        <div class="widget am-cf widget-body-lg">
+                            <div class="widget-head am-cf">
+                                <div class="widget-title am-fl">最新研报</div>
+                                <div class="widget-function am-fr">
+                                    <a href="stock_report_list.html?type=all" class="am-icon-cog">查看更多</a>
+                                </div>
+                            </div>
+                            <div class="widget-body  am-fr">
+                                <div class="am-scrollable-horizontal ">
+                                    <table width="100%" class="am-table am-table-compact am-text-nowrap tpl-table-black " >
+                                        <thead>
+                                            <tr>
+                                                <th rowspan="2">日期</th>
+                                                <th rowspan="2">证券代码</th>
+                                                <th rowspan="2">证券名称</th>
+                                                <th rowspan="2">业务研报</th>
+                                                <th rowspan="2">原文评级</th>
+                                                <th rowspan="2">评级变动</th>
+                                                <th rowspan="2">机构</th>
+                                                <th colspan="2">2018预测收益</th>
+                                                <th colspan="2">2019预测市盈率</th>
+                                            </tr>
+                                                <th>收益</th>
+                                                <th>市盈率</th>
+                                                <th>收益</th>
+                                                <th>市盈率</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for stock_report in stock_reports %}
+
+                                            <tr class="gradeX">
+                                                <td>{{ stock_report.pubdate }}</td>
+                                                <td>{{ stock_report.stkcode }}</td>
+                                                <td>{{ stock_report.stkname }}</td>
+                                                <td><a target="_blank" href="stock_report_detail.html?id={{ stock_report.id }}">{{stock_report.reportname}}</a></td>
+                                                <td>{{ stock_report.ywpj }}</td>
+                                                <td>{{ stock_report.pjbd }}</td>
+                                                <td>{{ stock_report.pjjg }}</td>
+                                                <td>{{ stock_report.ycsy1 }}</td>
+                                                <td>{{ stock_report.ycsyl1 }}</td>
+                                                <td>{{ stock_report.ycsy2 }}</td>
+                                                <td>{{ stock_report.ycsyl2 }}</td>
+                                            </tr>
+                                         {% end %}
+                                            <!-- more data -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row am-cf">
                     <div class="am-u-sm-12 am-u-md-12 am-u-lg-6 widget-margin-bottom-lg">
                         <div class="widget am-cf widget-body-lg">
                             <div class="widget-head am-cf">

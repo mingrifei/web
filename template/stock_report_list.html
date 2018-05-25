@@ -1,0 +1,132 @@
+{% extends "frame.html" %}
+{% block head %}
+    <title>研究报告_[{{ escape(handler.settings["blog_title"]) }}]</title>
+    <meta name="description" content="辅投助手提供沪深两市全面的研究报告，及时将国内各大机构研究报告优化整合，第一时间提供各大券商研究所报告，深入解析上市公司最新变化、发展方向、成长性以及业绩变动趋势。最大程度减少个人投资者与机构之间信息上的差异，使个人投资者更早的了解到上市公司基本面变化,信息仅供参考！行业研报尽在futouzs.com！">
+    <meta name="keywords" content="机构研究报告,研报中心,研报,个股评级,买入评级,个股研报,盈利预测,行业研究,行业研报,策略研究">
+{% end %}
+{% block main %}
+{% autoescape None %}<!--全局不转义-->
+        <div class="tpl-content-wrapper" >
+
+            <div class="row-content am-cf">
+                <div class="row">
+                    <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+                        <div class="widget am-cf">
+
+                            <div class="widget-head am-cf">
+                                <div class="widget-title  am-cf">研究报告列表</div>
+                            </div>
+
+                            <div class="widget-body  am-fr">
+                                <div class="am-u-sm-12 am-u-md-6 am-u-lg-6">
+                                    <div class="am-form-group">
+                                        <div class="am-btn-toolbar">
+                                            <div class="am-btn-group am-btn-group-xs">
+                                                <a href="stock_report_list.html?type=report" class="am-btn am-btn-default am-btn-success"><span class="am-icon-plus"></span>机构研究报告</a>
+                                           </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                 <div class="am-u-sm-12 am-u-md-12 am-u-lg-3">
+
+                                     {%if report_search!=''%}
+                                        <form action="stock_report_list.html" method="get">
+                                             {% module xsrf_form_html() %}
+                                            <div class="am-input-group am-input-group-sm tpl-form-border-form cl-p">
+                                                <input value="all" id="type" name="type" hidden>
+                                                <input type="text" name="report_search" id="report_search" value="{{report_search}}" class="am-form-field ">
+                                                <span class="am-input-group-btn">
+                                                    <button class="am-btn  am-btn-default am-btn-success tpl-table-list-field am-icon-search" type='submit'></button>
+                                                </span>
+                                            </div>
+                                         </form>
+                                        <div class="widget-title  am-cf">以下为关键字"<font color="red">{{report_search}}</font> "查询结果</div>
+                                     {%else%}
+                                        <form action="stock_report_list.html" method="get">
+                                         {% module xsrf_form_html() %}
+                                        <div class="am-input-group am-input-group-sm tpl-form-border-form cl-p">
+                                             <input value="all" id="type" name="type" hidden>
+                                            <input type="text" name="report_search" id="report_search" class="am-form-field ">
+                                            <span class="am-input-group-btn">
+                                                <button class="am-btn  am-btn-default am-btn-success tpl-table-list-field am-icon-search" type='submit'></button>
+                                            </span>
+                                        </div>
+                                     </form>
+
+                                    {%end%}
+                                </div>
+
+                                <div class="am-u-sm-12">
+                                    <table width="100%" class="am-table am-table-compact am-text-nowrap tpl-table-black " >
+                                        <thead>
+                                            <tr>
+                                                <th rowspan="2">日期</th>
+                                                <th rowspan="2">证券代码</th>
+                                                <th rowspan="2">证券名称</th>
+                                                <th rowspan="2">业务研报</th>
+                                                <th rowspan="2">原文评级</th>
+                                                <th rowspan="2">评级变动</th>
+                                                <th rowspan="2">机构</th>
+                                                <th colspan="2">2018预测收益</th>
+                                                <th colspan="2">2019预测市盈率</th>
+                                            </tr>
+                                                <th>收益</th>
+                                                <th>市盈率</th>
+                                                <th>收益</th>
+                                                <th>市盈率</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for reportlist in reportlists %}
+
+                                            <tr class="gradeX">
+                                                <td>{{ reportlist.pubdate }}</td>
+                                                <td>{{ reportlist.stkcode }}</td>
+                                                <td><a href="stock_report_list.html?type=all&report_search={{ reportlist.stkname }}">{{reportlist.stkname}}</a></td>
+                                                <td><a target="_blank" href="stock_report_detail.html?id={{ reportlist.id }}">{{reportlist.reportname}}</a></td>
+                                                <td>{{ reportlist.ywpj }}</td>
+                                                <td>{{ reportlist.pjbd }}</td>
+                                                <td>{{ reportlist.pjjg }}</td>
+                                                <td>{{ reportlist.ycsy1 }}</td>
+                                                <td>{{ reportlist.ycsyl1 }}</td>
+                                                <td>{{ reportlist.ycsy2 }}</td>
+                                                <td>{{ reportlist.ycsyl2 }}</td>
+                                            </tr>
+                                         {% end %}
+                                            <!-- more data -->
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                                <div class="am-u-lg-12 am-cf">
+
+                                    <div class="am-fr">
+                                        <ul class="am-pagination tpl-pagination">
+
+                                            {%if news_page>0%}
+                                                {%set previous_page=news_page-1%}
+                                                {% set nextpage=news_page+1 %}
+                                            {%elif news_page==0%}
+                                                {% set nextpage=news_page+1 %}
+                                                {%set previous_page=news_page%}
+                                            {%else%}
+                                                {%set previous_page=news_page%}
+                                            {%end%}
+                                            <li><a href="stock_report_list.html?page={{previous_page}}&type=all">上一页</a></li>
+                                            <li><a href="stock_report_list.html?page={{nextpage}}&type=all">下一页</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+
+<script>
+
+</script>
+{% end %}
