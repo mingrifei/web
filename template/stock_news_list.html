@@ -1,0 +1,123 @@
+{% extends "frame.html" %}
+{% block head %}
+    <title>个股新闻_[{{ escape(handler.settings["blog_title"]) }}]</title>
+    <meta name="description" content="辅投助手提供沪深两市全面的个股新闻，及时将国内各大机构个股新闻优化整合，第一时间提供各大券商研究所报告，个股新闻，深入解析上市公司最新变化、发展方向、成长性以及业绩变动趋势。最大程度减少个人投资者与机构之间信息上的差异，使个人投资者更早的了解到上市公司基本面变化,信息仅供参考！行业研报尽在futouzs.com！">
+    <meta name="keywords" content="机构研究报告,研报中心,研报,个股评级,买入评级,个股研报,盈利预测,行业研究,行业研报,策略研究">
+{% end %}
+{% block main %}
+{% autoescape None %}<!--全局不转义-->
+        <div class="tpl-content-wrapper" >
+
+            <div class="row-content am-cf">
+                <div class="row">
+                    <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+                        <div class="widget am-cf">
+
+                            <div class="widget-head am-cf">
+                                <div class="widget-title  am-cf">个股新闻列表</div>
+                                   <div class="am-u-sm-12 am-u-md-12 am-u-lg-5">
+                                     {%if report_search!=''%}
+                                        <form action="stock_news_list.html" method="get">
+                                             {% module xsrf_form_html() %}
+                                            <div class="am-input-group am-input-group-sm tpl-form-border-form cl-p">
+                                                <input value="all" id="type" name="type" hidden>
+                                                <input type="text" name="report_search" id="report_search" value="{{report_search}}" class="am-form-field ">
+                                                <span class="am-input-group-btn">
+                                                    <button class="am-btn  am-btn-default am-btn-success tpl-table-list-field am-icon-search" type='submit'></button>
+                                                </span>
+                                            </div>
+                                         </form>
+                                        <div class="widget-title  am-cf">以下为关键字"<font color="red">{{report_search}}</font> "查询结果</div>
+                                     {%else%}
+                                        <form action="stock_news_list.html" method="get">
+                                         {% module xsrf_form_html() %}
+                                        <div class="am-input-group am-input-group-sm tpl-form-border-form cl-p">
+                                             <input value="all" id="type" name="type" hidden>
+                                            <input type="text" name="report_search" id="report_search" class="am-form-field ">
+                                            <span class="am-input-group-btn">
+                                                <button class="am-btn  am-btn-default am-btn-success tpl-table-list-field am-icon-search" type='submit'></button>
+                                            </span>
+                                        </div>
+                                     </form>
+
+                                    {%end%}
+                                </div>
+                            </div>
+
+                            <div class="widget-body  am-fr">
+                                <div class="am-u-sm-12 am-u-md-6 am-u-lg-6">
+                                    <div class="am-form-group">
+                                        <div class="am-btn-toolbar">
+                                            <div class="am-btn-group am-btn-group-xs">
+                                                <a href="stock_report_list.html?type=report" class="am-btn am-btn-default am-btn-success"><span class="am-icon-plus"></span>个股新闻</a>
+                                           </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                 <div class="am-list-news-bd">
+                                     {% for newslist in newslists %}
+                                    <ul class="am-list">
+                                     <!--缩略图在标题左边-->
+                                      <li class="am-g am-list-item-desced am-list-item-thumbed am-list-item-thumb-left">
+                                        <div class=" am-u-sm-11 am-list-main">
+                                            <h3 class="am-list-item-hd"><a target="_blank" href="stock_news_detail.html?id={{ newslist.id }}">{{newslist.title}}</a></h3>
+                                            <div class="am-list-item-text">
+                                                <ul>
+                                                    <span>证券代码：<a href="stock_news_list.html?type=all&report_search={{ newslist.stkcode }}">{{newslist.stkcode}}</a></span>
+                                                    <span>证券名称：<a href="stock_news_list.html?type=all&report_search={{ newslist.stkname }}">{{newslist.stkname}}</a></span>
+                                                    <span>所属行业：<a href="stock_news_list.html?type=all&report_search={{ newslist.stkindustry }}">{{newslist.stkindustry}}</a></span>
+                                                    <span>发布日期：<a href="stock_news_list.html?type=all&report_search={{ newslist.pubtime }}">{{newslist.pubtime}}</a></span>
+                                                </ul>
+                                                <ul>
+                                                    <span>{{newslist.body}}</span>
+                                                </ul>
+
+                                             </div>
+
+                                        </div>
+                                          <div class=" am-u-sm-1 am-list-main">
+                                            <ul><span>智能评级：中性</span></ul>
+                                          </div>
+                                      </li>
+                                    </ul>
+                                    {%end%}
+                                 </div>
+                                <div class="am-u-lg-12 am-cf">
+
+                                    <div class="am-fr">
+                                        <ul class="am-pagination tpl-pagination">
+
+                                            {%if news_page>0%}
+                                                {%set previous_page=news_page-1%}
+                                                {% set nextpage=news_page+1 %}
+                                            {%elif news_page==0%}
+                                                {% set nextpage=news_page+1 %}
+                                                {%set previous_page=news_page%}
+                                            {%else%}
+                                                {%set previous_page=news_page%}
+                                            {%end%}
+                                            {%if report_search!=''%}
+                                            <li><a href="stock_news_list.html?page={{previous_page}}&type=all&report_search={{report_search}}">上一页</a></li>
+                                            <li><a href="stock_news_list.html?page={{nextpage}}&type=all&report_search={{report_search}}">下一页</a></li>
+                                            {%else%}
+                                            <li><a href="stock_news_list.html?page={{previous_page}}&type=all">上一页</a></li>
+                                            <li><a href="stock_news_list.html?page={{nextpage}}&type=all">下一页</a></li>
+                                            {%end%}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+
+<script>
+
+</script>
+{% end %}
