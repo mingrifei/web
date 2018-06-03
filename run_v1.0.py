@@ -37,7 +37,7 @@ import lxml
 from tornado.options import define, options
 
 define("port", default=8080, help="run on the given port", type=int)
-define("mysql_host", default="127.0.0.1:4407", help="blog database host")
+define("mysql_host", default="17.0.0.1:4407", help="blog database host")
 define("mysql_database", default="bigdata", help="blog database name")
 define("mysql_user", default="root", help="blog database user")
 define("mysql_password", default="kingdom88", help="blog database password")
@@ -111,7 +111,7 @@ class Application(tornado.web.Application):
         ]
         settings = dict(
             blog_title=u"辅投助手_企业信息查询_公司查询_工商查询_企业信用信息查询系统",
-            description=u"辅投助手专注服务于个人与企业信息查询,为您提供证券、基金、银行、阳光私募公司查询,工商信息查询,企业查询,工商查询,企业信用信息查询等相关信息,帮您快速了解企业信息,企业工商信息,企业信用信息等企业经营和人员投资状况,查询更多信息请到辅助投资助手！",
+            description=u"辅投助手专注服务于个人与企业信息查询,为您提供证券、基金、银行、阳光私募公司,工商信息查询,企业查询,工商查询,企业信用信息查询等相关信息,帮您快速了解企业信息,企业工商信息,企业信用信息等企业经营和人员投资状况,查询更多信息请到辅助投资助手！",
             keywords=u"辅投助手，天眼查,企业查询,公司查询,工商查询,信用查询,企业信息查询,企业工商信息查询,企业信用查询,企业信用信息查询系统,启信宝,企查查,红盾网",
             template_path=os.path.join(os.path.dirname(__file__), "template"),
             static_path=os.path.join(os.path.dirname(__file__), "statics"),
@@ -119,7 +119,7 @@ class Application(tornado.web.Application):
             xsrf_cookies=True,
             cookie_secret="__TODO:_GENERATE_YOUR_OWN_RANDOM_VALUE_HERE__",
             login_url="/auth/login",
-            debug=True,
+            debug=False,
         )
         super(Application, self).__init__(handlers, **settings)
         # Have one global connection to the blog DB across all handlers
@@ -480,10 +480,10 @@ class News_list_Handler(BaseHandler):
         news_page = self.get_argument("page", 0)
         page_count = 20
         if news_type=='all':
-            sql="SELECT `t_news`.`id`, `t_news`.`title`, `t_news`.`pubtime`, `t_news`.`url`, `t_news`.`tag`,`t_news_tag_dict`.`tag_dict_name`, `t_news`.`refer`, `t_news`.`body`, `t_news`.`link_business_id` FROM `bigdata`.`t_news` left join `bigdata`.`t_news_tag_dict` on `t_news`.`tag`=`t_news_tag_dict`.`tag_dictid` order by `t_news`.`newsid` limit {}, 20".format(news_page)
+            sql="SELECT `t_news`.`id`, `t_news`.`title`, `t_news`.`pubtime`, `t_news`.`url`, `t_news`.`tag`,`t_news_tag_dict`.`tag_dict_name`, `t_news`.`refer`, `t_news`.`body`, `t_news`.`link_business_id` FROM `bigdata`.`t_news` left join `bigdata`.`t_news_tag_dict` on `t_news`.`tag`=`t_news_tag_dict`.`tag_dictid` order by `t_news`.`pubtime` desc limit {}, 20".format(news_page)
             newslist=self.db.query(sql)
         else:
-            sql="SELECT `t_news`.`id`, `t_news`.`title`, `t_news`.`pubtime`, `t_news`.`url`, `t_news`.`tag`,`t_news_tag_dict`.`tag_dict_name`, `t_news`.`refer`, `t_news`.`body`, `t_news`.`link_business_id` FROM `bigdata`.`t_news` left join `bigdata`.`t_news_tag_dict` on `t_news`.`tag`=`t_news_tag_dict`.`tag_dictid`   where `t_news`.`tag`=%s  order by `t_news`.`newsid` limit {}, 20".format(news_page)
+            sql="SELECT `t_news`.`id`, `t_news`.`title`, `t_news`.`pubtime`, `t_news`.`url`, `t_news`.`tag`,`t_news_tag_dict`.`tag_dict_name`, `t_news`.`refer`, `t_news`.`body`, `t_news`.`link_business_id` FROM `bigdata`.`t_news` left join `bigdata`.`t_news_tag_dict` on `t_news`.`tag`=`t_news_tag_dict`.`tag_dictid`   where `t_news`.`tag`=%s  order by `t_news`.`pubtime` desc limit {}, 20".format(news_page)
             newslist=self.db.query(sql,news_type)
         self.render("news_list.html", userinfo=self.current_user,newslists=newslist,page_count=page_count,news_page=int(news_page),news_search='')
     def post(self):
