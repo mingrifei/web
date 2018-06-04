@@ -482,8 +482,9 @@ class News_detail_Handler(BaseHandler):
 class News_list_Handler(BaseHandler):
     def get(self):
         news_type = self.get_argument("type", None)
-        news_page = self.get_argument("page", 0)
+        vnews_page = self.get_argument("page", 0)
         page_count = 20
+        news_page=int(vnews_page)*page_count
         if news_type=='all':
             sql="SELECT `t_news`.`id`, `t_news`.`title`, `t_news`.`pubtime`, `t_news`.`url`, `t_news`.`tag`,`t_news_tag_dict`.`tag_dict_name`, `t_news`.`refer`, `t_news`.`body`, `t_news`.`link_business_id` FROM `bigdata`.`t_news` left join `bigdata`.`t_news_tag_dict` on `t_news`.`tag`=`t_news_tag_dict`.`tag_dictid` order by `t_news`.`newsid` limit {}, 20".format(news_page)
             newslist=self.db.query(sql)
@@ -522,31 +523,33 @@ class Stock_report_list_Handler(BaseHandler):
         if news_type == 'all':
             if vreport_search != None:
                 report_search = '%' + vreport_search + '%'
-                sql = "SELECT `stock_report`.`id`,`stock_report`.`reportname`,`stock_report`.`tag`,`stock_report`.`pubdate`,`stock_report`.`pubtime`,`stock_report`.`refer`,`stock_report`.`stkcode`,`stock_report`.`stkname`,`stock_report`.`body`,`stock_report`.`url`,`stock_report`.`ywpj`,`stock_report`.`pjbd`,`stock_report`.`pjjg`,`stock_report`.`ycsy1`,`stock_report`.`ycsyl1`,`stock_report`.`ycsy2`,`stock_report`.`ycsyl2`,`stock_report`.`instime` FROM `bigdata`.`stock_report` where stkname like %s order by pubtime desc limit {news_page}, 20".format(
+                sql = "SELECT `stock_report`.`id`,`stock_report`.`reportname`,`stock_report`.`tag`,`stock_report`.`pubdate`,`stock_report`.`pubtime`,`stock_report`.`refer`,`stock_report`.`stkcode`,`stock_report`.`stkname`,`stock_report`.`body`,`stock_report`.`url`,`stock_report`.`ywpj`,`stock_report`.`pjbd`,`stock_report`.`pjjg`,`stock_report`.`ycsy1`,`stock_report`.`ycsyl1`,`stock_report`.`ycsy2`,`stock_report`.`ycsyl2`,`stock_report`.`instime` FROM `bigdata`.`stock_report` where stkname like %s  or pjjg like %s  or stkcode like %s or pubdate like %s order by pubdate desc limit {news_page}, 20".format(
                     news_page=news_page)
-                reportlist = self.db.query(sql,report_search)
+                reportlist = self.db.query(sql,report_search,report_search,report_search,report_search)
             else:
-                sql = "SELECT `stock_report`.`id`,`stock_report`.`reportname`,`stock_report`.`tag`,`stock_report`.`pubdate`,`stock_report`.`pubtime`,`stock_report`.`refer`,`stock_report`.`stkcode`,`stock_report`.`stkname`,`stock_report`.`body`,`stock_report`.`url`,`stock_report`.`ywpj`,`stock_report`.`pjbd`,`stock_report`.`pjjg`,`stock_report`.`ycsy1`,`stock_report`.`ycsyl1`,`stock_report`.`ycsy2`,`stock_report`.`ycsyl2`,`stock_report`.`instime` FROM `bigdata`.`stock_report` order by pubtime desc limit {}, 20".format(
+                sql = "SELECT `stock_report`.`id`,`stock_report`.`reportname`,`stock_report`.`tag`,`stock_report`.`pubdate`,`stock_report`.`pubtime`,`stock_report`.`refer`,`stock_report`.`stkcode`,`stock_report`.`stkname`,`stock_report`.`body`,`stock_report`.`url`,`stock_report`.`ywpj`,`stock_report`.`pjbd`,`stock_report`.`pjjg`,`stock_report`.`ycsy1`,`stock_report`.`ycsyl1`,`stock_report`.`ycsy2`,`stock_report`.`ycsyl2`,`stock_report`.`instime` FROM `bigdata`.`stock_report` order by pubdate desc limit {}, 20".format(
                     news_page)
                 reportlist = self.db.query(sql)
         else:
-            sql = "SELECT `stock_report`.`id`,`stock_report`.`reportname`,`stock_report`.`tag`,`stock_report`.`pubdate`,`stock_report`.`pubtime`,`stock_report`.`refer`,`stock_report`.`stkcode`,`stock_report`.`stkname`,`stock_report`.`body`,`stock_report`.`url`,`stock_report`.`ywpj`,`stock_report`.`pjbd`,`stock_report`.`pjjg`,`stock_report`.`ycsy1`,`stock_report`.`ycsyl1`,`stock_report`.`ycsy2`,`stock_report`.`ycsyl2`,`stock_report`.`instime` FROM `bigdata`.`stock_report` where tag=%s  order by pubtime desc limit {}, 20".format(
+            sql = "SELECT `stock_report`.`id`,`stock_report`.`reportname`,`stock_report`.`tag`,`stock_report`.`pubdate`,`stock_report`.`pubtime`,`stock_report`.`refer`,`stock_report`.`stkcode`,`stock_report`.`stkname`,`stock_report`.`body`,`stock_report`.`url`,`stock_report`.`ywpj`,`stock_report`.`pjbd`,`stock_report`.`pjjg`,`stock_report`.`ycsy1`,`stock_report`.`ycsyl1`,`stock_report`.`ycsy2`,`stock_report`.`ycsyl2`,`stock_report`.`instime` FROM `bigdata`.`stock_report` where tag=%s  order by pubdate desc limit {}, 20".format(
                 news_page)
             reportlist = self.db.query(sql, news_type)
         self.render("stock_report_list.html", userinfo=self.current_user, reportlists=reportlist, page_count=page_count,
-                    news_page=int(news_page), report_search=vreport_search)
+                    news_page=int(vnews_page), report_search=vreport_search)
 
     def post(self):
-        vreport_search = self.get_argument("report_search", None)
+        vreport_search = self.get_argument("report_search", '')
+        news_type = self.get_argument("type", '')
+        vnews_page = self.get_argument("page", 0)
+        page_count = 20
+        news_page = int(vnews_page) * page_count
         if vreport_search != None:
             report_search = '%' + vreport_search + '%'
-            page_count = 0
-            news_page = 20
             # sql = "SELECT `t_news`.`id`, `t_news`.`title`, `t_news`.`pubtime`, `t_news`.`url`, `t_news`.`tag`, `t_news`.`refer`, `t_news`.`body`, `t_news`.`link_business_id` FROM `bigdata`.`t_news` where title like {} or content {} order by newsid limit 0, 200"%(news_search,news_search)
-            sql = "SELECT `stock_report`.`id`,`stock_report`.`reportname`,`stock_report`.`tag`,`stock_report`.`pubdate`,`stock_report`.`pubtime`,`stock_report`.`refer`,`stock_report`.`stkcode`,`stock_report`.`stkname`,`stock_report`.`body`,`stock_report`.`url`,`stock_report`.`ywpj`,`stock_report`.`pjbd`,`stock_report`.`pjjg`,`stock_report`.`ycsy1`,`stock_report`.`ycsyl1`,`stock_report`.`ycsy2`,`stock_report`.`ycsyl2`,`stock_report`.`instime` FROM `bigdata`.`stock_report`  where reportname like %s or body like %s order by pubtime limit 0, 200"
+            sql = "SELECT `stock_report`.`id`,`stock_report`.`reportname`,`stock_report`.`tag`,`stock_report`.`pubdate`,`stock_report`.`pubtime`,`stock_report`.`refer`,`stock_report`.`stkcode`,`stock_report`.`stkname`,`stock_report`.`body`,`stock_report`.`url`,`stock_report`.`ywpj`,`stock_report`.`pjbd`,`stock_report`.`pjjg`,`stock_report`.`ycsy1`,`stock_report`.`ycsyl1`,`stock_report`.`ycsy2`,`stock_report`.`ycsyl2`,`stock_report`.`instime` FROM `bigdata`.`stock_report`  where reportname like %s or body like %s order by pubtime limit {}, 200".format(news_page)
             reportlist = self.db.query(sql, report_search, report_search)
             self.render("stock_report_list.html", userinfo=self.current_user, reportlists=reportlist, page_count=page_count,
-                        news_page=int(news_page), report_search=vreport_search)
+                        news_page=int(vnews_page), report_search=vreport_search)
 
 # 个股新闻详情页面
 class Stock_news_detail_Handler(BaseHandler):

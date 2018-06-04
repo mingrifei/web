@@ -57,7 +57,8 @@
                                 </div>
 
                                 <div class="am-u-sm-12">
-                                    <table width="100%" class="am-table am-table-compact am-text-nowrap tpl-table-black " >
+                                    <div class="am-scrollable-horizontal ">
+                                         <table width="100%" class="am-table am-table-compact am-text-nowrap tpl-table-black" >
                                         <thead>
                                             <tr>
                                                 <th rowspan="2">日期</th>
@@ -80,13 +81,13 @@
                                         {% for reportlist in reportlists %}
 
                                             <tr class="gradeX">
-                                                <td>{{ reportlist.pubdate }}</td>
-                                                <td>{{ reportlist.stkcode }}</td>
+                                                <td><a href="stock_report_list.html?type=all&report_search={{ reportlist.pubdate }}">{{ reportlist.pubdate }}</a></td>
+                                                <td><a href="stock_report_list.html?type=all&report_search={{ reportlist.stkcode }}">{{ reportlist.stkcode }}</a></td>
                                                 <td><a href="stock_report_list.html?type=all&report_search={{ reportlist.stkname }}">{{reportlist.stkname}}</a></td>
                                                 <td><a target="_blank" href="stock_report_detail.html?id={{ reportlist.id }}">{{reportlist.reportname}}</a></td>
                                                 <td>{{ reportlist.ywpj }}</td>
                                                 <td>{{ reportlist.pjbd }}</td>
-                                                <td>{{ reportlist.pjjg }}</td>
+                                                <td><a href="stock_report_list.html?type=all&report_search={{ reportlist.pjjg }}">{{ reportlist.pjjg }}</a></td>
                                                 <td>{{ reportlist.ycsy1 }}</td>
                                                 <td>{{ reportlist.ycsyl1 }}</td>
                                                 <td>{{ reportlist.ycsy2 }}</td>
@@ -96,7 +97,7 @@
                                             <!-- more data -->
                                         </tbody>
                                     </table>
-
+                                    </div>
                                 </div>
                                 <div class="am-u-lg-12 am-cf">
 
@@ -112,8 +113,13 @@
                                             {%else%}
                                                 {%set previous_page=news_page%}
                                             {%end%}
+                                            {%if report_search!=''%}
+                                            <li><a href="stock_report_list.html?page={{previous_page}}&type=all&report_search={{report_search}}">上一页</a></li>
+                                            <li><a href="stock_report_list.html?page={{nextpage}}&type=all&report_search={{report_search}}">下一页</a></li>
+                                            {%else%}
                                             <li><a href="stock_report_list.html?page={{previous_page}}&type=all">上一页</a></li>
                                             <li><a href="stock_report_list.html?page={{nextpage}}&type=all">下一页</a></li>
+                                            {%end%}
                                         </ul>
                                     </div>
                                 </div>
