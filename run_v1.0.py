@@ -486,10 +486,10 @@ class News_list_Handler(BaseHandler):
         page_count = 20
         news_page=int(vnews_page)*page_count
         if news_type=='all':
-            sql="SELECT `t_news`.`id`, `t_news`.`title`, `t_news`.`pubtime`, `t_news`.`url`, `t_news`.`tag`,`t_news_tag_dict`.`tag_dict_name`, `t_news`.`refer`, `t_news`.`body`, `t_news`.`link_business_id` FROM `bigdata`.`t_news` left join `bigdata`.`t_news_tag_dict` on `t_news`.`tag`=`t_news_tag_dict`.`tag_dictid` order by `t_news`.`newsid` limit {}, 20".format(news_page)
+            sql="SELECT `t_news`.`id`, `t_news`.`title`, `t_news`.`pubtime`, `t_news`.`url`, `t_news`.`tag`,`t_news_tag_dict`.`tag_dict_name`, `t_news`.`refer`, `t_news`.`body`, `t_news`.`link_business_id` FROM `bigdata`.`t_news` left join `bigdata`.`t_news_tag_dict` on `t_news`.`tag`=`t_news_tag_dict`.`tag_dictid` where `t_news`.`tag`!='finance' and stkcode is null order by `t_news`.`pubtime` desc limit {}, 20".format(news_page)
             newslist=self.db.query(sql)
         else:
-            sql="SELECT `t_news`.`id`, `t_news`.`title`, `t_news`.`pubtime`, `t_news`.`url`, `t_news`.`tag`,`t_news_tag_dict`.`tag_dict_name`, `t_news`.`refer`, `t_news`.`body`, `t_news`.`link_business_id` FROM `bigdata`.`t_news` left join `bigdata`.`t_news_tag_dict` on `t_news`.`tag`=`t_news_tag_dict`.`tag_dictid`   where `t_news`.`tag`=%s  order by `t_news`.`newsid` limit {}, 20".format(news_page)
+            sql="SELECT `t_news`.`id`, `t_news`.`title`, `t_news`.`pubtime`, `t_news`.`url`, `t_news`.`tag`,`t_news_tag_dict`.`tag_dict_name`, `t_news`.`refer`, `t_news`.`body`, `t_news`.`link_business_id` FROM `bigdata`.`t_news` left join `bigdata`.`t_news_tag_dict` on `t_news`.`tag`=`t_news_tag_dict`.`tag_dictid`   where `t_news`.`tag`=%s   order by `t_news`.`pubtime` desc limit {}, 20".format(news_page)
             newslist=self.db.query(sql,news_type)
         self.render("news_list.html", userinfo=self.current_user,newslists=newslist,page_count=page_count,news_page=int(vnews_page),news_search='')
     def post(self):
