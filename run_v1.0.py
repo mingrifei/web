@@ -570,7 +570,8 @@ class Stock_news_list_Handler(BaseHandler):
         news_page=(int(vnews_page))*page_count
         if news_type == 'all':
             if vreport_search != '':
-                report_search = '%' + vreport_search + '%'
+                #report_search = '%' + vreport_search + '%'
+                report_search = vreport_search
                 sql = "SELECT `t_news`.`id`,`t_news`.`title`,`t_news`.`pubtime`,`t_news`.`url`,`t_news`.`tag`,`t_news`.`refer`,`t_news`.`abstract`,`t_news`.`body`,`t_news`.`link_business_id`,`t_news`.`newsid`,`t_news`.`stkcode`,`t_news`.`stkname`,`t_news`.`stkindustry`,`t_news`.`instime` FROM `bigdata`.`t_news` where  length(stkcode)>1 and (stkname = %s or stkcode = %s or stkindustry = %s or pubtime = %s)  order by pubtime desc limit {news_page}, 100".format(
                     news_page=news_page)
                 newslist = self.db.query(sql,report_search,report_search,report_search,report_search)
