@@ -40,11 +40,11 @@ define("port", default=8080, help="run on the given port", type=int)
 define("mysql_host", default="127.0.0.1:4407", help="blog database host")
 define("mysql_database", default="bigdata", help="blog database name")
 define("mysql_user", default="root", help="blog database user")
-define("mysql_password", default="kingdom88", help="blog database password")
-
 
 # A thread pool to be used for password hashing with bcrypt.
 executor = concurrent.futures.ThreadPoolExecutor(2)
+define("mysql_password", default="kingdom88", help="blog database password")
+
 
 
 class Application(tornado.web.Application):
@@ -124,7 +124,7 @@ class Application(tornado.web.Application):
             xsrf_cookies=True,
             cookie_secret="__TODO:_GENERATE_YOUR_OWN_RANDOM_VALUE_HERE__",
             login_url="/auth/login",
-            debug=True,
+            debug=False,
         )
         super(Application, self).__init__(handlers, **settings)
         # Have one global connection to the blog DB across all handlers
@@ -171,10 +171,10 @@ class HomeHandler(BaseHandler):
             self.redirect("/auth/login")
             return
         else:#登录成功后
-            newslist=self.db.query("SELECT `t_news`.`id`,     `t_news`.`title`,     `t_news`.`pubtime`,     `t_news`.`url`,     `t_news`.`tag`,     `t_news`.`refer`,     `t_news`.`body`,     `t_news`.`link_business_id` FROM `bigdata`.`t_news` order by  pubtime desc limit 6 ")
-            newslist_finance=self.db.query("SELECT `t_news`.`id`,     `t_news`.`title`,     `t_news`.`pubtime`,     `t_news`.`url`,     `t_news`.`tag`,     `t_news`.`refer`,     `t_news`.`body`,     `t_news`.`link_business_id` FROM `bigdata`.`t_news` where tag='finance' order by  pubtime desc limit 10 ")
-            newslist_tech=self.db.query("SELECT `t_news`.`id`,     `t_news`.`title`,     `t_news`.`pubtime`,     `t_news`.`url`,     `t_news`.`tag`,     `t_news`.`refer`,     `t_news`.`body`,     `t_news`.`link_business_id` FROM `bigdata`.`t_news` where tag='tech' order by  pubtime desc limit 10 ")
-            newslist_ent=self.db.query("SELECT `t_news`.`id`,     `t_news`.`title`,     `t_news`.`pubtime`,     `t_news`.`url`,     `t_news`.`tag`,     `t_news`.`refer`,     `t_news`.`body`,     `t_news`.`link_business_id` FROM `bigdata`.`t_news` where tag='ent' order by  pubtime desc limit 10 ")
+            newslist=self.db.query("SELECT `t_news`.`id`,     `t_news`.`title`,     `t_news`.`pubtime`,     `t_news`.`url`,     `t_news`.`tag`,     `t_news`.`refer`,     `t_news`.`body`,     `t_news`.`link_business_id` FROM `bigdata`.`t_news` order by  pub_time desc limit 6 ")
+            newslist_finance=self.db.query("SELECT `t_news`.`id`,     `t_news`.`title`,     `t_news`.`pubtime`,     `t_news`.`url`,     `t_news`.`tag`,     `t_news`.`refer`,     `t_news`.`body`,     `t_news`.`link_business_id` FROM `bigdata`.`t_news` where tag='finance' order by  pub_time desc limit 10 ")
+            newslist_tech=self.db.query("SELECT `t_news`.`id`,     `t_news`.`title`,     `t_news`.`pubtime`,     `t_news`.`url`,     `t_news`.`tag`,     `t_news`.`refer`,     `t_news`.`body`,     `t_news`.`link_business_id` FROM `bigdata`.`t_news` where tag='tech' order by  pub_time desc limit 10 ")
+            newslist_ent=self.db.query("SELECT `t_news`.`id`,     `t_news`.`title`,     `t_news`.`pubtime`,     `t_news`.`url`,     `t_news`.`tag`,     `t_news`.`refer`,     `t_news`.`body`,     `t_news`.`link_business_id` FROM `bigdata`.`t_news` where tag='ent' order by  pub_time desc limit 10 ")
             stock_report=self.db.query("SELECT `stock_report`.`id`,`stock_report`.`reportname`,`stock_report`.`tag`,`stock_report`.`pubdate`,`stock_report`.`pubtime`,`stock_report`.`refer`,`stock_report`.`stkcode`,`stock_report`.`stkname`,`stock_report`.`body`,`stock_report`.`url`,`stock_report`.`ywpj`,`stock_report`.`pjbd`,`stock_report`.`pjjg`,`stock_report`.`ycsy1`,`stock_report`.`ycsyl1`,`stock_report`.`ycsy2`,`stock_report`.`ycsyl2`,`stock_report`.`instime` FROM `bigdata`.`stock_report` order by pubdate desc limit 10 ")
 
             business_count = self.db.get("SELECT FORMAT(sum(case when business_reg_capital like '%%万元人民币%%' "
@@ -304,9 +304,9 @@ class pf_company_list(BaseHandler):
         search_type = self.get_argument("search_type", None)
         if business_city is not None:
             if search_type=="reg":
-                business_list=self.db.query("SELECT c.registerNo, a.business_id, a.business_name, case when lenght(a.business_legal_name)<1 t.men_name else a.business_legal_name end business_legal_name, a.business_reg_capital, a.business_reg_time, a.business_industry, a.business_scope, a.business_phone, b.jglx FROM `business_base` a INNER JOIN pf_base_info  b ON a.business_reg_number = b.gszch INNER JOIN pf_base c ON c.registerNo = b.djbm left join `bigdata`.`business_men_base` t on a.business_legal_id=t.men_id WHERE c.registerCity = %s limit 200",business_city)
+                business_list=self.db.query("SELECT c.registerNo, a.business_id, a.business_name, case when length(a.business_legal_name)<1 then t.men_name else a.business_legal_name end business_legal_name, a.business_reg_capital, a.business_reg_time, a.business_industry, a.business_scope, a.business_phone, b.jglx FROM `business_base` a INNER JOIN pf_base_info  b ON a.business_reg_number = b.gszch INNER JOIN pf_base c ON c.registerNo = b.djbm left join `bigdata`.`business_men_base` t on a.business_legal_id=t.men_id WHERE c.registerCity = %s limit 200",business_city)
             else:
-                business_list=self.db.query("SELECT c.registerNo, a.business_id, a.business_name,case when length(a.business_legal_name)<1 t.men_name else business_legal_name end business_legal_name ,a.business_reg_capital, a.business_reg_time, a.business_industry, a.business_scope, a.business_phone, b.jglx FROM `business_base` a INNER JOIN pf_base_info  b ON a.business_reg_number = b.gszch INNER JOIN pf_base c ON c.registerNo = b.djbm left join `bigdata`.`business_men_base` t on a.business_legal_id=t.men_id WHERE c.officecity = %s limit 200",business_city)
+                business_list=self.db.query("SELECT c.registerNo, a.business_id, a.business_name,case when length(a.business_legal_name)<1 then t.men_name else business_legal_name end business_legal_name ,a.business_reg_capital, a.business_reg_time, a.business_industry, a.business_scope, a.business_phone, b.jglx FROM `business_base` a INNER JOIN pf_base_info  b ON a.business_reg_number = b.gszch INNER JOIN pf_base c ON c.registerNo = b.djbm left join `bigdata`.`business_men_base` t on a.business_legal_id=t.men_id WHERE c.officecity = %s limit 200",business_city)
             self.render("pf_company_list.html", userinfo=self.current_user, business_list=business_list,business_citys=business_city,business_names=v_business_name)
         if v_business_name is not None:
             business_list = self.db.query("SELECT     b.djbm registerNo,     b.jglx,     a.business_id,     a.business_name,     CASE         WHEN length(a.business_legal_name)<1 then t.men_name         ELSE a.business_legal_name     END business_legal_name,     a.business_reg_capital,     a.business_reg_time,     a.business_industry,     a.business_scope,     a.business_score FROM     `bigdata`.`business_base` a         left JOIN 	bigdata.pf_base_info b ON b.gszch = a.business_id         LEFT JOIN     `bigdata`.`business_men_base` t ON a.business_legal_id = t.men_id WHERE     a.business_name LIKE %s  limit 10",business_name)
@@ -486,10 +486,10 @@ class News_list_Handler(BaseHandler):
         page_count = 20
         news_page=int(vnews_page)*page_count
         if news_type=='all':
-            sql="SELECT `t_news`.`id`, `t_news`.`title`, `t_news`.`pubtime`, `t_news`.`url`, `t_news`.`tag`,`t_news_tag_dict`.`tag_dict_name`, `t_news`.`refer`, `t_news`.`body`, `t_news`.`link_business_id` FROM `bigdata`.`t_news` left join `bigdata`.`t_news_tag_dict` on `t_news`.`tag`=`t_news_tag_dict`.`tag_dictid` where `t_news`.`tag`!='finance' and stkcode is null order by `t_news`.`pubtime` desc limit {}, 20".format(news_page)
+            sql="SELECT `t_news`.`id`, `t_news`.`title`, `t_news`.`pubtime`, `t_news`.`url`, `t_news`.`tag`,`t_news_tag_dict`.`tag_dict_name`, `t_news`.`refer`, `t_news`.`body`, `t_news`.`link_business_id` FROM `bigdata`.`t_news` left join `bigdata`.`t_news_tag_dict` on `t_news`.`tag`=`t_news_tag_dict`.`tag_dictid` where `t_news`.`tag`!='finance' and stkcode is null order by pub_time desc limit {}, 20".format(news_page)
             newslist=self.db.query(sql)
         else:
-            sql="SELECT `t_news`.`id`, `t_news`.`title`, `t_news`.`pubtime`, `t_news`.`url`, `t_news`.`tag`,`t_news_tag_dict`.`tag_dict_name`, `t_news`.`refer`, `t_news`.`body`, `t_news`.`link_business_id` FROM `bigdata`.`t_news` left join `bigdata`.`t_news_tag_dict` on `t_news`.`tag`=`t_news_tag_dict`.`tag_dictid`   where `t_news`.`tag`=%s   order by `t_news`.`pubtime` desc limit {}, 20".format(news_page)
+            sql="SELECT `t_news`.`id`, `t_news`.`title`, `t_news`.`pubtime`, `t_news`.`url`, `t_news`.`tag`,`t_news_tag_dict`.`tag_dict_name`, `t_news`.`refer`, `t_news`.`body`, `t_news`.`link_business_id` FROM `bigdata`.`t_news` left join `bigdata`.`t_news_tag_dict` on `t_news`.`tag`=`t_news_tag_dict`.`tag_dictid`   where `t_news`.`tag`=%s   order by  pub_time desc limit {}, 20".format(news_page)
             newslist=self.db.query(sql,news_type)
         self.render("news_list.html", userinfo=self.current_user,newslists=newslist,page_count=page_count,news_page=int(vnews_page),news_search='')
     def post(self):
@@ -570,16 +570,17 @@ class Stock_news_list_Handler(BaseHandler):
         news_page=(int(vnews_page))*page_count
         if news_type == 'all':
             if vreport_search != '':
-                report_search = '%' + vreport_search + '%'
-                sql = "SELECT `t_news`.`id`,`t_news`.`title`,`t_news`.`pubtime`,`t_news`.`url`,`t_news`.`tag`,`t_news`.`refer`,`t_news`.`abstract`,`t_news`.`body`,`t_news`.`link_business_id`,`t_news`.`newsid`,`t_news`.`stkcode`,`t_news`.`stkname`,`t_news`.`stkindustry`,`t_news`.`instime` FROM `bigdata`.`t_news` where  length(stkcode)>1 and stkname like %s or stkcode like %s or stkindustry like %s or pubtime like %s  order by pubtime desc limit {news_page}, 100".format(
+                #report_search = '%' + vreport_search + '%'
+                report_search = vreport_search
+                sql = "SELECT `t_news`.`id`,`t_news`.`title`,`t_news`.`pubtime`,`t_news`.`url`,`t_news`.`tag`,`t_news`.`refer`,`t_news`.`abstract`,`t_news`.`body`,`t_news`.`link_business_id`,`t_news`.`newsid`,`t_news`.`stkcode`,`t_news`.`stkname`,`t_news`.`stkindustry`,`t_news`.`instime` FROM `bigdata`.`t_news` where  length(stkcode)>1 and (stkname = %s or stkcode = %s or stkindustry = %s or pubtime = %s)  order by pub_time desc limit {news_page}, 100".format(
                     news_page=news_page)
                 newslist = self.db.query(sql,report_search,report_search,report_search,report_search)
             else:
-                sql = "SELECT `t_news`.`id`,`t_news`.`title`,`t_news`.`pubtime`,`t_news`.`url`,`t_news`.`tag`,`t_news`.`refer`,`t_news`.`abstract`,`t_news`.`body`,`t_news`.`link_business_id`,`t_news`.`newsid`,`t_news`.`stkcode`,`t_news`.`stkname`,`t_news`.`stkindustry`,`t_news`.`instime` FROM `bigdata`.`t_news` where  length(stkcode)>1 order by pubtime desc limit {}, 100".format(
+                sql = "SELECT `t_news`.`id`,`t_news`.`title`,`t_news`.`pubtime`,`t_news`.`url`,`t_news`.`tag`,`t_news`.`refer`,`t_news`.`abstract`,`t_news`.`body`,`t_news`.`link_business_id`,`t_news`.`newsid`,`t_news`.`stkcode`,`t_news`.`stkname`,`t_news`.`stkindustry`,`t_news`.`instime` FROM `bigdata`.`t_news` where  length(stkcode)>1 order by pub_time desc limit {}, 100".format(
                     news_page)
                 newslist = self.db.query(sql)
         else:
-            sql = "SELECT `t_news`.`id`,`t_news`.`title`,`t_news`.`pubtime`,`t_news`.`url`,`t_news`.`tag`,`t_news`.`refer`,`t_news`.`abstract`,`t_news`.`body`,`t_news`.`link_business_id`,`t_news`.`newsid`,`t_news`.`stkcode`,`t_news`.`stkname`,`t_news`.`stkindustry`,`t_news`.`instime` FROM `bigdata`.`t_news` where  length(stkcode)>1 and tag=%s order by pubtime desc limit {}, 100".format(
+            sql = "SELECT `t_news`.`id`,`t_news`.`title`,`t_news`.`pubtime`,`t_news`.`url`,`t_news`.`tag`,`t_news`.`refer`,`t_news`.`abstract`,`t_news`.`body`,`t_news`.`link_business_id`,`t_news`.`newsid`,`t_news`.`stkcode`,`t_news`.`stkname`,`t_news`.`stkindustry`,`t_news`.`instime` FROM `bigdata`.`t_news` where  length(stkcode)>1 and tag=%s order by pub_time desc limit {}, 100".format(
                 news_page)
             newslist = self.db.query(sql, news_type)
         self.render("stock_news_list.html", userinfo=self.current_user, newslists=newslist, page_count=page_count,
