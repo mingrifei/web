@@ -64,7 +64,7 @@
                                     {{business_newscount.news_count}}
                                 </div>
                                 <div class="widget-statistic-description">
-                                    其中上市公司信息约为 <strong>{{business_newscount.news_count-200000}}</strong>
+                                    其中上市公司信息约为 <strong>{{business_newscount.news_count*0.9}}</strong>
                                 </div>
                                 <span class="widget-statistic-icon am-icon-credit-card-alt"></span>
                             </div>
@@ -199,7 +199,7 @@
                                         {% for newslist_finance in newslist_finances %}
 
                                             <tr class="gradeX">
-                                                <td><a target="_blank" href="news_detail.html?id={{ newslist_finance.id }}">{{newslist_finance.title}}</a></td>
+                                                <td><a target="_blank" href="stock_news_detail.html?id={{ newslist_finance.id }}">{{newslist_finance.title}}</a></td>
                                             </tr>
                                          {% end %}
                                             <!-- more data -->
