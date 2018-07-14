@@ -22,7 +22,7 @@
                             <div class="widget-head am-cf">
                                 <div class="widget-title am-fl">输入要查询的企业名称</div>
                                 <div class="widget-function am-fr">
-                                    <a href="javascript:;" class="am-icon-cog"></a>
+                                    <a href="javascript:" class="am-icon-cog"></a>
                                 </div>
                             </div>
                             <div class="widget-body am-fr">
@@ -57,14 +57,14 @@
                     <div class="am-u-sm-12 am-u-md-6 am-u-lg-4">
                         <div class="widget widget-primary am-cf">
                             <div class="widget-statistic-header">
-                                共计注册资本总额
+                                共计收录的公司资讯
                             </div>
                             <div class="widget-statistic-body">
                                 <div class="widget-statistic-value">
-                                    ￥{{business_count.business_reg_capital}}亿
+                                    {{business_newscount.news_count}}
                                 </div>
                                 <div class="widget-statistic-description">
-                                    其中新三板企业注册资本为 <strong>2,940,355亿</strong> 人民币
+                                    其中上市公司信息约为 <strong>{{business_newscount.news_count-200000}}</strong>
                                 </div>
                                 <span class="widget-statistic-icon am-icon-credit-card-alt"></span>
                             </div>
@@ -94,7 +94,7 @@
                             <div class="widget-head am-cf">
                                 <div class="widget-title am-fl">企业收录信息分类（单元：亿元）</div>
                                 <div class="widget-function am-fr">
-                                    <a href="javascript:;" class="am-icon-cog"></a>
+                                    <a href="javascript:" class="am-icon-cog"></a>
                                 </div>
                             </div>
                             <div class="widget-body-md widget-body tpl-amendment-echarts am-fr" id="tpl-echarts">
@@ -108,7 +108,7 @@
                             <div class="widget-head am-cf">
                                 <div class="widget-title am-fl">收录企业信息分布</div>
                                 <div class="widget-function am-fr">
-                                    <a href="javascript:;" class="am-icon-cog"></a>
+                                    <a href="javascript:" class="am-icon-cog"></a>
                                 </div>
                             </div>
                             <div class="widget-body widget-body-md am-fr">

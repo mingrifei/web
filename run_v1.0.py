@@ -115,9 +115,9 @@ class Application(tornado.web.Application):
             (r"/authdeny.html", authdeny),
         ]
         settings = dict(
-            blog_title=u"辅投助手_企业信息查询_公司查询_工商查询_企业信用信息查询系统",
-            description=u"辅投助手专注服务于个人与企业信息查询,为您提供证券、基金、银行、阳光私募公司查询,工商信息查询,企业查询,工商查询,企业信用信息查询等相关信息,帮您快速了解企业信息,企业工商信息,企业信用信息等企业经营和人员投资状况,查询更多信息请到辅助投资助手！",
-            keywords=u"辅投助手，天眼查,企业查询,公司查询,工商查询,信用查询,企业信息查询,企业工商信息查询,企业信用查询,企业信用信息查询系统,启信宝,企查查,红盾网",
+            blog_title=u"辅投助手_企业信息查询_公司查询_提供证券、基金、银行、上市企业相关资讯及数据",
+            description=u"辅投助手专注服务于个人与企业信息查询,为您提供证券、基金、银行、阳光私募公司、上市企业信息查询,工商信息查询,企业研究报告,企业新闻,企业信用信息查询等相关信息,帮您快速了解企业信息,企业工商信息,企业信用信息等企业经营和人员投资状况,查询更多信息请到辅助投资助手！",
+            keywords=u"辅投助手，上市企业新闻,企业信息查询,公司查询,工商查询,企业研究报告,金融人才信息,企业信息监控,企业信用查询,企业信用信息查询系统",
             template_path=os.path.join(os.path.dirname(__file__), "template"),
             static_path=os.path.join(os.path.dirname(__file__), "statics"),
             ui_modules={"Entry": EntryModule},
@@ -177,20 +177,50 @@ class HomeHandler(BaseHandler):
             newslist_ent=self.db.query("SELECT `t_news`.`id`,     `t_news`.`title`,     `t_news`.`pubtime`,     `t_news`.`url`,     `t_news`.`tag`,     `t_news`.`refer`,     `t_news`.`body`,     `t_news`.`link_business_id` FROM `bigdata`.`t_news` where tag='ent' order by  pub_time desc limit 10 ")
             stock_report=self.db.query("SELECT `stock_report`.`id`,`stock_report`.`reportname`,`stock_report`.`tag`,`stock_report`.`pubdate`,`stock_report`.`pubtime`,`stock_report`.`refer`,`stock_report`.`stkcode`,`stock_report`.`stkname`,`stock_report`.`body`,`stock_report`.`url`,`stock_report`.`ywpj`,`stock_report`.`pjbd`,`stock_report`.`pjjg`,`stock_report`.`ycsy1`,`stock_report`.`ycsyl1`,`stock_report`.`ycsy2`,`stock_report`.`ycsyl2`,`stock_report`.`instime` FROM `bigdata`.`stock_report` order by pubdate desc limit 10 ")
 
-            business_count = self.db.get("SELECT FORMAT(sum(case when business_reg_capital like '%%万元人民币%%' "
-                                           "then replace(business_reg_capital,'万元人民币','')*10000 "
-                                            "when business_reg_capital like '%%未公开%%' "
-                                            "then 0 "
-                                            "when business_reg_capital like '%%万美元%%' "
-                                            "then replace(business_reg_capital,'万美元','')*60000 "
-                                             "when business_reg_capital like '%%万人民币%%' "
-                                            "then replace(business_reg_capital,'万人民币','')*10000 "
-                                              "when business_reg_capital like '%%万%%' "
-                                            "then replace(business_reg_capital,'万','')*10000 "
-                                           "else business_reg_capital end)/100000000,2) `business_reg_capital`, "
-                                           "format(count(*),0) `business_count` FROM business_base LIMIT 5")
-            business_list = self.db.query("SELECT    `business_base`.`business_id`,    `business_base`.`business_name`,    `business_base`.`business_industry`,    `business_base`.`business_score`FROM `bigdata`.`business_base` where business_name!='' and business_id!='' order by rand() desc limit 10 ")
-            business_public_list = self.db.query("SELECT    `business_base`.`business_id`,    `business_base`.`business_name`,    `business_base`.`business_industry`,    `business_base`.`business_score`FROM `bigdata`.`business_base` where business_name!='' and business_plate='A' and business_id!='' order by rand()  limit 10")
+            business_newscount = self.db.get("select count(*) news_count from bigdata.t_news t ")
+            business_count = self.db.get("select count(*) business_count from bigdata.business_base")
+            business_list = self.db.query("""
+                                    SELECT 
+                                        t1.business_id,
+                                        t1.business_name,
+                                        t1.business_industry,
+                                        t1.business_score
+                                    FROM
+                                        `bigdata`.`business_base` AS t1
+                                            JOIN
+                                        (SELECT 
+                                            ROUND(RAND() * (SELECT 
+                                                        MAX(id)
+                                                    FROM
+                                                        `bigdata`.`business_base`)) AS id
+                                        ) AS t2
+                                    WHERE
+                                        t1.id >= t2.id
+                                    ORDER BY t1.id ASC
+                                    LIMIT 10
+            
+            """)
+            business_public_list = self.db.query("""
+                SELECT 
+                    t1.business_id,
+                    t1.business_name,
+                    t1.business_industry,
+                    t1.business_score
+                FROM
+                   (SELECT * FROM  `bigdata`.`business_base` where business_plate='A') AS t1
+                        JOIN
+                    (SELECT 
+                        ROUND(RAND() * (SELECT 
+                                    MAX(id)
+                                FROM
+                                    `bigdata`.`business_base` where business_plate='A')) AS id
+                    ) AS t2
+                WHERE
+                    t1.id >= t2.id
+                ORDER BY t1.id ASC
+                LIMIT 10
+            
+            """)
 
             self.render("index.html", userinfo=userinfo,
                         business_count=business_count,
@@ -200,6 +230,7 @@ class HomeHandler(BaseHandler):
                         newslist_ents=newslist_ent,
                         business_lists=business_list,
                         business_public_lists=business_public_list,
+                        business_newscount=business_newscount,
                         stock_reports=stock_report)
 #企业搜索查询
 class Business_search(BaseHandler):
