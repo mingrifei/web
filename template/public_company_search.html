@@ -36,29 +36,16 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="widget-body am-fl">
-								<div class="am-fl">
-									<div class="widget-title am-fl">大家都在搜索的企业：</div>
-								</div>
-							</div>
-                            <div class="widget-body am-fl">
-                            {% for  business_search_hot in business_search_hots%}
-                                <div class="m-u-sm-12 am-u-md-12 am-u-lg-4">
 
-                                        <div class="widget-title am-fl"><a href="business_list.html?business_name={{business_search_hot.system_operate_business_name}}">{{business_search_hot.system_operate_business_name}}</a></div>
-
-                                </div>
-                            {%end%}
-                            </div>
                             <div class="widget-head am-cf ">
                                 <div class="widget-title am-fl">沪深交易所上市企业</div>
                             </div>
                             <div class="widget-body am-fl">
                              {% for  public_company_list in public_company_lists%}
 
-								<div class="am-u-sm-12 am-u-lg-4">
+								<div class="am-u-sm-6 am-u-lg-2">
                                     <div class="widget-title am-fl">
-                                        <a href="business_detail.html?id={{public_company_list.business_id}}">{{public_company_list.business_name}}</a>
+                                        <a href="business_detail.html?id={{public_company_list.business_id}}">{{public_company_list.stkcode}}-{{public_company_list.stkname}}</a>
                                         </div>
 								</div>
 

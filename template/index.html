@@ -303,7 +303,7 @@
                                          {% for business_list in business_lists %}
                                             <tr class="gradeX">
                                                 <td><a target="_blank" href="business_detail.html?id={{ business_list.business_id }}">{{business_list.business_name}}</a></td>
-                                                <td><button type="button" class="am-btn am-btn-default am-round am-btn-xs am-btn-primary">{{business_list.business_industry}}</button></td>
+                                                <td>{%if business_list.business_industry != None%}<button type="button" class="am-btn am-btn-default am-round am-btn-xs am-btn-primary">{{business_list.business_industry}}</button>{% end %}</td>
                                             </tr>
                                          {% end %}
                                             <!-- more data -->
@@ -329,7 +329,7 @@
 
                                             <tr class="gradeX">
                                                 <td><a target="_blank" href="business_detail.html?id={{ business_public_list.business_id }}">{{business_public_list.business_name}}</a></td>
-                                                <td><button type="button" class="am-btn am-btn-default am-round am-btn-xs am-btn-success">{{business_public_list.business_industry}}</button></td>
+                                                <td>{% if business_public_list.business_industry !=None %}<button type="button" class="am-btn am-btn-default am-round am-btn-xs am-btn-success">{{business_public_list.business_industry}}</button>{% end %}</td>
                                             </tr>
                                          {% end %}
                                             <!-- more data -->

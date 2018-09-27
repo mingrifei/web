@@ -9679,7 +9679,7 @@ TODO:
   z-index: 99;
   float: left;
   width: 100%;
-  padding: 10px 10px 15px;
+  padding: 5px 2px 3px;
   visibility: hidden;
   -webkit-transition: -webkit-transform 0.3s;
   transition: -webkit-transform 0.3s;
