@@ -172,7 +172,7 @@ class HomeHandler(BaseHandler):
             newslist = self.db.query(
                 "SELECT `t_news`.`id`,     `t_news`.`title`,     `t_news`.`pubtime`,     `t_news`.`url`,     `t_news`.`tag`,     `t_news`.`refer`,     `t_news`.`body`,     `t_news`.`link_business_id` FROM `bigdata`.`t_news` order by  pub_time desc limit 6 ")
             newslist_finance = self.db.query(
-                "SELECT `t_news`.`id`,     `t_news`.`title`,     `t_news`.`pubtime`,     `t_news`.`url`,     `t_news`.`tag`,     `t_news`.`refer`,     `t_news`.`body`,     `t_news`.`link_business_id` FROM `bigdata`.`t_news` where tag='finance' order by  pub_time desc limit 10 ")
+                "SELECT `t_news`.`id`,     `t_news`.`title`,     `t_news`.`pubtime`,     `t_news`.`url`,     `t_news`.`tag`,     `t_news`.`refer`,     `t_news`.`body`,     `t_news`.`link_business_id`,`t_news`.`stkname` FROM `bigdata`.`t_news` where length(stkcode)>1 order by  pub_time desc limit 10 ")
             newslist_tech = self.db.query(
                 "SELECT `t_news`.`id`,     `t_news`.`title`,     `t_news`.`pubtime`,     `t_news`.`url`,     `t_news`.`tag`,     `t_news`.`refer`,     `t_news`.`body`,     `t_news`.`link_business_id` FROM `bigdata`.`t_news` where tag='tech' order by  pub_time desc limit 10 ")
             newslist_ent = self.db.query(
@@ -224,7 +224,12 @@ class HomeHandler(BaseHandler):
                 LIMIT 10
 
             """)
-
+            sql_vippersonal="SELECT rpi_photo_path,aoi_id, RPI_NAME, sco_name, aoi_name, md5(aoi_name) vaoi_name, eco_name, pti_name, cer_num, md5(cer_num) AS vcer_num FROM ( SELECT s.*, RIGHT (s.CER_NUM, 11) vcer_num FROM `bigdata`.`person_stock_info` s ) a WHERE vcer_num >= (( SELECT MAX(a.vcer_num) FROM ( SELECT *, RIGHT (CER_NUM, 11) vcer_num FROM `bigdata`.`person_stock_info` ) a ) - ( SELECT MIN(a1.vcer_num) FROM ( SELECT *, RIGHT (CER_NUM, 11) vcer_num FROM `bigdata`.`person_stock_info` ) a1 )) * RAND() * 2000 + ( SELECT MIN(a2.vcer_num) FROM ( SELECT *, RIGHT (CER_NUM, 11) vcer_num FROM `bigdata`.`person_stock_info` ) a2 ) LIMIT 4"
+            vippersonal_list=self.db.query(sql_vippersonal)
+            sql_personal="SELECT aoi_id, RPI_NAME, sco_name, aoi_name, md5(aoi_name) vaoi_name, eco_name, pti_name, cer_num, md5(cer_num) AS vcer_num FROM ( SELECT s.*, RIGHT (s.CER_NUM, 11) vcer_num FROM `bigdata`.`person_stock_info` s ) a WHERE vcer_num >= (( SELECT MAX(a.vcer_num) FROM ( SELECT *, RIGHT (CER_NUM, 11) vcer_num FROM `bigdata`.`person_stock_info` ) a ) - ( SELECT MIN(a1.vcer_num) FROM ( SELECT *, RIGHT (CER_NUM, 11) vcer_num FROM `bigdata`.`person_stock_info` ) a1 )) * RAND() * 5000 + ( SELECT MIN(a2.vcer_num) FROM ( SELECT *, RIGHT (CER_NUM, 11) vcer_num FROM `bigdata`.`person_stock_info` ) a2 ) LIMIT 10"
+            stockpersonallist=self.db.query(sql_personal)
+            sql_banklist="SELECT t1.business_id, t1.business_name, t1.business_industry, t1.business_score FROM `bigdata`.`business_base` AS t1 WHERE t1.business_name LIKE '%%银行%%' ORDER BY t1.id ASC LIMIT 10"
+            banklist=self.db.query(sql_banklist)
             self.render("index.html", userinfo=userinfo,
                         business_count=business_count,
                         newslists=newslist,
@@ -234,7 +239,11 @@ class HomeHandler(BaseHandler):
                         business_lists=business_list,
                         business_public_lists=business_public_list,
                         business_newscount=business_newscount,
-                        stock_reports=stock_report)
+                        stock_reports=stock_report,
+                        stockpersonallists=stockpersonallist,
+                        banklists=banklist,
+                        vippersonallists=vippersonal_list
+                        )
 
 
 # 企业搜索查询
