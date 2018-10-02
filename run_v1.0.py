@@ -772,7 +772,7 @@ class person_stock_Handler(BaseHandler):
         userinfo = self.current_user
         if searchname is not None:
             res = self.db.query(
-                "SELECT md5( `person_stock_info`.`AOI_ID` ) AOI_ID, `person_stock_info`.`AOI_NAME`, MD5( `person_stock_info`.`RPI_ID` ) RPI_ID, `person_stock_info`.`RPI_NAME`, `person_stock_info`.`ADI_ID`, `person_stock_info`.`ADI_NAME`, `person_stock_info`.`SCO_NAME`, `person_stock_info`.`PTI_NAME`, `person_stock_info`.`ECO_NAME`, `person_stock_info`.`CER_NUM`, `person_stock_info`.`PPP_GET_DATE`, `person_stock_info`.`PPP_END_DATE` FROM `bigdata`.`person_stock_info` WHERE MATCH (RPI_NAME, CER_NUM) AGAINST (% s)",
+                "SELECT md5( `person_stock_info`.`AOI_ID` ) AOI_ID, `person_stock_info`.`AOI_NAME`, MD5( `person_stock_info`.`RPI_ID` ) RPI_ID, `person_stock_info`.`RPI_NAME`, `person_stock_info`.`ADI_ID`, `person_stock_info`.`ADI_NAME`, `person_stock_info`.`SCO_NAME`, `person_stock_info`.`PTI_NAME`, `person_stock_info`.`ECO_NAME`, `person_stock_info`.`CER_NUM`, md5(`person_stock_info`.`CER_NUM`) VCER_NUM,`person_stock_info`.`PPP_GET_DATE`, `person_stock_info`.`PPP_END_DATE` FROM `bigdata`.`person_stock_info` WHERE MATCH (RPI_NAME, CER_NUM) AGAINST (% s)",
                 searchname)
         else:
             if searchorgid is not None:
