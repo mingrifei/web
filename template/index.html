@@ -310,9 +310,9 @@
                 <div class="am-u-md-3">
                             <div class="card-box widget-user">
                                 <div>
-                                    <a href="stock_personal_detail.html?cerid={{vippersonallist['vcer_num']}}" target="_blank"><img src="http://person.sac.net.cn/photo/images/{{ vippersonallist.RPI_PHOTO_PATH }}" class="img-responsive img-circle" alt="user"></a>
+                                    <a href="person_stock_detail.html?cer_id={{vippersonallist['vcer_num']}}" target="_blank"><img onerror="this.src='http://person.sac.net.cn/photo/images/{{ vippersonallist.RPI_PHOTO_PATH }}'" src="http://exam.sac.net.cn/photo/images/{{ vippersonallist.RPI_PHOTO_PATH }}" class="img-responsive img-circle" alt="{{ vippersonallist.RPI_NAME }}_{{ vippersonallist.AOI_NAME }}"></a>
                                     <div class="wid-u-info">
-                                        <h5 class="m-t-0 m-b-5 font-600"><a href="stock_personal_detail.html?cerid={{vippersonallist['vcer_num']}}" target="_blank">{{ vippersonallist.RPI_NAME }}</a></h5>
+                                        <h5 class="m-t-0 m-b-5 font-600"><a href="person_stock_detail.html?cer_id={{vippersonallist['vcer_num']}}" target="_blank">{{ vippersonallist.RPI_NAME }}</a></h5>
                                         <p class="text-muted m-b-5 ">{{ vippersonallist.AOI_NAME }}</p>
                                         <p class="text-muted m-b-5 ">{{ vippersonallist.PTI_NAME }}</p>
                                     </div>
@@ -326,7 +326,7 @@
                             <div class="widget-head am-cf">
                                 <div class="widget-title am-fl">证券人才库</div>
                                 <div class="widget-function am-fr">
-                                    <a href="stock_personal.html" class="am-icon-cog">查看更多</a>
+                                    <a href="person_stock.html" class="am-icon-cog">查看更多</a>
                                 </div>
                             </div>
                             <div class="widget-body  am-fr">
@@ -347,7 +347,7 @@
                                                   {% for index, vpersonal_list in enumerate(stockpersonallists)%}
                                                 <tr class="gradeX">
                                                     <td>{{index}}</td>
-                                                    <td><a href="stock_personal_detail.html?cerid={{vpersonal_list['vcer_num']}}" target="_blank">{{vpersonal_list['RPI_NAME']}}</a></td>
+                                                    <td><a href="person_stock_detail.html?cer_id={{vpersonal_list['vcer_num']}}" target="_blank">{{vpersonal_list['RPI_NAME']}}</a></td>
                                                     <td>{{vpersonal_list['SCO_NAME']}}</td>
                                                     <td>{{vpersonal_list['ECO_NAME']}}</td>
                                                     <td>{{vpersonal_list['AOI_NAME']}}</td>
@@ -364,20 +364,103 @@
                     <div class="am-u-sm-12 am-u-md-12 am-u-lg-6 widget-margin-bottom-lg">
                         <div class="widget am-cf widget-body-lg">
                             <div class="widget-head am-cf">
-                                <div class="widget-title am-fl">银行信息</div>
+                                <div class="widget-title am-fl">证券公司信息</div>
                                 <div class="widget-function am-fr">
-                                    <a href="business_list.html?business_name=银行" class="am-icon-cog">查看更多</a>
+                                    <a href="business_list.html?business_name=证券" class="am-icon-cog">查看更多</a>
                                 </div>
                             </div>
                             <div class="widget-body  am-fr">
                                 <div class="am-scrollable-horizontal ">
                                     <table width="100%" class="am-table am-table-compact am-text-nowrap tpl-table-black " >
                                         <tbody>
-                                        {% for banklist in banklists %}
+                                        {% for stockcompanylist in stockcompanylists %}
 
                                             <tr class="gradeX">
-                                                <td><a target="_blank" href="business_detail.html?id={{ banklist.business_id }}">{{banklist.business_name}}</a></td>
-                                                <td>{% if banklist.business_industry !=None %}<button type="button" class="am-btn am-btn-default am-round am-btn-xs am-btn-success">{{banklist.business_industry}}</button>{% end %}</td>
+                                                <td><a target="_blank" href="business_detail.html?id={{ stockcompanylist.business_id }}">{{stockcompanylist.business_name}}</a></td>
+                                                <td>{% if stockcompanylist.business_industry !=None %}<button type="button" class="am-btn am-btn-default am-round am-btn-xs am-btn-success">{{stockcompanylist.business_industry}}</button>{% end %}</td>
+                                            </tr>
+                                         {% end %}
+                                            <!-- more data -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% for vipfundpersonallist in vipfundpersonal_lists %}
+
+                <div class="am-u-md-3">
+                            <div class="card-box widget-user">
+                                <div>
+                                    <a href="person_fund_detail.html?rpi_id={{vipfundpersonallist['RPI_ID']}}" target="_blank"><img  src="http://person.amac.org.cn/photo/apache-tomcat-6.0.35/webapps/image_product/images/{{ vipfundpersonallist.RPI_PHOTO_PATH }}" class="img-responsive img-circle" alt="{{ vipfundpersonallist.RPI_NAME }}_{{ vipfundpersonallist.AOI_NAME }}"></a>
+                                    <div class="wid-u-info">
+                                        <h5 class="m-t-0 m-b-5 font-600"><a href="person_fund_detail.html?rpi_id={{vipfundpersonallist['RPI_ID']}}" target="_blank">{{ vipfundpersonallist.RPI_NAME }}</a></h5>
+                                        <p class="text-muted m-b-5 ">{{ vipfundpersonallist.AOI_NAME }}</p>
+                                        <p class="text-muted m-b-5 ">{{ vipfundpersonallist.PTI_NAME }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                </div>
+                {% end %}
+                <div class="row am-cf">
+                    <div class="am-u-sm-12 am-u-md-12 am-u-lg-6 widget-margin-bottom-lg">
+                        <div class="widget am-cf widget-body-lg">
+                            <div class="widget-head am-cf">
+                                <div class="widget-title am-fl">基金人才库</div>
+                                <div class="widget-function am-fr">
+                                    <a href="person_fund.html" class="am-icon-cog">查看更多</a>
+                                </div>
+                            </div>
+                            <div class="widget-body  am-fr">
+                                <div class="am-scrollable-horizontal ">
+                                    <table width="100%" class="am-table am-table-compact am-text-nowrap tpl-table-black " id="example-r">
+                                            <thead>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>姓名</th>
+                                                    <th>性别</th>
+                                                    <th>学历</th>
+                                                    <th>执业机构</th>
+                                                    <th>执业岗位</th>
+
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                  {% for index, fundpersonallist in enumerate(fundpersonallists)%}
+                                                <tr class="gradeX">
+                                                    <td>{{index}}</td>
+                                                    <td><a href="person_fund_detail.html?rpi_id={{fundpersonallist['RPI_ID']}}" target="_blank">{{fundpersonallist['RPI_NAME']}}</a></td>
+                                                    <td>{{fundpersonallist['SCO_NAME']}}</td>
+                                                    <td>{{fundpersonallist['ECO_NAME']}}</td>
+                                                    <td>{{fundpersonallist['AOI_NAME']}}</td>
+                                                    <td>{{fundpersonallist['PTI_NAME']}}</td>
+
+                                                </tr>
+                                                  {%end%}
+                                                  </tbody>
+                                        </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="am-u-sm-12 am-u-md-12 am-u-lg-6 widget-margin-bottom-lg">
+                        <div class="widget am-cf widget-body-lg">
+                            <div class="widget-head am-cf">
+                                <div class="widget-title am-fl">基金公司信息</div>
+                                <div class="widget-function am-fr">
+                                    <a href="business_list.html?business_name=基金" class="am-icon-cog">查看更多</a>
+                                </div>
+                            </div>
+                            <div class="widget-body  am-fr">
+                                <div class="am-scrollable-horizontal ">
+                                    <table width="100%" class="am-table am-table-compact am-text-nowrap tpl-table-black " >
+                                        <tbody>
+                                        {% for fundcompanylist in fundcompanylists %}
+
+                                            <tr class="gradeX">
+                                                <td><a target="_blank" href="business_detail.html?id={{ fundcompanylist.business_id }}">{{fundcompanylist.business_name}}</a></td>
+                                                <td>{% if fundcompanylist.business_industry !=None %}<button type="button" class="am-btn am-btn-default am-round am-btn-xs am-btn-success">{{fundcompanylist.business_industry}}</button>{% end %}</td>
                                             </tr>
                                          {% end %}
                                             <!-- more data -->
@@ -415,7 +498,7 @@
                     <div class="am-u-sm-12 am-u-md-12 am-u-lg-6 widget-margin-bottom-lg">
                         <div class="widget am-cf widget-body-lg">
                             <div class="widget-head am-cf">
-                                <div class="widget-title am-fl">金融企业</div>
+                                <div class="widget-title am-fl">企业展播</div>
                                 <div class="widget-function am-fr">
                                     <a href="stock_company_list.html" class="am-icon-cog">查看更多</a>
                                 </div>

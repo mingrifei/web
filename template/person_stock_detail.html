@@ -1,0 +1,103 @@
+{% extends "frame.html" %}
+{% block head %}
+    <title>{{personal_info['RPI_NAME']}}_{{personal_info['AOI_NAME']}}_证券从业信息查询_[{{ escape(handler.settings["blog_title"]) }}]</title>
+    <meta name="description" content="辅投助手为您提供{{personal_info['AOI_NAME']}}{{personal_info['RPI_NAME']}}人员信息，证券公司，基金公司从业人员信息！">
+    <meta name="keywords" content="{{personal_info['AOI_NAME']}}{{personal_info['RPI_NAME']}}证券从业资格查询，执业岗位{{personal_info['PTI_NAME']}}，证书编号{{personal_info['CER_NUM']}}，{{personal_info['AOI_NAME']}}从业资格查询，{{personal_info['RPI_NAME']}}_{{personal_info['AOI_NAME']}}私募基金从业资格查询,资产管理公司从业资格查询，{{personal_info['AOI_NAME']}}信息">
+{% end %}
+{% block main %}
+        <div class="tpl-content-wrapper" >
+
+            <div class="row-content am-cf">
+                <div class="row  am-u-sm-12 am-u-md-12 am-u-lg-12">
+                    <div class="widget-body widget-body-lg am-fr">
+                        <div class="am-scrollable-horizontal ">
+                        <table width="100%" class="am-table am-table-compact tpl-table-black am-text-nowrap ">
+                        <tbody>
+                        <tr class="gradeX">
+                        <td>姓名：</td>
+                        <td>{{personal_info['RPI_NAME']}}</td>
+                        <td>性别:</td>
+                        <td>{{personal_info['SCO_NAME']}}</td>
+                        <td rowspan="4" colspan="2">
+                            <img width="120px" height="160px" onerror="this.src='http://person.sac.net.cn/photo/images/{{personal_info['RPI_PHOTO_PATH']}}" src="http://exam.sac.net.cn/photo/images/{{personal_info['RPI_PHOTO_PATH']}}"></td>
+                        <td></td>
+                        </tr>
+                        <tr class="even gradeC">
+                        <td>学历：</td>
+                        <td>{{personal_info['ECO_NAME']}}</td>
+                        <td>执业机构:</td>
+                        <td><a  href="business_list.html?business_name={{personal_info['AOI_NAME']}}" target="_blank" >{{personal_info['AOI_NAME']}}</a></td>
+
+                        </tr>
+                        <tr class="even gradeX">
+                        <td>证书编号：</td>
+                        <td>{{personal_info['CER_NUM']}}</td>
+                        <td>执业岗位:</td>
+                        <td>{{personal_info['PTI_NAME']}}</td>
+                        </tr>
+                        <tr class="even gradeC">
+                        <td>证书取得日期：</td>
+                        <td>{{personal_info['PPP_GET_DATE']}}</td>
+                        <td>证书有效截止日期:</td>
+                        <td>{{personal_info['PPP_END_DATE']}}</td>
+                        </tr>
+
+                        <tr class="even gradeX">
+                        <td colspan="6">注册变更记录：</td>
+                        </tr>
+                        <tr>
+                            <td>序号</td>
+                            <td>证书编号</td>
+                            <td>取得日期</td>
+                            <td>执业机构</td>
+                            <td>执业岗位</td>
+                            <td>证书状态</td>
+                        </tr>
+                        {% for index, vpersonal_info_chg in enumerate(personal_info_chg)%}
+                        <tr>
+                            <td>{{index}}</td>
+                            <td>{{vpersonal_info_chg['CER_NUM']}}</td>
+                            <td>{{vpersonal_info_chg['OBTAIN_DATE']}}</td>
+                            <td><a href="person_stock.html?searchname={{vpersonal_info_chg['AOI_NAME']}}" target="_blank" >{{vpersonal_info_chg['AOI_NAME']}}</a></td>
+                            <td>{{vpersonal_info_chg['PTI_NAME']}}</td>
+                            <td>{{vpersonal_info_chg['CERTC_NAME']}}</td>
+                        </tr>
+                        {% end %}
+
+                        <!-- more data -->
+                        </tbody>
+                        </table>
+                        </div>
+                        </div>
+                </div>
+            </div>
+            <div class="container-fluid am-cf">
+                <div class="row">
+                    <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+                        <div class="page-header-heading"><span class="am-icon-home page-header-heading-icon"></span> 相关推荐人才 </div>
+                        {% for vippersonallist in vippersonallists %}
+
+                            <div class="am-u-md-3">
+                                        <div class="card-box widget-user">
+                                            <div>
+                                                <a href="person_fund_detail.html?rpi_id={{vippersonallist['RPI_ID']}}" target="_blank"><img onerror="this.src='http://person.sac.net.cn/photo/images/{{ vippersonallist.RPI_PHOTO_PATH }}'" src="http://exam.sac.net.cn/photo/images/{{ vippersonallist.RPI_PHOTO_PATH }}" class="img-responsive img-circle"  alt="{{ vippersonallist.RPI_NAME }}_{{ vippersonallist.AOI_NAME }}"></a>
+                                                <div class="wid-u-info">
+                                                    <h5 class="m-t-0 m-b-5 font-600"><a href="person_stock_detail.html?cer_id={{vippersonallist['vcer_num']}}" target="_blank">{{ vippersonallist.RPI_NAME }}</a></h5>
+                                                    <p class="text-muted m-b-5 ">{{ vippersonallist.AOI_NAME }}</p>
+                                                    <p class="text-muted m-b-5 ">{{ vippersonallist.PTI_NAME }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                            </div>
+                        {% end %}
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+<script>
+
+</script>
+{% end %}
