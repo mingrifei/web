@@ -37,6 +37,7 @@ from bs4 import BeautifulSoup
 import lxml
 from tornado.options import define, options
 from dbconfig import define
+#from orm import AsyncMysqlClient
 
 # A thread pool to be used for password hashing with bcrypt.
 executor = concurrent.futures.ThreadPoolExecutor(2)
@@ -109,6 +110,10 @@ class Application(tornado.web.Application):
             (r"/stock_news_list.html", Stock_news_list_Handler),
             # 个股新闻详细信息
             (r"/stock_news_detail.html", Stock_news_detail_Handler),
+            # 私募基金产品信息
+            (r"/fund_product_pf.html", fund_product_pf_Handler),
+            # 私募基金产品信息--详情
+            (r"/fund_product_pf_detail.html", fund_product_pf__detail_Handler),
 
             # 无权限页面
             (r"/authdeny.html", authdeny),
@@ -124,14 +129,17 @@ class Application(tornado.web.Application):
             cookie_secret="__TODO:_GENERATE_YOUR_OWN_RANDOM_VALUE_HERE__",
             login_url="/auth/login",
             debug=False,
+            autoreload=True
         )
         super(Application, self).__init__(handlers, **settings)
         # Have one global connection to the blog DB across all handlers
+        #self.orm=AsyncMysqlClient()
+        #self.dbs_query=self.orm.query_all
         self.db = torndb.Connection(
             host=options.mysql_host, database=options.mysql_database,
             user=options.mysql_user, password=options.mysql_password)
 
-        self.maybe_create_tables()
+        #self.maybe_create_tables()
 
     def maybe_create_tables(self):
         try:
@@ -149,7 +157,8 @@ class BaseHandler(tornado.web.RequestHandler):
     @property
     def db(self):
         return self.application.db
-
+    def orm_query_all(self,sql,args=None):
+        return self.application.dbs_query(sql,args)
     def get_current_user(self):
         # user_id = self.get_secure_cookie("login_user")
         user_id = 2
@@ -167,14 +176,15 @@ class BaseHandler(tornado.web.RequestHandler):
 
 
 class HomeHandler(BaseHandler):
+    @tornado.web.asynchronous
+    @gen.coroutine
     def get(self):
         userinfo = self.current_user
         if self.current_user == None:
             self.redirect("/auth/login")
             return
         else:  # 登录成功后
-            newslist = self.db.query(
-                "SELECT `t_news`.`id`,     `t_news`.`title`,     `t_news`.`pubtime`,     `t_news`.`url`,     `t_news`.`tag`,     `t_news`.`refer`,     `t_news`.`body`,     `t_news`.`link_business_id` FROM `bigdata`.`t_news` order by  pub_time desc limit 6 ")
+            newslist = self.db.query("SELECT `t_news`.`id`,     `t_news`.`title`,     `t_news`.`pubtime`,     `t_news`.`url`,     `t_news`.`tag`,     `t_news`.`refer`,     `t_news`.`body`,     `t_news`.`link_business_id` FROM `bigdata`.`t_news` order by  pub_time desc limit 6 ")
             newslist_finance = self.db.query(
                 "SELECT `t_news`.`id`,     `t_news`.`title`,     `t_news`.`pubtime`,     `t_news`.`url`,     `t_news`.`tag`,     `t_news`.`refer`,     `t_news`.`body`,     `t_news`.`link_business_id`,`t_news`.`stkname` FROM `bigdata`.`t_news` where length(stkcode)>1 order by  pub_time desc limit 10 ")
             newslist_tech = self.db.query(
@@ -233,7 +243,7 @@ class HomeHandler(BaseHandler):
             sql_personal="SELECT aoi_id, RPI_NAME, sco_name, aoi_name, md5(aoi_name) vaoi_name, eco_name, pti_name, cer_num, md5(cer_num) AS vcer_num FROM ( SELECT s.*, RIGHT (s.CER_NUM, 11) vcer_num FROM `bigdata`.`person_stock_info` s ) a WHERE vcer_num >= (( SELECT MAX(a.vcer_num) FROM ( SELECT *, RIGHT (CER_NUM, 11) vcer_num FROM `bigdata`.`person_stock_info` ) a ) - ( SELECT MIN(a1.vcer_num) FROM ( SELECT *, RIGHT (CER_NUM, 11) vcer_num FROM `bigdata`.`person_stock_info` ) a1 )) * RAND() * 5000 + ( SELECT MIN(a2.vcer_num) FROM ( SELECT *, RIGHT (CER_NUM, 11) vcer_num FROM `bigdata`.`person_stock_info` ) a2 ) LIMIT 10"
             stockpersonallist=self.db.query(sql_personal)
             sql_fundpersonal = "SELECT aoi_id, RPI_NAME, sco_name,md5(rpi_id) RPI_ID, aoi_name, md5(aoi_name) vaoi_name, eco_name, pti_name, cer_num, md5(cer_num) AS vcer_num FROM ( SELECT s.*, RIGHT (s.CER_NUM, 11) vcer_num FROM `bigdata`.`person_fund_base_info` s ) a WHERE vcer_num >= (( SELECT MAX(a.vcer_num) FROM ( SELECT *, RIGHT (CER_NUM, 11) vcer_num FROM `bigdata`.`person_fund_base_info` ) a ) - ( SELECT MIN(a1.vcer_num) FROM ( SELECT *, RIGHT (CER_NUM, 11) vcer_num FROM `bigdata`.`person_fund_base_info` ) a1 )) * RAND() * 100 + ( SELECT MIN(a2.vcer_num) FROM ( SELECT *, RIGHT (CER_NUM, 11) vcer_num FROM `bigdata`.`person_fund_base_info` ) a2 ) LIMIT 11"
-            fundpersonallist = self.db.query(sql_fundpersonal)
+            fundpersonallist =self.db.query(sql_fundpersonal)
             sql_banklist="SELECT t1.business_id, t1.business_name, t1.business_industry, t1.business_score FROM `bigdata`.`business_base` AS t1 WHERE t1.business_name LIKE '%%银行%%' ORDER BY t1.id ASC LIMIT 10"
             banklist=self.db.query(sql_banklist)
             sql_stockcompanylist = "SELECT t1.business_id, t1.business_name, t1.business_industry, t1.business_score FROM `bigdata`.`business_base` AS t1 WHERE t1.business_name LIKE '%%证券%%' ORDER BY t1.id ASC LIMIT 10"
@@ -264,7 +274,8 @@ class HomeHandler(BaseHandler):
 
 # 企业搜索查询
 class Business_search(BaseHandler):
-
+    @tornado.web.asynchronous
+    @gen.coroutine
     def get(self):
         userinfo = self.current_user
         business_search_hiss = self.db.query(
@@ -298,6 +309,8 @@ class Business_search(BaseHandler):
 
 # 企业列表查询
 class Business_list(BaseHandler):
+    @tornado.web.asynchronous
+    @gen.coroutine
     def get(self):
         # business_name = '*'+self.get_argument("business_name", None)+'*'
         business_name = self.get_argument("business_name", None)
@@ -326,9 +339,10 @@ class Business_list(BaseHandler):
             self.create_log(operate_type='200', operate_event=self.get_argument("business_name", None))
         self.render("business_list.html", userinfo=self.current_user, business_list=business_list,business_name=business_name)
 
-
 # 企业详情查询
 class Business_detail(BaseHandler):
+    @tornado.web.asynchronous
+    @gen.coroutine
     def get(self):
         business_id = self.get_argument("id", None)
         business_detail_base = self.db.get(
@@ -437,6 +451,8 @@ class Business_detail(BaseHandler):
 
 # 证券公司查询
 class Stock_company_Handler(BaseHandler):
+    @tornado.web.asynchronous
+    @gen.coroutine
     def get(self):
         v_business_name = self.get_argument("business_name", None)
         userinfo = self.current_user
@@ -456,6 +472,8 @@ class Stock_company_Handler(BaseHandler):
 
 
 class Stock_company_list_Handler(BaseHandler):
+    @tornado.web.asynchronous
+    @gen.coroutine
     def get(self):
         v_business_name = self.get_argument("business_name", None)
         if v_business_name is not None:
@@ -479,6 +497,8 @@ class Stock_company_list_Handler(BaseHandler):
 
 # 证券公司详细信息
 class Stock_company_detail_Handler(BaseHandler):
+    @tornado.web.asynchronous
+    @gen.coroutine
     def get(self):
         business_id = self.get_argument("id", None)
         business_detail_base = self.db.get(
@@ -509,7 +529,8 @@ class Stock_company_detail_Handler(BaseHandler):
 
 # 私募基金公司查询
 class pf_company_search(BaseHandler):
-
+    @tornado.web.asynchronous
+    @gen.coroutine
     def get(self):
         userinfo = self.current_user
         pf_company_provinces = self.db.query(
@@ -529,6 +550,8 @@ class pf_company_search(BaseHandler):
 
 # 私募基金列表查询
 class pf_company_list(BaseHandler):
+    @tornado.web.asynchronous
+    @gen.coroutine
     def get(self):
         # business_name = '*'+self.get_argument("business_name", None)+'*'
         # business_list=self.db.query("select  pf_id,jjglrqc,jjglrqcyw,djbm,zzjgdm,djsj,zcdz,bgdz,zczb,sjzb,sjbl,qyxz,jglx,ygrs,clsj,frdb  from `bigdata`.`pf_base_info` where match(jjglrqc,frdb) against (%s IN BOOLEAN MODE)",business_name)
@@ -562,6 +585,8 @@ class pf_company_list(BaseHandler):
 
 # 私募基金详情
 class pf_detail(BaseHandler):
+    @tornado.web.asynchronous
+    @gen.coroutine
     def get(self):
         business_id = self.get_argument("id", None)
         business_detail_base = self.db.get(
@@ -585,6 +610,8 @@ class pf_detail(BaseHandler):
 
 # 私募管理人发行产品详情
 class pf_product_base(BaseHandler):
+    @tornado.web.asynchronous
+    @gen.coroutine
     def get(self):
         pf_cpid = self.get_argument("id", None)
         pf_product_bases = self.db.get(
@@ -595,6 +622,8 @@ class pf_product_base(BaseHandler):
 
 # 私募地图
 class pf_map_list(BaseHandler):
+    @tornado.web.asynchronous
+    @gen.coroutine
     def get(self):
         # pf_map_list = self.db.query("SELECT c.registerNo, a.business_id, a.business_name, a.business_legal_name, a.business_reg_capital, a.business_reg_time, a.business_industry, a.business_scope, a.business_phone, b.jglx FROM `business_base` a INNER JOIN pf_base_info  b ON a.business_reg_number = b.gszch INNER JOIN pf_base c ON c.registerNo = b.djbm WHERE c.officecity = %s limit 10")
         # print(pf_map_list)
@@ -603,7 +632,8 @@ class pf_map_list(BaseHandler):
 
 # 上市公司查询
 class Public_Company_search_Handler(BaseHandler):
-
+    @tornado.web.asynchronous
+    @gen.coroutine
     def get(self):
         userinfo = self.current_user
         public_company_list = self.db.query(
@@ -619,6 +649,8 @@ class Public_Company_search_Handler(BaseHandler):
 
 
 class api_rest(BaseHandler):
+    @tornado.web.asynchronous
+    @gen.coroutine
     def get(self):
         api_name = self.get_argument("api_name", None)
         if api_name is not None:
@@ -638,7 +670,8 @@ class api_rest(BaseHandler):
 
 # 金融人才证券从业查询
 class Stock_personal_Handler(BaseHandler):
-
+    @tornado.web.asynchronous
+    @gen.coroutine
     def get(self):
         personal_name = self.get_argument("personal_name", None)
         aoid = self.get_argument("aoid", None)
@@ -670,7 +703,8 @@ class Stock_personal_Handler(BaseHandler):
 
 # 金融人才证券从业本地查询
 class Stock_personal_local_Handler(BaseHandler):
-
+    @tornado.web.asynchronous
+    @gen.coroutine
     def get(self):
         personal_name = self.get_argument("personal_name", None)
         userinfo = self.current_user
@@ -686,6 +720,8 @@ class Stock_personal_local_Handler(BaseHandler):
 
 # 金融人才证券从业人员详情
 class Stock_personal_info_Handler(BaseHandler):
+    @tornado.web.asynchronous
+    @gen.coroutine
     def get(self):
         id = self.get_argument("id", None)
         userinfo = self.current_user
@@ -720,13 +756,15 @@ class Stock_personal_info_Handler(BaseHandler):
 
 #基金行业从业人员信息
 class person_fund_Handler(BaseHandler):
+    @tornado.web.asynchronous
+    @gen.coroutine
     def get(self):
         searchname = self.get_argument("searchname", None)
         searchorgid = self.get_argument("searchorgid", None)
         userinfo = self.current_user
         if searchname is not None:
             res = self.db.query(
-                "SELECT	md5(`person_fund_base_info`.`AOI_ID`) AOI_ID,	`person_fund_base_info`.`AOI_NAME`,	`person_fund_base_info`.`OTC_ID`,	`person_fund_base_info`.`OTC_NAME`,	MD5(`person_fund_base_info`.`RPI_ID`) RPI_ID,	`person_fund_base_info`.`RPI_NAME`,	`person_fund_base_info`.`ADI_ID`,	`person_fund_base_info`.`ADI_NAME`,	`person_fund_base_info`.`SCO_NAME`,	`person_fund_base_info`.`PTI_NAME`,	`person_fund_base_info`.`ECO_NAME`,	`person_fund_base_info`.`CER_NUM`,	`person_fund_base_info`.`OBTAIN_DATE`,	`person_fund_base_info`.`ARRIVE_DATE`FROM	`bigdata`.`person_fund_base_info` where MATCH(AOI_NAME,RPI_NAME,CER_NUM) AGAINST(%s)",
+                "SELECT	md5(`person_fund_base_info`.`AOI_ID`) AOI_ID,	`person_fund_base_info`.`AOI_NAME`,	`person_fund_base_info`.`OTC_ID`,	`person_fund_base_info`.`OTC_NAME`,	MD5(`person_fund_base_info`.`RPI_ID`) RPI_ID,	`person_fund_base_info`.`RPI_NAME`,	`person_fund_base_info`.`ADI_ID`,	`person_fund_base_info`.`ADI_NAME`,	`person_fund_base_info`.`SCO_NAME`,	`person_fund_base_info`.`PTI_NAME`,	`person_fund_base_info`.`ECO_NAME`,	`person_fund_base_info`.`CER_NUM`,	`person_fund_base_info`.`OBTAIN_DATE`,	`person_fund_base_info`.`ARRIVE_DATE`FROM	`bigdata`.`person_fund_base_info` where MATCH(RPI_NAME) AGAINST(%s  IN BOOLEAN MODE)",
                 searchname)
         else:
             if searchorgid is not None:
@@ -748,6 +786,8 @@ class person_fund_Handler(BaseHandler):
                     personal_lists=res,
                     searchname=searchname)
 class person_fund_detail_Handler(BaseHandler):
+    @tornado.web.asynchronous
+    @gen.coroutine
     def get(self):
         rpi_id = self.get_argument("rpi_id", None)
         userinfo = self.current_user
@@ -766,18 +806,20 @@ class person_fund_detail_Handler(BaseHandler):
 
 #证券行业从业人员信息
 class person_stock_Handler(BaseHandler):
+    @tornado.web.asynchronous
+    @gen.coroutine
     def get(self):
         searchname = self.get_argument("searchname", None)
         searchorgid = self.get_argument("searchorgid", None)
         userinfo = self.current_user
         if searchname is not None:
             res = self.db.query(
-                "SELECT md5( `person_stock_info`.`AOI_ID` ) AOI_ID, `person_stock_info`.`AOI_NAME`, MD5( `person_stock_info`.`RPI_ID` ) RPI_ID, `person_stock_info`.`RPI_NAME`, `person_stock_info`.`ADI_ID`, `person_stock_info`.`ADI_NAME`, `person_stock_info`.`SCO_NAME`, `person_stock_info`.`PTI_NAME`, `person_stock_info`.`ECO_NAME`, `person_stock_info`.`CER_NUM`, md5(`person_stock_info`.`CER_NUM`) VCER_NUM,`person_stock_info`.`PPP_GET_DATE`, `person_stock_info`.`PPP_END_DATE` FROM `bigdata`.`person_stock_info` WHERE MATCH (RPI_NAME, CER_NUM) AGAINST (% s)",
+                "SELECT md5( `person_stock_info`.`AOI_ID` ) AOI_ID, `person_stock_info`.`AOI_NAME`, MD5( `person_stock_info`.`RPI_ID` ) RPI_ID, `person_stock_info`.`RPI_NAME`, `person_stock_info`.`ADI_ID`, `person_stock_info`.`ADI_NAME`, `person_stock_info`.`SCO_NAME`, `person_stock_info`.`PTI_NAME`, `person_stock_info`.`ECO_NAME`, `person_stock_info`.`CER_NUM`, md5(`person_stock_info`.`CER_NUM`) VCER_NUM,`person_stock_info`.`PPP_GET_DATE`, `person_stock_info`.`PPP_END_DATE` FROM `bigdata`.`person_stock_info` WHERE MATCH (RPI_NAME) AGAINST (%s  IN BOOLEAN MODE) order by rpi_name limit 100",
                 searchname)
         else:
             if searchorgid is not None:
                 res = self.db.query(
-                    "SELECT md5( `person_stock_info`.`AOI_ID` ) AOI_ID, `person_stock_info`.`AOI_NAME`, md5( `person_stock_info`.`RPI_ID` ) RPI_ID, `person_stock_info`.`RPI_NAME`, `person_stock_info`.`ADI_ID`, `person_stock_info`.`ADI_NAME`, `person_stock_info`.`SCO_NAME`, `person_stock_info`.`PTI_NAME`, `person_stock_info`.`ECO_NAME`, `person_stock_info`.`CER_NUM`,md5(`person_stock_info`.`CER_NUM`) VCER_NUM, `person_stock_info`.`PPP_GET_DATE`, `person_stock_info`.`PPP_END_DATE` FROM `bigdata`.`person_stock_info` WHERE md5(aoi_id) =%s",
+                    "SELECT md5( `person_stock_info`.`AOI_ID` ) AOI_ID, `person_stock_info`.`AOI_NAME`, md5( `person_stock_info`.`RPI_ID` ) RPI_ID, `person_stock_info`.`RPI_NAME`, `person_stock_info`.`ADI_ID`, `person_stock_info`.`ADI_NAME`, `person_stock_info`.`SCO_NAME`, `person_stock_info`.`PTI_NAME`, `person_stock_info`.`ECO_NAME`, `person_stock_info`.`CER_NUM`,md5(`person_stock_info`.`CER_NUM`) VCER_NUM, `person_stock_info`.`PPP_GET_DATE`, `person_stock_info`.`PPP_END_DATE` FROM `bigdata`.`person_stock_info` WHERE md5(aoi_id) =%s limit 200",
                     searchorgid)
                 searchname = None
             else:
@@ -794,6 +836,8 @@ class person_stock_Handler(BaseHandler):
                     personal_lists=res,
                     searchname=searchname)
 class person_stock_detail_Handler(BaseHandler):
+    @tornado.web.asynchronous
+    @gen.coroutine
     def get(self):
         cer_id = self.get_argument("cer_id", None)
         userinfo = self.current_user
@@ -811,6 +855,8 @@ class person_stock_detail_Handler(BaseHandler):
 
 # 证券公司从业人员详情
 class Securities_company_Handler(BaseHandler):
+    @tornado.web.asynchronous
+    @gen.coroutine
     def get(self):
         personal_name = self.get_argument("personal_name", None)
         userinfo = self.current_user
@@ -830,6 +876,8 @@ class Securities_company_Handler(BaseHandler):
 
 # 新闻详情页面
 class News_detail_Handler(BaseHandler):
+    @tornado.web.asynchronous
+    @gen.coroutine
     def get(self):
         id = self.get_argument("id", None)
         newsdetail = self.db.get(
@@ -840,6 +888,8 @@ class News_detail_Handler(BaseHandler):
 
 # 新闻列表
 class News_list_Handler(BaseHandler):
+    @tornado.web.asynchronous
+    @gen.coroutine
     def get(self):
         news_type = self.get_argument("type", None)
         vnews_page = self.get_argument("page", 0)
@@ -871,6 +921,8 @@ class News_list_Handler(BaseHandler):
 
 # 研报详情页面
 class Stock_report_detail_Handler(BaseHandler):
+    @tornado.web.asynchronous
+    @gen.coroutine
     def get(self):
         id = self.get_argument("id", None)
         stock_report_detail = self.db.get(
@@ -881,6 +933,8 @@ class Stock_report_detail_Handler(BaseHandler):
 
 # 研报列表
 class Stock_report_list_Handler(BaseHandler):
+    @tornado.web.asynchronous
+    @gen.coroutine
     def get(self):
         vreport_search = self.get_argument("report_search", '')
         news_type = self.get_argument("type", '')
@@ -923,6 +977,8 @@ class Stock_report_list_Handler(BaseHandler):
 
 # 个股新闻详情页面
 class Stock_news_detail_Handler(BaseHandler):
+    @tornado.web.asynchronous
+    @gen.coroutine
     def get(self):
         id = self.get_argument("id", None)
         stock_news_detail = self.db.get(
@@ -933,6 +989,8 @@ class Stock_news_detail_Handler(BaseHandler):
 
 # 个股新闻列表
 class Stock_news_list_Handler(BaseHandler):
+    @tornado.web.asynchronous
+    @gen.coroutine
     def get(self):
         vreport_search = self.get_argument("report_search", '')
         news_type = self.get_argument("type", '')
@@ -958,13 +1016,67 @@ class Stock_news_list_Handler(BaseHandler):
                     news_page=int(news_page), report_search=vreport_search)
 
 
+#私募基金管理人产品信息
+class fund_product_pf_Handler(BaseHandler):
+    @tornado.web.asynchronous
+    @gen.coroutine
+    def get(self):
+        searchname = self.get_argument("searchname", None)
+        searchorgid = self.get_argument("searchorgid", None)
+        userinfo = self.current_user
+        if searchname is not None:
+            res = self.db.query(
+                "SELECT md5(fund_product_pf.fundid) fundid, fund_product_pf.fundName, fund_product_pf.jjbh, fund_product_pf.clsj, fund_product_pf.basj, fund_product_pf.jjbajd, fund_product_pf.jjlx, fund_product_pf.bz, fund_product_pf.jjglrmc, fund_product_pf.gllx, fund_product_pf.tgrmc, fund_product_pf.yzzt, fund_product_pf.putOnRecordDate, fund_product_pf.tbts, fund_product_pf.isDeputeManage, fund_product_pf.xxpl_dyyb, fund_product_pf.xxpl_bnb, fund_product_pf.xxpl_nb, fund_product_pf.xxpl_jb, fund_product_pf.lastQuarterUpdate, fund_product_pf.mandatorName, fund_product_pf.updatetime, fund_product_pf.managerUrl, fund_product_pf.managerName, fund_product_pf.managerType FROM fund_product_pf WHERE MATCH (fundName, managerName,jjlx) AGAINST (%s IN BOOLEAN MODE) LIMIT 500",
+                searchname)
+        else:
+            if searchorgid is not None:
+                res = self.db.query(
+                    "SELECT md5(fund_product_pf.fundid) fundid, fund_product_pf.fundName, fund_product_pf.jjbh, fund_product_pf.clsj, fund_product_pf.basj, fund_product_pf.jjbajd, fund_product_pf.jjlx, fund_product_pf.bz, fund_product_pf.jjglrmc, fund_product_pf.gllx, fund_product_pf.tgrmc, fund_product_pf.yzzt, fund_product_pf.putOnRecordDate, fund_product_pf.tbts, fund_product_pf.isDeputeManage, fund_product_pf.xxpl_dyyb, fund_product_pf.xxpl_bnb, fund_product_pf.xxpl_nb, fund_product_pf.xxpl_jb, fund_product_pf.lastQuarterUpdate, fund_product_pf.mandatorName, fund_product_pf.updatetime, fund_product_pf.managerUrl, fund_product_pf.managerName, fund_product_pf.managerType FROM fund_product_pf WHERE managerUrl =%s LIMIT 200",
+                    searchorgid)
+                searchname = None
+            else:
+                res = self.db.query(
+                    "SELECT md5(fund_product_pf.fundid) fundid, fund_product_pf.fundName, fund_product_pf.jjbh, fund_product_pf.clsj, fund_product_pf.basj, fund_product_pf.jjbajd, fund_product_pf.jjlx, fund_product_pf.bz, fund_product_pf.jjglrmc, fund_product_pf.gllx, fund_product_pf.tgrmc, fund_product_pf.yzzt, fund_product_pf.putOnRecordDate, fund_product_pf.tbts, fund_product_pf.isDeputeManage, fund_product_pf.xxpl_dyyb, fund_product_pf.xxpl_bnb, fund_product_pf.xxpl_nb, fund_product_pf.xxpl_jb, fund_product_pf.lastQuarterUpdate, fund_product_pf.mandatorName, fund_product_pf.updatetime, fund_product_pf.managerUrl, fund_product_pf.managerName, fund_product_pf.managerType FROM fund_product_pf  order by clsj desc  LIMIT 20")
+
+        vipproduct_sql="SELECT md5(fund_product_pf.fundid) fundid, fund_product_pf.fundName, fund_product_pf.jjbh, fund_product_pf.clsj, fund_product_pf.basj, fund_product_pf.jjbajd, fund_product_pf.jjlx, fund_product_pf.bz, fund_product_pf.jjglrmc, fund_product_pf.gllx, fund_product_pf.tgrmc, fund_product_pf.yzzt, fund_product_pf.putOnRecordDate, fund_product_pf.tbts, fund_product_pf.isDeputeManage, fund_product_pf.xxpl_dyyb, fund_product_pf.xxpl_bnb, fund_product_pf.xxpl_nb, fund_product_pf.xxpl_jb, fund_product_pf.lastQuarterUpdate, fund_product_pf.mandatorName, fund_product_pf.updatetime, fund_product_pf.managerUrl, fund_product_pf.managerName, fund_product_pf.managerType FROM fund_product_pf   LIMIT 4"
+        vipproduct_list=self.db.query(vipproduct_sql)
+        if len(res) > 0:
+            #self.create_log(operate_type='500', operate_event=res['AOI_NAME'] + res['RPI_NAME'])
+            pass
+        self.render("fund_product_pf.html", userinfo=userinfo,
+                    vipproduct_lists=vipproduct_list,
+                    res_lists=res,
+                    searchname=searchname)
+class fund_product_pf__detail_Handler(BaseHandler):
+    @tornado.web.asynchronous
+    @gen.coroutine
+    def get(self):
+        fundid = self.get_argument("fundid", None)
+        userinfo = self.current_user
+        #sql_personal_info_chg="SELECT `person_fund_changelist`.`CER_NUM`, `person_fund_changelist`.`AOI_NAME`, `person_fund_changelist`.`CERTC_NAME`, `person_fund_changelist`.`OBTAIN_DATE`, `person_fund_changelist`.`PTI_NAME`, `person_fund_changelist`.`RPI_ID` FROM `bigdata`.`person_fund_changelist` WHERE MD5(RPI_ID) =%s"
+        personal_info_chg ={}
+        res = self.db.get(
+            "SELECT md5(fund_product_pf.fundid) fundid, fund_product_pf.fundName, fund_product_pf.jjbh, fund_product_pf.clsj, fund_product_pf.basj, fund_product_pf.jjbajd, fund_product_pf.jjlx, fund_product_pf.bz, fund_product_pf.jjglrmc, fund_product_pf.gllx, fund_product_pf.tgrmc, fund_product_pf.yzzt, fund_product_pf.putOnRecordDate, fund_product_pf.tbts, fund_product_pf.isDeputeManage, fund_product_pf.xxpl_dyyb, fund_product_pf.xxpl_bnb, fund_product_pf.xxpl_nb, fund_product_pf.xxpl_jb, fund_product_pf.lastQuarterUpdate, fund_product_pf.mandatorName, fund_product_pf.updatetime, fund_product_pf.managerUrl, fund_product_pf.managerName, fund_product_pf.managerType FROM fund_product_pf where MD5(fundid)=%s",
+            fundid)
+        vipproduct_sql = "SELECT md5(fund_product_pf.fundid) fundid, fund_product_pf.fundName, fund_product_pf.jjbh, fund_product_pf.clsj, fund_product_pf.basj, fund_product_pf.jjbajd, fund_product_pf.jjlx, fund_product_pf.bz, fund_product_pf.jjglrmc, fund_product_pf.gllx, fund_product_pf.tgrmc, fund_product_pf.yzzt, fund_product_pf.putOnRecordDate, fund_product_pf.tbts, fund_product_pf.isDeputeManage, fund_product_pf.xxpl_dyyb, fund_product_pf.xxpl_bnb, fund_product_pf.xxpl_nb, fund_product_pf.xxpl_jb, fund_product_pf.lastQuarterUpdate, fund_product_pf.mandatorName, fund_product_pf.updatetime, fund_product_pf.managerUrl, fund_product_pf.managerName, fund_product_pf.managerType FROM fund_product_pf WHERE managerUrl IN ( SELECT managerUrl FROM `bigdata`.`fund_product_pf` WHERE md5(fundid) = %s ) LIMIT 4"
+        vipproductlist = self.db.query(vipproduct_sql,fundid)
+        if len(res) > 0:
+            self.create_log(operate_type='501', operate_event=res['fundName'])
+        self.render("fund_product_pf_detail.html", userinfo=userinfo, product_info=res,
+                    vipproductlists=vipproductlist)
+
+
 # 无权限页面
 class authdeny(BaseHandler):
+    @tornado.web.asynchronous
+    @gen.coroutine
     def get(self):
         self.render("authdeny.html", userinfo=self.current_user)
 
 
 class EntryHandler(BaseHandler):
+    @tornado.web.asynchronous
+    @gen.coroutine
     def get(self, slug):
         entry = self.db.get("SELECT * FROM entries WHERE slug = %s", slug)
         if not entry: raise tornado.web.HTTPError(404)
@@ -972,6 +1084,8 @@ class EntryHandler(BaseHandler):
 
 
 class ArchiveHandler(BaseHandler):
+    @tornado.web.asynchronous
+    @gen.coroutine
     def get(self):
         entries = self.db.query("SELECT * FROM entries ORDER BY published "
                                 "DESC")
@@ -1026,6 +1140,8 @@ class ComposeHandler(BaseHandler):
 
 
 class AuthCreateHandler(BaseHandler):
+    @tornado.web.asynchronous
+    @gen.coroutine
     def get(self):
         self.render("create_author.html")
 

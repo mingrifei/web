@@ -1,0 +1,125 @@
+{% extends "frame.html" %}
+{% block head %}
+    <title>{{product_info['fundName']}}_{{product_info['managerName']}}_私募产品信息查询_[{{ escape(handler.settings["blog_title"]) }}]</title>
+    <meta name="description" content="辅投助手为您提供{{product_info['fundName']}}信息，{{product_info['managerName']}}管理的基金产品信息！">
+    <meta name="keywords" content="{{product_info['fundName']}}，{{product_info['managerName']}}，{{product_info['jjlx']}}>
+{% end %}
+{% block main %}
+        <div class="tpl-content-wrapper" >
+                        <div class="container-fluid am-cf">
+                <div class="row">
+                    <div class="am-u-sm-12 am-u-md-12 am-u-lg-9">
+                        <div class="page-header-heading"><span class="am-icon-home page-header-heading-icon"></span> 账户状态和声明 <small>Account status</small></div>
+                        <p class="page-header-description">您现在使用的为大众版本，使用本系统数据无任何限制，不收取任何费用。平台上的信息均来自网络公开信息，由信息来源方对信息真实性等负相应责任，平台所展示信息出于传递更多信息之目的，并不意味平台赞同其观点或已经证实其内容的真实性。</p>
+						<p class="page-header-description">数据来源包括但不限于：全国企业信用信息公示系统 中国裁判文书网 中国执行信息公开网 国家知识产权局 商标局 版权局。</p>
+						<p class="page-header-description">此数据仅用于日常行业统计分析，请自行确认数据完整性。</p>
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="row-content am-cf">
+                <div class="row  am-u-sm-12 am-u-md-12 am-u-lg-12">
+                    <div class="widget-body widget-body-lg am-fr">
+                        <div class="am-scrollable-horizontal ">
+                        <table width="100%" class="am-table am-table-compact tpl-table-black am-text-nowrap ">
+                        <tbody>
+                        <tr class="gradeX">
+                            <td width="5%">基金名称：</td>
+                            <td>{{product_info['fundName']}}<button type="button" class="am-btn am-btn-default am-round am-btn-xs am-btn-primary">{{product_info['jjlx']}}</button></td>
+                        </tr>
+                        <tr class="gradeX">
+                            <td>基金编号：</td>
+                            <td>{{product_info['jjbh']}}</td>
+                        </tr>
+                        <tr class="gradeX">
+                            <td>基金管理人：</td>
+                            <td><a href="fund_product_pf.html?searchorgid={{product_info['managerUrl']}}" target="_blank">{{product_info['managerName']}}</a><button type="button" class="am-btn am-btn-default am-round am-btn-xs am-btn-success">><a style="color:white" href="business_list.html?business_name={{product_info['managerName']}}" target="_blank">详情</a></button></td>
+                        </tr>
+                        <tr class="gradeX">
+                            <td>成立时间：</td>
+                            <td>{{product_info['clsj']}}</td>
+                        </tr>
+                        <tr class="gradeX">
+                            <td>备案时间：</td>
+                            <td>{{product_info['basj']}}</td>
+                        </tr>
+                        <tr class="gradeX">
+                            <td>备案阶段：</td>
+                            <td>{{product_info['jjbajd']}}</td>
+                        </tr>
+                        <tr class="gradeX">
+                            <td>基金类型：</td>
+                            <td>{{product_info['jjlx']}}</td>
+                        </tr>
+                        <tr class="gradeX">
+                            <td>币种：</td>
+                            <td>{{product_info['bz']}}</td>
+                        </tr>
+                        <tr class="gradeX">
+                            <td>管理类型：</td>
+                            <td>{{product_info['gllx']}}</td>
+                        </tr>
+                        <tr class="gradeX">
+                            <td>托管人名称：</td>
+                            <td>{{product_info['tgrmc']}}</td>
+                        </tr>
+                        <tr class="gradeX">
+                            <td>运作状态：</td>
+                            <td>{{product_info['yzzt']}}</td>
+                        </tr>
+                        <tr class="gradeX">
+                            <td>最近信披时间：</td>
+                            <td>{{product_info['updatetime']}}</td>
+                        </tr>
+                        <tr class="gradeX">
+                            <td>当月月报：</td>
+                            <td>{{product_info['xxpl_dyyb']}}</td>
+                        </tr>
+                        <tr class="gradeX">
+                            <td>季报：</td>
+                            <td>{{product_info['xxpl_jb']}}</td>
+                        </tr>
+                        <tr class="gradeX">
+                            <td>年报：</td>
+                            <td>{{product_info['xxpl_nb']}}</td>
+                        </tr>
+
+
+
+                        <!-- more data -->
+                        </tbody>
+                        </table>
+                        </div>
+                        </div>
+                </div>
+            </div>
+            <div class="container-fluid am-cf">
+                <div class="row">
+                    <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+                        <div class="page-header-heading"><span class="am-icon-home page-header-heading-icon"></span>{{product_info['managerName']}}相关产品 </div>
+                        {% for vipproductlist in vipproductlists %}
+
+                            <div class="am-u-md-3">
+                                        <div class="card-box widget-user">
+                                            <div>
+                                                <div class="wid-u-info"  style="margin-left:0px;">
+                                                    <h5 class="m-t-0 m-b-5 font-600"><a href="fund_product_pf_detail.html?fundid={{vipproductlist['fundid']}}" target="_blank">{{ vipproductlist.fundName }}</a></h5>
+                                                    <p class="text-muted m-b-5 ">{{ vipproductlist.managerName }}</p>
+                                                    <p class="text-muted m-b-5 ">{{ vipproductlist.jjlx }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                            </div>
+                        {% end %}
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+<script>
+
+</script>
+{% end %}

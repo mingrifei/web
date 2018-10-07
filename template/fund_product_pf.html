@@ -1,0 +1,119 @@
+{% extends "frame.html" %}
+{% block head %}
+    <title>金融产品信息{{ escape(handler.settings["blog_title"]) }}</title>
+    <meta name="description" content="辅投助手为您免费提供证券公司人员查询，从业人员信息,就到辅投助手！">
+    <meta name="keywords" content="证券公司从业资格查询,基金公司从业资格查询，私募基金从业资格查询,资产管理公司从业资格查询，证券公司信息">
+{% end %}
+{% block main %}
+        <div class="tpl-content-wrapper" >
+
+            <div class="container-fluid am-cf">
+                <div class="row">
+                    <div class="am-u-sm-12 am-u-md-12 am-u-lg-9">
+                        <div class="page-header-heading"><span class="am-icon-home page-header-heading-icon"></span> 账户状态和声明 <small>Account status</small></div>
+                        <p class="page-header-description">您现在使用的为大众版本，使用本系统数据无任何限制，不收取任何费用。平台上的信息均来自网络公开信息，由信息来源方对信息真实性等负相应责任，平台所展示信息出于传递更多信息之目的，并不意味平台赞同其观点或已经证实其内容的真实性。</p>
+						<p class="page-header-description">数据来源包括但不限于：全国企业信用信息公示系统 中国裁判文书网 中国执行信息公开网 国家知识产权局 商标局 版权局。</p>
+						<p class="page-header-description">此数据仅用于行业统计分析,不会进行任何推介商业活动。</p>
+                    </div>
+
+                </div>
+
+            </div>
+               {% for vipproduct_list in vipproduct_lists %}
+
+                <div class="am-u-md-3">
+                            <div class="card-box widget-user">
+                                <div>
+                                    <div class="wid-u-info" style="margin-left:0px;">
+                                        <h5 class="m-t-0 m-b-5 font-600"><a href="fund_product_detail.html?fundid={{vipproduct_list['fundid']}}" target="_blank">{{ vipproduct_list.fundName }}</a></h5>
+                                        <p class="text-muted m-b-5 ">{{ vipproduct_list.managerName }}</p>
+                                        <p class="text-muted m-b-5 ">{{ vipproduct_list.jjlx }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                </div>
+                {% end %}
+            <div class="row-content am-cf">
+                <div class="row  am-cf">
+                    <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+                        <div class="widget am-cf">
+                            <div class="widget-head am-cf ">
+                                <div class="widget-title am-fl">私募基金管理人产品名称</div>
+                                <div class="widget-function am-fr">
+                                    <a href="javascript:;" class="am-icon-cog"></a>
+                                </div>
+                            </div>
+                            <div class="widget-body am-fr">
+                                <form action="fund_product_pf.html">
+                                <div class="am-fl">
+                                    <div class="row">
+										<div class="am-u-sm-12 am-u-md-12 am-u-lg-8">
+											<div class="am-input-group am-input-group-sm tpl-form-border-form cl-p">
+												<input type="text" name="searchname" id="searchname" value="{% if searchname is not None %}{{ searchname }}{% end %}" class="am-form-field " placeholder="请输入私募基金管理人产品名称或其它关键词 ..." required>
+												<span class="am-input-group-btn">
+													<button id="btn" type='submit' class="am-btn  am-btn-default am-btn-success tpl-table-list-field am-icon-search" type="button"></button>
+												</span>
+											</div>
+										</div>
+									</div>
+                                </div>
+                                </form>
+
+                            </div>
+
+                           <div class="am-u-sm-12 am-u-md-12 am-u-lg-12 widget-margin-bottom-lg">
+
+                            <div class="widget am-cf widget-body-lg">
+
+                                <div class="widget-body  am-fr">
+                                    <div class="am-scrollable-horizontal ">
+                                        <table width="100%" class="am-table am-table-compact  tpl-table-black " id="example-r">
+                                            <thead>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th width="20%">基金名称</th>
+                                                    <th>基金类型</th>
+                                                    <th>基金管理人</th>
+                                                    <th>基金托管人</th>
+                                                    <th>运作状态</th>
+
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                  {% for index, res_list in enumerate(res_lists)%}
+                                                <tr class="gradeX">
+                                                    <td>{{index}}</td>
+                                                    <td><a href="fund_product_pf_detail.html?fundid={{res_list['fundid']}}" target="_blank">{{res_list['fundName']}}</a></td>
+                                                    {% if res_list['jjlx']=='私募证券投资基金' %}
+                                                    <td><button type="button" class="am-btn am-btn-default am-round am-btn-xs am-btn-warning">{{res_list['jjlx']}}</button></td>
+                                                    {% elif res_list['jjlx']=='股权投资基金' %}
+                                                    <td><button type="button" class="am-btn am-btn-default am-round am-btn-xs am-btn-primary">{{res_list['jjlx']}}</button></td>
+                                                    {% else %}
+                                                    <td><button type="button" class="am-btn am-btn-default am-round am-btn-xs am-btn-success">{{res_list['jjlx']}}</button></td>
+                                                    {% end %}
+                                                    <td><a href="fund_product_pf.html?searchorgid={{res_list['managerUrl']}}" target="_blank">{{res_list['managerName']}}</a></td>
+                                                    <td>{{res_list['tgrmc']}}</td>
+                                                    <td>{{res_list['yzzt']}}</td>
+                                                </tr>
+                                                  {%end%}
+                                                  </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+
+                     </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+<script>
+
+</script>
+{% end %}

@@ -75,14 +75,18 @@ class Application(tornado.web.Application):
 
             # 查询金融人才证券人才
             # (r"/stock_personal.html", Stock_personal_Handler),
-            (r"/stock_personal.html", Stock_personal_local_Handler),
+            (r"/person_stock.html", person_stock_Handler),
             # 查询金融人才证券人才详情
             (r"/stock_personal_info.html", Stock_personal_info_Handler),
             # 查询金融人才证券人才本地详情
-            (r"/stock_personal_detail.html", Stock_personal_info_local_Handler),
+            (r"/person_stock_detail.html", person_stock_detail_Handler),
 
             # 查询证券公司从业情况
             (r"/securities_company.html", Securities_company_Handler),
+            # 查询基金行业从业情况
+            (r"/person_fund.html", person_fund_Handler),
+            # 查询基金从业人才详情
+            (r"/person_fund_detail.html", person_fund_detail_Handler),
             # 查询证券公司信息
             (r"/stock_company.html", Stock_company_Handler),
             # 搜索证券公司列表
@@ -119,7 +123,7 @@ class Application(tornado.web.Application):
             xsrf_cookies=True,
             cookie_secret="__TODO:_GENERATE_YOUR_OWN_RANDOM_VALUE_HERE__",
             login_url="/auth/login",
-            debug=True,
+            debug=False,
         )
         super(Application, self).__init__(handlers, **settings)
         # Have one global connection to the blog DB across all handlers
@@ -172,7 +176,7 @@ class HomeHandler(BaseHandler):
             newslist = self.db.query(
                 "SELECT `t_news`.`id`,     `t_news`.`title`,     `t_news`.`pubtime`,     `t_news`.`url`,     `t_news`.`tag`,     `t_news`.`refer`,     `t_news`.`body`,     `t_news`.`link_business_id` FROM `bigdata`.`t_news` order by  pub_time desc limit 6 ")
             newslist_finance = self.db.query(
-                "SELECT `t_news`.`id`,     `t_news`.`title`,     `t_news`.`pubtime`,     `t_news`.`url`,     `t_news`.`tag`,     `t_news`.`refer`,     `t_news`.`body`,     `t_news`.`link_business_id` FROM `bigdata`.`t_news` where tag='finance' order by  pub_time desc limit 10 ")
+                "SELECT `t_news`.`id`,     `t_news`.`title`,     `t_news`.`pubtime`,     `t_news`.`url`,     `t_news`.`tag`,     `t_news`.`refer`,     `t_news`.`body`,     `t_news`.`link_business_id`,`t_news`.`stkname` FROM `bigdata`.`t_news` where length(stkcode)>1 order by  pub_time desc limit 10 ")
             newslist_tech = self.db.query(
                 "SELECT `t_news`.`id`,     `t_news`.`title`,     `t_news`.`pubtime`,     `t_news`.`url`,     `t_news`.`tag`,     `t_news`.`refer`,     `t_news`.`body`,     `t_news`.`link_business_id` FROM `bigdata`.`t_news` where tag='tech' order by  pub_time desc limit 10 ")
             newslist_ent = self.db.query(
@@ -224,7 +228,20 @@ class HomeHandler(BaseHandler):
                 LIMIT 10
 
             """)
-
+            sql_vippersonal = "SELECT rpi_photo_path,aoi_id, RPI_NAME, sco_name, aoi_name, md5(aoi_name) vaoi_name, eco_name, pti_name, cer_num, md5(cer_num) AS vcer_num FROM ( SELECT s.*, RIGHT (s.CER_NUM, 11) vcer_num FROM `bigdata`.`person_stock_info` s ) a WHERE vcer_num >= (( SELECT MAX(a.vcer_num) FROM ( SELECT *, RIGHT (CER_NUM, 11) vcer_num FROM `bigdata`.`person_stock_info` ) a ) - ( SELECT MIN(a1.vcer_num) FROM ( SELECT *, RIGHT (CER_NUM, 11) vcer_num FROM `bigdata`.`person_stock_info` ) a1 )) * RAND() * 2000 + ( SELECT MIN(a2.vcer_num) FROM ( SELECT *, RIGHT (CER_NUM, 11) vcer_num FROM `bigdata`.`person_stock_info` ) a2 ) LIMIT 4"
+            vippersonal_list = self.db.query(sql_vippersonal)
+            sql_personal = "SELECT aoi_id, RPI_NAME, sco_name, aoi_name, md5(aoi_name) vaoi_name, eco_name, pti_name, cer_num, md5(cer_num) AS vcer_num FROM ( SELECT s.*, RIGHT (s.CER_NUM, 11) vcer_num FROM `bigdata`.`person_stock_info` s ) a WHERE vcer_num >= (( SELECT MAX(a.vcer_num) FROM ( SELECT *, RIGHT (CER_NUM, 11) vcer_num FROM `bigdata`.`person_stock_info` ) a ) - ( SELECT MIN(a1.vcer_num) FROM ( SELECT *, RIGHT (CER_NUM, 11) vcer_num FROM `bigdata`.`person_stock_info` ) a1 )) * RAND() * 5000 + ( SELECT MIN(a2.vcer_num) FROM ( SELECT *, RIGHT (CER_NUM, 11) vcer_num FROM `bigdata`.`person_stock_info` ) a2 ) LIMIT 10"
+            stockpersonallist = self.db.query(sql_personal)
+            sql_fundpersonal = "SELECT aoi_id, RPI_NAME, sco_name,md5(rpi_id) RPI_ID, aoi_name, md5(aoi_name) vaoi_name, eco_name, pti_name, cer_num, md5(cer_num) AS vcer_num FROM ( SELECT s.*, RIGHT (s.CER_NUM, 11) vcer_num FROM `bigdata`.`person_fund_base_info` s ) a WHERE vcer_num >= (( SELECT MAX(a.vcer_num) FROM ( SELECT *, RIGHT (CER_NUM, 11) vcer_num FROM `bigdata`.`person_fund_base_info` ) a ) - ( SELECT MIN(a1.vcer_num) FROM ( SELECT *, RIGHT (CER_NUM, 11) vcer_num FROM `bigdata`.`person_fund_base_info` ) a1 )) * RAND() * 100 + ( SELECT MIN(a2.vcer_num) FROM ( SELECT *, RIGHT (CER_NUM, 11) vcer_num FROM `bigdata`.`person_fund_base_info` ) a2 ) LIMIT 11"
+            fundpersonallist = self.db.query(sql_fundpersonal)
+            sql_banklist = "SELECT t1.business_id, t1.business_name, t1.business_industry, t1.business_score FROM `bigdata`.`business_base` AS t1 WHERE t1.business_name LIKE '%%银行%%' ORDER BY t1.id ASC LIMIT 10"
+            banklist = self.db.query(sql_banklist)
+            sql_stockcompanylist = "SELECT t1.business_id, t1.business_name, t1.business_industry, t1.business_score FROM `bigdata`.`business_base` AS t1 WHERE t1.business_name LIKE '%%证券%%' ORDER BY t1.id ASC LIMIT 10"
+            stockcompanylist = self.db.query(sql_stockcompanylist)
+            sql_fundcompanylist = "SELECT t1.business_id, t1.business_name, t1.business_industry, t1.business_score FROM `bigdata`.`business_base` AS t1 WHERE t1.business_name LIKE '%%基金%%' ORDER BY t1.id ASC LIMIT 10"
+            fundcompanylist = self.db.query(sql_fundcompanylist)
+            sql_vipfundpersonal = "SELECT rpi_photo_path,md5(aoi_id) AOI_ID,md5(rpi_id) RPI_ID, RPI_NAME, sco_name, aoi_name, md5(aoi_name) vaoi_name, eco_name, pti_name, cer_num, md5(cer_num) AS vcer_num FROM ( SELECT s.*, RIGHT (s.CER_NUM, 11) vcer_num FROM `bigdata`.`person_fund_base_info` s ) a WHERE vcer_num >= (( SELECT MAX(a.vcer_num) FROM ( SELECT *, RIGHT (CER_NUM, 11) vcer_num FROM `bigdata`.`person_fund_base_info` ) a ) - ( SELECT MIN(a1.vcer_num) FROM ( SELECT *, RIGHT (CER_NUM, 11) vcer_num FROM `bigdata`.`person_fund_base_info` ) a1 )) * RAND() * 2000 + ( SELECT MIN(a2.vcer_num) FROM ( SELECT *, RIGHT (CER_NUM, 11) vcer_num FROM `bigdata`.`person_fund_base_info` ) a2 ) LIMIT 4"
+            vipfundpersonal_list = self.db.query(sql_vipfundpersonal)
             self.render("index.html", userinfo=userinfo,
                         business_count=business_count,
                         newslists=newslist,
@@ -234,7 +251,15 @@ class HomeHandler(BaseHandler):
                         business_lists=business_list,
                         business_public_lists=business_public_list,
                         business_newscount=business_newscount,
-                        stock_reports=stock_report)
+                        stock_reports=stock_report,
+                        stockpersonallists=stockpersonallist,
+                        banklists=banklist,
+                        stockcompanylists=stockcompanylist,
+                        fundcompanylists=fundcompanylist,
+                        vipfundpersonal_lists=vipfundpersonal_list,
+                        fundpersonallists=fundpersonallist,
+                        vippersonallists=vippersonal_list
+                        )
 
 
 # 企业搜索查询
@@ -265,7 +290,7 @@ class Business_search(BaseHandler):
             ORDER BY system_operate_time DESC
             LIMIT 20    
             """
-            )
+        )
 
         self.render("business_search.html", userinfo=userinfo, business_search_hiss=business_search_hiss,
                     business_search_hots=business_search_hots)
@@ -299,7 +324,8 @@ class Business_list(BaseHandler):
             business_name)
         if len(business_list) > 0:
             self.create_log(operate_type='200', operate_event=self.get_argument("business_name", None))
-        self.render("business_list.html", userinfo=self.current_user, business_list=business_list,business_name=business_name)
+        self.render("business_list.html", userinfo=self.current_user, business_list=business_list,
+                    business_name=business_name)
 
 
 # 企业详情查询
@@ -318,12 +344,97 @@ class Business_detail(BaseHandler):
         business_detail_changes = self.db.query(
             "SELECT `business_change`.`id`,     `business_change`.`business_id`,     `business_change`.`change_time`,     `business_change`.`change_name`,     `business_change`.`change_before`,     `business_change`.`change_after`,     `business_change`.`change_ins_time` FROM `bigdata`.`business_change` where business_id=%s",
             business_id)
+        sqlreportlist = """
+            SELECT
+                t1.`id`,
+                t1.`reportname`,
+                t1.`tag`,
+                t1.`pubdate`,
+                t1.`pubtime`,
+                t1.`refer`,
+                t1.`stkcode`,
+                t1.`stkname`,
+                t1.`body`,
+                t1.`url`,
+                t1.`ywpj`,
+                t1.`pjbd`,
+                t1.`pjjg`,
+                t1.`ycsy1`,
+                t1.`ycsyl1`,
+                t1.`ycsy2`,
+                t1.`ycsyl2`,
+                t1.`instime`
+            FROM
+                `bigdata`.`stock_report` t1
+            INNER JOIN bigdata.public_company_base_info t ON t.stkcode = t1.stkcode
+            INNER JOIN bigdata.business_base t2 ON t2.business_name = t.companyname
+            WHERE
+                t2.business_id =%s         
+        """
+        reportlist = self.db.query(sqlreportlist, business_id)
+        # 上市企业相关新闻列表
+        sql = """
+            SELECT
+                t1.id,
+                t1.`title`,
+                t1.`pubtime`,
+                t1.`url`,
+                t1.`tag`,
+                t1.`refer`,
+                t1.`body`,
+                t1.stkcode,
+                t1.stkindustry,
+                t1.stkname,
+                t1.`link_business_id`
+            FROM
+                `bigdata`.`t_news` t1 INNER JOIN bigdata.public_company_base_info t on t1.stkcode=t.stkcode INNER JOIN bigdata.business_base t2 on t.companyname=t2.business_name
+            WHERE
+                t2.business_id = %s
+            ORDER BY
+                pub_time DESC
+            LIMIT 50
+        """
+        newslist = self.db.query(sql, business_id)
+        sql_sbzfgjj = """
+        SELECT
+            c.si_num,
+            c.si_begindate,
+            c.si_status,
+            c.si_all_user,
+            c.si_yanglao_user,
+            c.si_yiliao_user,
+            c.si_gongshang_user,
+            c.si_shiye_user,
+            b.gjj_num,
+            b.gjj_status,
+            b.gjj_begindate,
+            b.gjj_enddate,
+            b.business_ins_time
+        FROM
+            bigdata.business_base a
+        LEFT JOIN bigdata.business_zfgjj b ON a.business_id = b.business_id
+        LEFT JOIN bigdata.business_social c ON c.business_id = a.business_id
+        where a.business_id=%s
+        """
+        sbzfgjjlist = self.db.get(sql_sbzfgjj, business_id)
+        sql_men = """
+        SELECT
+            a.men_id,a.men_name,b.men_job
+        FROM
+            bigdata.business_men_base a INNER JOIN
+        bigdata.business_staff_men b on a.men_id=b.men_id
+        where b.business_id=%s 
+        group by a.men_id,a.men_name,b.men_job
+
+        """
+        menlist = self.db.query(sql_men, business_id)
         if business_detail_base is not None:
             if len(business_detail_base) > 0:
                 self.create_log(operate_type='200', operate_event=business_detail_base['business_name'])
             self.render("business_detail.html", userinfo=self.current_user, business_detail_base=business_detail_base,
                         business_detail_holdes=business_detail_holdes, business_detail_invests=business_detail_invests,
-                        business_detail_changes=business_detail_changes)
+                        business_detail_changes=business_detail_changes, reportlists=reportlist, newslists=newslist,
+                        sbzfgjjlist=sbzfgjjlist, menlists=menlist)
 
 
 # 证券公司查询
@@ -498,12 +609,14 @@ class Public_Company_search_Handler(BaseHandler):
     def get(self):
         userinfo = self.current_user
         public_company_list = self.db.query(
-            "SELECT  `business_base`.`business_id`, `business_base`.`business_name` FROM `bigdata`.`business_base`  where business_plate='A'")
+            "SELECT a.`business_id`, a.`business_name`,b.stkcode,b.stkname FROM `bigdata`.`business_base`  a INNER JOIN bigdata.public_company_base_info b on a.business_name=b.companyname WHERE business_plate = 'A' limit 100")
         public_company_list_xsb = self.db.query(
-            "SELECT  `business_base`.`business_id`, `business_base`.`business_name` FROM `bigdata`.`business_base`  where business_plate='C'")
-        business_search_hots = self.db.query(
-            "SELECT SUBSTRING_INDEX(GROUP_CONCAT(system_operate_time ORDER BY system_operate_time DESC), ',',1)  as sort,   system_operate_business_name FROM bigdata.system_user_log where system_operate_type=600  group by system_operate_business_name order by  sort desc limit 20 ")
-        self.render("public_company_search.html", userinfo=userinfo, business_search_hots=business_search_hots,
+            "SELECT  `business_base`.`business_id`, `business_base`.`business_name` FROM `bigdata`.`business_base`  where business_plate='C' limit 200")
+
+        # business_search_hots = self.db.query(
+        #    "SELECT SUBSTRING_INDEX(GROUP_CONCAT(system_operate_time ORDER BY system_operate_time DESC), ',',1)  as sort,   system_operate_business_name FROM bigdata.system_user_log where system_operate_type=200  group by system_operate_business_name order by  sort desc limit 20 ")
+
+        self.render("public_company_search.html", userinfo=userinfo,
                     public_company_lists=public_company_list, public_company_lists_xsb=public_company_list_xsb)
 
 
@@ -605,22 +718,103 @@ class Stock_personal_info_Handler(BaseHandler):
                 self.render("stock_personal_info.html", userinfo=userinfo, personal_info=vres,
                             personal_info_chg=personal_info_chg)
 
-            # 金融人才证券从业人员详情
 
+# 金融人才证券从业人员详情
 
-class Stock_personal_info_local_Handler(BaseHandler):
+# 基金行业从业人员信息
+class person_fund_Handler(BaseHandler):
     def get(self):
-        cer_num = self.get_argument("cerid", None)
+        searchname = self.get_argument("searchname", None)
+        searchorgid = self.get_argument("searchorgid", None)
         userinfo = self.current_user
-        personal_info_chg = {}
-        res = self.db.get(
-            "SELECT `person_stock_info`.`AOI_ID`,    md5( `person_stock_info`.`cer_num`)  vcer_num,     `person_stock_info`.`RPI_NAME`,     `person_stock_info`.`SCO_NAME`,     `person_stock_info`.`ECO_NAME`,     `person_stock_info`.`AOI_NAME`,     `person_stock_info`.`PTI_NAME`,     `person_stock_info`.`CTI_NAME`,     `person_stock_info`.`CER_NUM`,     `person_stock_info`.`PPP_GET_DATE`,     `person_stock_info`.`PPP_END_DATE`,     `person_stock_info`.`COUNTCER`,     `person_stock_info`.`COUNTCX`,     `person_stock_info`.`RPI_ID`,     `person_stock_info`.`RPI_PHOTO_PATH` FROM `bigdata`.`person_stock_info` where md5(CER_NUM)=%s",
-            cer_num)
+        if searchname is not None:
+            res = self.db.query(
+                "SELECT	md5(`person_fund_base_info`.`AOI_ID`) AOI_ID,	`person_fund_base_info`.`AOI_NAME`,	`person_fund_base_info`.`OTC_ID`,	`person_fund_base_info`.`OTC_NAME`,	MD5(`person_fund_base_info`.`RPI_ID`) RPI_ID,	`person_fund_base_info`.`RPI_NAME`,	`person_fund_base_info`.`ADI_ID`,	`person_fund_base_info`.`ADI_NAME`,	`person_fund_base_info`.`SCO_NAME`,	`person_fund_base_info`.`PTI_NAME`,	`person_fund_base_info`.`ECO_NAME`,	`person_fund_base_info`.`CER_NUM`,	`person_fund_base_info`.`OBTAIN_DATE`,	`person_fund_base_info`.`ARRIVE_DATE`FROM	`bigdata`.`person_fund_base_info` where MATCH(AOI_NAME,RPI_NAME,CER_NUM) AGAINST(%s)",
+                searchname)
+        else:
+            if searchorgid is not None:
+                res = self.db.query(
+                    "SELECT	md5(`person_fund_base_info`.`AOI_ID`) AOI_ID,	`person_fund_base_info`.`AOI_NAME`,	`person_fund_base_info`.`OTC_ID`,	`person_fund_base_info`.`OTC_NAME`,	md5(`person_fund_base_info`.`RPI_ID`) RPI_ID,	`person_fund_base_info`.`RPI_NAME`,	`person_fund_base_info`.`ADI_ID`,	`person_fund_base_info`.`ADI_NAME`,	`person_fund_base_info`.`SCO_NAME`,	`person_fund_base_info`.`PTI_NAME`,	`person_fund_base_info`.`ECO_NAME`,	`person_fund_base_info`.`CER_NUM`,	`person_fund_base_info`.`OBTAIN_DATE`,	`person_fund_base_info`.`ARRIVE_DATE`FROM	`bigdata`.`person_fund_base_info` where md5(aoi_id)=%s",
+                    searchorgid)
+                searchname = None
+            else:
+                res = self.db.query(
+                    "SELECT md5(`AOI_ID`) AOI_ID,	`AOI_NAME`,	`OTC_ID`,	`OTC_NAME`,	md5(`RPI_ID`) RPI_ID,	`RPI_NAME`,	`ADI_ID`,	`ADI_NAME`,	`SCO_NAME`,	`PTI_NAME`,	`ECO_NAME`,	`CER_NUM`,	`OBTAIN_DATE`,	`ARRIVE_DATE`, md5(cer_num) AS vcer_num FROM ( SELECT s.*, RIGHT (s.CER_NUM, 11) vcer_num FROM `bigdata`.`person_fund_base_info` s ) a WHERE vcer_num >= (( SELECT MAX(a.vcer_num) FROM ( SELECT *, RIGHT (CER_NUM, 11) vcer_num FROM `bigdata`.`person_fund_base_info` ) a ) - ( SELECT MIN(a1.vcer_num) FROM ( SELECT *, RIGHT (CER_NUM, 11) vcer_num FROM `bigdata`.`person_fund_base_info` ) a1 )) * RAND() * 2000 + ( SELECT MIN(a2.vcer_num) FROM ( SELECT *, RIGHT (CER_NUM, 11) vcer_num FROM `bigdata`.`person_fund_base_info` ) a2 ) LIMIT 20")
 
+        vippersonal_sql = "SELECT RPI_PHOTO_PATH,aoi_id, RPI_NAME, md5(RPI_ID) RPI_ID,sco_name, aoi_name, md5(aoi_name) vaoi_name, eco_name, pti_name, cer_num, md5(cer_num) AS vcer_num FROM ( SELECT s.*, RIGHT (s.CER_NUM, 11) vcer_num FROM `bigdata`.`person_fund_base_info` s ) a WHERE vcer_num >= (( SELECT MAX(a.vcer_num) FROM ( SELECT *, RIGHT (CER_NUM, 11) vcer_num FROM `bigdata`.`person_fund_base_info` ) a ) - ( SELECT MIN(a1.vcer_num) FROM ( SELECT *, RIGHT (CER_NUM, 11) vcer_num FROM `bigdata`.`person_fund_base_info` ) a1 )) * RAND() * 2000 + ( SELECT MIN(a2.vcer_num) FROM ( SELECT *, RIGHT (CER_NUM, 11) vcer_num FROM `bigdata`.`person_fund_base_info` ) a2 ) LIMIT 4"
+        vippersonal_list = self.db.query(vippersonal_sql)
+        if len(res) > 0:
+            # self.create_log(operate_type='500', operate_event=res['AOI_NAME'] + res['RPI_NAME'])
+            pass
+        self.render("person_fund.html", userinfo=userinfo,
+                    vippersonallists=vippersonal_list,
+                    personal_lists=res,
+                    searchname=searchname)
+
+
+class person_fund_detail_Handler(BaseHandler):
+    def get(self):
+        rpi_id = self.get_argument("rpi_id", None)
+        userinfo = self.current_user
+        sql_personal_info_chg = "SELECT `person_fund_changelist`.`CER_NUM`, `person_fund_changelist`.`AOI_NAME`, `person_fund_changelist`.`CERTC_NAME`, `person_fund_changelist`.`OBTAIN_DATE`, `person_fund_changelist`.`PTI_NAME`, `person_fund_changelist`.`RPI_ID` FROM `bigdata`.`person_fund_changelist` WHERE MD5(RPI_ID) =%s"
+        personal_info_chg = self.db.query(sql_personal_info_chg, rpi_id)
+        res = self.db.get(
+            "SELECT * FROM bigdata.person_fund_base_info where MD5(RPI_ID)=%s",
+            rpi_id)
+        vippersonal_sql = "SELECT RPI_PHOTO_PATH, aoi_id, RPI_NAME, md5(RPI_ID) RPI_ID, sco_name, aoi_name, md5(aoi_name) vaoi_name, eco_name, pti_name, cer_num, md5(cer_num) AS vcer_num FROM ( SELECT s.*, RIGHT (s.CER_NUM, 11) vcer_num FROM `bigdata`.`person_fund_base_info` s WHERE s.aoi_id IN ( SELECT aoi_id FROM `bigdata`.`person_fund_base_info` WHERE md5(rpi_id) =% s )) a ORDER BY RAND() LIMIT 4"
+        vippersonal_list = self.db.query(vippersonal_sql, rpi_id)
         if len(res) > 0:
             self.create_log(operate_type='500', operate_event=res['AOI_NAME'] + res['RPI_NAME'])
-        self.render("stock_personal_detail.html", userinfo=userinfo, personal_info=res,
-                    personal_info_chg=personal_info_chg)
+        self.render("person_fund_detail.html", userinfo=userinfo, personal_info=res,
+                    personal_info_chg=personal_info_chg, vippersonallists=vippersonal_list)
+
+
+# 证券行业从业人员信息
+class person_stock_Handler(BaseHandler):
+    def get(self):
+        searchname = self.get_argument("searchname", None)
+        searchorgid = self.get_argument("searchorgid", None)
+        userinfo = self.current_user
+        if searchname is not None:
+            res = self.db.query(
+                "SELECT md5( `person_stock_info`.`AOI_ID` ) AOI_ID, `person_stock_info`.`AOI_NAME`, MD5( `person_stock_info`.`RPI_ID` ) RPI_ID, `person_stock_info`.`RPI_NAME`, `person_stock_info`.`ADI_ID`, `person_stock_info`.`ADI_NAME`, `person_stock_info`.`SCO_NAME`, `person_stock_info`.`PTI_NAME`, `person_stock_info`.`ECO_NAME`, `person_stock_info`.`CER_NUM`, md5(`person_stock_info`.`CER_NUM`) VCER_NUM,`person_stock_info`.`PPP_GET_DATE`, `person_stock_info`.`PPP_END_DATE` FROM `bigdata`.`person_stock_info` WHERE MATCH (RPI_NAME, CER_NUM) AGAINST (% s) limit 100",
+                searchname)
+        else:
+            if searchorgid is not None:
+                res = self.db.query(
+                    "SELECT md5( `person_stock_info`.`AOI_ID` ) AOI_ID, `person_stock_info`.`AOI_NAME`, md5( `person_stock_info`.`RPI_ID` ) RPI_ID, `person_stock_info`.`RPI_NAME`, `person_stock_info`.`ADI_ID`, `person_stock_info`.`ADI_NAME`, `person_stock_info`.`SCO_NAME`, `person_stock_info`.`PTI_NAME`, `person_stock_info`.`ECO_NAME`, `person_stock_info`.`CER_NUM`,md5(`person_stock_info`.`CER_NUM`) VCER_NUM, `person_stock_info`.`PPP_GET_DATE`, `person_stock_info`.`PPP_END_DATE` FROM `bigdata`.`person_stock_info` WHERE md5(aoi_id) =%s limit 200",
+                    searchorgid)
+                searchname = None
+            else:
+                res = self.db.query(
+                    "SELECT md5(`AOI_ID`) AOI_ID, `AOI_NAME`, md5(`RPI_ID`) RPI_ID, `RPI_NAME`, `ADI_ID`, `ADI_NAME`, `SCO_NAME`, `PTI_NAME`, `ECO_NAME`, `CER_NUM`, `PPP_GET_DATE`, `PPP_END_DATE`, md5(cer_num) AS VCER_NUM FROM ( SELECT s.*, RIGHT (s.CER_NUM, 11) vcer_num FROM `bigdata`.`person_stock_info` s ) a WHERE vcer_num >= (( SELECT MAX(a.vcer_num) FROM ( SELECT *, RIGHT (CER_NUM, 11) VCER_NUM FROM `bigdata`.`person_stock_info` ) a ) - ( SELECT MIN(a1.vcer_num) FROM ( SELECT *, RIGHT (CER_NUM, 11) vcer_num FROM `bigdata`.`person_stock_info` ) a1 )) * RAND() * 2000 + ( SELECT MIN(a2.vcer_num) FROM ( SELECT *, RIGHT (CER_NUM, 11) vcer_num FROM `bigdata`.`person_stock_info` ) a2 ) LIMIT 20")
+
+        vippersonal_sql = "SELECT RPI_PHOTO_PATH,aoi_id, RPI_NAME, md5(RPI_ID) RPI_ID,sco_name, aoi_name, md5(aoi_name) vaoi_name, eco_name, pti_name, cer_num, md5(cer_num) AS vcer_num FROM ( SELECT s.*, RIGHT (s.CER_NUM, 11) vcer_num FROM `bigdata`.`person_stock_info` s ) a WHERE vcer_num >= (( SELECT MAX(a.vcer_num) FROM ( SELECT *, RIGHT (CER_NUM, 11) vcer_num FROM `bigdata`.`person_stock_info` ) a ) - ( SELECT MIN(a1.vcer_num) FROM ( SELECT *, RIGHT (CER_NUM, 11) vcer_num FROM `bigdata`.`person_stock_info` ) a1 )) * RAND() * 2000 + ( SELECT MIN(a2.vcer_num) FROM ( SELECT *, RIGHT (CER_NUM, 11) vcer_num FROM `bigdata`.`person_stock_info` ) a2 ) LIMIT 4"
+        vippersonal_list = self.db.query(vippersonal_sql)
+        if len(res) > 0:
+            # self.create_log(operate_type='500', operate_event=res['AOI_NAME'] + res['RPI_NAME'])
+            pass
+        self.render("person_stock.html", userinfo=userinfo,
+                    vippersonallists=vippersonal_list,
+                    personal_lists=res,
+                    searchname=searchname)
+
+
+class person_stock_detail_Handler(BaseHandler):
+    def get(self):
+        cer_id = self.get_argument("cer_id", None)
+        userinfo = self.current_user
+        # sql_personal_info_chg="SELECT `person_fund_changelist`.`CER_NUM`, `person_fund_changelist`.`AOI_NAME`, `person_fund_changelist`.`CERTC_NAME`, `person_fund_changelist`.`OBTAIN_DATE`, `person_fund_changelist`.`PTI_NAME`, `person_fund_changelist`.`RPI_ID` FROM `bigdata`.`person_fund_changelist` WHERE MD5(RPI_ID) =%s"
+        personal_info_chg = {}
+        res = self.db.get(
+            "SELECT * FROM bigdata.`person_stock_info` where MD5(cer_num)=%s",
+            cer_id)
+        vippersonal_sql = "SELECT RPI_PHOTO_PATH, aoi_id, RPI_NAME, md5(RPI_ID) RPI_ID, sco_name, aoi_name, md5(aoi_name) vaoi_name, eco_name, pti_name, cer_num, md5(cer_num) AS vcer_num FROM ( SELECT s.*, RIGHT (s.CER_NUM, 11) vcer_num FROM `bigdata`.`person_stock_info` s WHERE s.AOI_ID IN ( SELECT AOI_ID FROM `bigdata`.`person_stock_info` WHERE md5(CER_NUM) =%s )) a ORDER BY RAND() LIMIT 4"
+        vippersonal_list = self.db.query(vippersonal_sql, cer_id)
+        if len(res) > 0:
+            self.create_log(operate_type='500', operate_event=res['AOI_NAME'] + res['RPI_NAME'])
+        self.render("person_stock_detail.html", userinfo=userinfo, personal_info=res,
+                    personal_info_chg=personal_info_chg, vippersonallists=vippersonal_list)
 
 
 # 证券公司从业人员详情
