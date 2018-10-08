@@ -81,7 +81,7 @@ class Application(tornado.web.Application):
             (r"/stock_personal_info.html", Stock_personal_info_Handler),
             # 查询金融人才证券人才本地详情
             (r"/person_stock_detail.html", person_stock_detail_Handler),
-
+            (r"/stock_personal_detail.html", person_stock_detail_Handler),
             # 查询证券公司从业情况
             (r"/securities_company.html", Securities_company_Handler),
             # 查询基金行业从业情况
@@ -538,11 +538,9 @@ class pf_company_search(BaseHandler):
         pf_company_office_provinces = self.db.query(
             "SELECT b.officeProvince,b.officeCity,  COUNT(b.officeCity) AS vcount FROM  pf_base_info a   right JOIN  pf_base b ON  a.djbm=b.registerNo WHERE  b.registerCity <>'' GROUP BY b.officeProvince,b.officeCity order by vcount desc limit 60")
 
-        business_search_hiss = self.db.query(
-            "SELECT SUBSTRING_INDEX(GROUP_CONCAT(system_operate_time ORDER BY system_operate_time DESC), ',',1)  as sort,   system_operate_business_name FROM bigdata.system_user_log where system_operate_user=%s and system_operate_type=300  group by system_operate_business_name order by  sort desc limit 20",
-            self.current_user.id)
+        business_search_hiss ={}
         business_search_hots = self.db.query(
-            "SELECT SUBSTRING_INDEX(GROUP_CONCAT(system_operate_time ORDER BY system_operate_time DESC), ',',1)  as sort,   system_operate_business_name FROM bigdata.system_user_log where system_operate_type=300  group by system_operate_business_name order by  sort desc limit 20 ")
+            "SELECT DISTINCT a.system_operate_business_name AS system_operate_business_name FROM bigdata.system_user_log a WHERE a.system_operate_type = 300 LIMIT 20")
         self.render("pf_company_search.html", userinfo=userinfo, business_search_hiss=business_search_hiss,
                     business_search_hots=business_search_hots, pf_company_provinces=pf_company_provinces,
                     pf_company_office_provinces=pf_company_office_provinces)
@@ -840,6 +838,8 @@ class person_stock_detail_Handler(BaseHandler):
     @gen.coroutine
     def get(self):
         cer_id = self.get_argument("cer_id", None)
+        if cer_id is None:
+            cer_id = self.get_argument("cerid", None)
         userinfo = self.current_user
         #sql_personal_info_chg="SELECT `person_fund_changelist`.`CER_NUM`, `person_fund_changelist`.`AOI_NAME`, `person_fund_changelist`.`CERTC_NAME`, `person_fund_changelist`.`OBTAIN_DATE`, `person_fund_changelist`.`PTI_NAME`, `person_fund_changelist`.`RPI_ID` FROM `bigdata`.`person_fund_changelist` WHERE MD5(RPI_ID) =%s"
         personal_info_chg ={}
