@@ -563,11 +563,11 @@ class pf_company_list(BaseHandler):
         if business_city is not None:
             if search_type == "reg":
                 business_list = self.db.query(
-                    "SELECT c.registerNo, a.business_id, a.business_name, case when length(a.business_legal_name)<1 then t.men_name else a.business_legal_name end business_legal_name, a.business_reg_capital, a.business_reg_time, a.business_industry, a.business_scope, a.business_phone, b.jglx FROM `business_base` a INNER JOIN pf_base_info  b ON a.business_reg_number = b.gszch INNER JOIN pf_base c ON c.registerNo = b.djbm left join `bigdata`.`business_men_base` t on a.business_legal_id=t.men_id WHERE c.registerCity = %s limit 200",
+                    "SELECT c.registerNo, a.business_id, a.business_name, CASE WHEN length(a.business_legal_name) < 1 THEN t.men_name ELSE a.business_legal_name END business_legal_name, a.business_reg_capital, a.business_reg_time, a.business_industry, a.business_scope, a.business_phone, b.jglx FROM `business_base` a INNER JOIN pf_base_info b ON a.business_name = b.jjglrqc INNER JOIN pf_base c ON c.pf_id = b.pf_id LEFT JOIN `bigdata`.`business_men_base` t ON a.business_legal_id = t.men_id WHERE c.registerCity = %s LIMIT 1000",
                     business_city)
             else:
                 business_list = self.db.query(
-                    "SELECT c.registerNo, a.business_id, a.business_name,case when length(a.business_legal_name)<1 then t.men_name else business_legal_name end business_legal_name ,a.business_reg_capital, a.business_reg_time, a.business_industry, a.business_scope, a.business_phone, b.jglx FROM `business_base` a INNER JOIN pf_base_info  b ON a.business_reg_number = b.gszch INNER JOIN pf_base c ON c.registerNo = b.djbm left join `bigdata`.`business_men_base` t on a.business_legal_id=t.men_id WHERE c.officecity = %s limit 200",
+                    "SELECT c.registerNo, a.business_id, a.business_name, CASE WHEN length(a.business_legal_name) < 1 THEN t.men_name ELSE business_legal_name END business_legal_name, a.business_reg_capital, a.business_reg_time, a.business_industry, a.business_scope, a.business_phone, b.jglx FROM `business_base` a INNER JOIN pf_base_info b ON a.business_name = b.jjglrqc INNER JOIN pf_base c ON c.pf_id = b.pf_id LEFT JOIN `bigdata`.`business_men_base` t ON a.business_legal_id = t.men_id WHERE c.officecity = % s LIMIT 1000",
                     business_city)
             self.render("pf_company_list.html", userinfo=self.current_user, business_list=business_list,
                         business_citys=business_city, business_names=v_business_name)
