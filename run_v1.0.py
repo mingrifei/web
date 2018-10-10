@@ -588,23 +588,89 @@ class pf_detail(BaseHandler):
     def get(self):
         business_id = self.get_argument("id", None)
         business_detail_base = self.db.get(
-            "SELECT `business_id`, `business_name`, `business_logo`, `business_phone`, `business_email`, `business_url`, `business_addres`, `busines_tags`, `business_summary`, `business_update_time`, `business_legal_id`, case when length(business_legal_name)<1 then t.men_name else business_legal_name end business_legal_name, `business_reg_capital`, `business_reg_time`, `business_reg_state`, `business_reg_number`, `business_organization_number`, `business_unite_number`, `business_type`, `business_payment_number`, `business_industry`, `business_cycle_time`, `business_approved_time`, `business_reg_Institute`, `business_reg_addres`, `business_en_name`, `business_scope`, `business_score`, `business_plate` FROM `bigdata`.`business_base` left join `bigdata`.`business_men_base` t on business_legal_id=t.men_id where business_id=%s LIMIT 1",
+            "SELECT s.business_id, s.business_name, s.business_logo, s.business_phone, s.business_email, s.business_url, s.business_addres, s.busines_tags, s.business_summary, s.business_update_time, s.business_legal_id, case when length(s.business_legal_name)<1 then t.men_name else business_legal_name end business_legal_name , s.business_reg_capital, s.business_reg_time, s.business_reg_state, s.business_reg_number, s.business_organization_number, s.business_unite_number, s.business_type, s.business_payment_number, s.business_industry, s.business_cycle_time, s.business_approved_time, s.business_reg_Institute, s.business_reg_addres, s.business_en_name, s.business_scope, s.business_score, s.business_plate FROM bigdata.business_base s  left join `bigdata`.`business_men_base` t on s.business_legal_id=t.men_id where s.business_id=%s LIMIT 1",
             business_id)
         business_detail_holdes = self.db.query(
-            "SELECT business_id,men_id,men_name,holder_percent,holder_amomon FROM `bigdata`.`business_holder` where business_id=%s group by business_id,men_id,men_name,holder_percent,holder_amomon",
+            "SELECT     s.business_id,     s.men_id,     s.men_name,     md5(t.business_name) vmen_name,     s.holder_percent,     s.holder_amomon FROM     `bigdata`.`business_holder` s left join bigdata.business_base t on s.men_name=t.business_name where s.business_id=%s GROUP BY s.business_id , s.men_id , s.men_name , s.holder_percent , s.holder_amomon,t.business_name",
             business_id)
         business_detail_invests = self.db.query(
-            "SELECT `business_id`, `invest_name`, `invest_id`, `legal_name`, `legal_id`, `invest_reg_capital`, `invest_amount`, `invest_amomon`, DATE_FORMAT(invest_reg_time,'%%Y-%%m') `invest_reg_time`, `invest_state` FROM `bigdata`.`business_invest` where business_id=%s",
+            "SELECT     s.`business_id`,     s.`invest_name`,     md5(t.business_name) vbusiness_name,     s.`invest_id`,     s.`legal_name`,     s.`legal_id`,     s.`invest_reg_capital`,     s.`invest_amount`,     s.`invest_amomon`,     case when length(s.invest_reg_time)>0 then substr(s.invest_reg_time, 1,10) else s.invest_reg_time end `invest_reg_time`,     s.`invest_state` FROM     `bigdata`.`business_invest` s left join bigdata.business_base t on s.invest_name=t.business_name where s.business_id=%s",
             business_id)
-        pf_detail_product = self.db.query(
-            "SELECT a.pf_id,a.cpmc,a.cpid,a.cpfl,c.pf_gllx,c.pf_jjlx,c.pf_clsj,c.pf_yzzt,c.pf_basj FROM bigdata.pf_product_info  a left join bigdata.pf_base_info b on a.pf_id=b.pf_id left join pf_product_base c on c.pf_cpid=a.cpid where b.gszch=%s order by c.pf_clsj desc",
+        business_detail_changes = self.db.query(
+            "SELECT `business_change`.`id`,     `business_change`.`business_id`,     `business_change`.`change_time`,     `business_change`.`change_name`,     `business_change`.`change_before`,     `business_change`.`change_after`,     `business_change`.`change_ins_time` FROM `bigdata`.`business_change` where business_id=%s",
             business_id)
-        if len(business_detail_base) > 0:
-            self.create_log(operate_type='300', operate_event=business_detail_base['business_name'])
-        self.render("pf_detail.html", pf_detail_products=pf_detail_product, userinfo=self.current_user,
-                    business_detail_base=business_detail_base, business_detail_holdes=business_detail_holdes,
-                    business_detail_invests=business_detail_invests)
+        sqlreportlist = """
+            SELECT
+                t1.`id`,
+                t1.`reportname`,
+                t1.`tag`,
+                t1.`pubdate`,
+                t1.`pubtime`,
+                t1.`refer`,
+                t1.`stkcode`,
+                t1.`stkname`,
+                t1.`body`,
+                t1.`url`,
+                t1.`ywpj`,
+                t1.`pjbd`,
+                t1.`pjjg`,
+                t1.`ycsy1`,
+                t1.`ycsyl1`,
+                t1.`ycsy2`,
+                t1.`ycsyl2`,
+                t1.`instime`
+            FROM
+                `bigdata`.`stock_report` t1
+            INNER JOIN bigdata.public_company_base_info t ON t.stkcode = t1.stkcode
+            INNER JOIN bigdata.business_base t2 ON t2.business_name = t.companyname
+            WHERE
+                t2.business_id =%s         
+        """
+        reportlist = self.db.query(sqlreportlist, business_id)
 
+        sql_sbzfgjj = """
+        SELECT
+            c.si_num,
+            c.si_begindate,
+            c.si_status,
+            c.si_all_user,
+            c.si_yanglao_user,
+            c.si_yiliao_user,
+            c.si_gongshang_user,
+            c.si_shiye_user,
+            b.gjj_num,
+            b.gjj_status,
+            b.gjj_begindate,
+            b.gjj_enddate,
+            b.business_ins_time
+        FROM
+            bigdata.business_base a
+        LEFT JOIN bigdata.business_zfgjj b ON a.business_id = b.business_id
+        LEFT JOIN bigdata.business_social c ON c.business_id = a.business_id
+        where a.business_id=%s
+        """
+        sbzfgjjlist = self.db.get(sql_sbzfgjj, business_id)
+        sql_men = """
+        SELECT
+            a.men_id,a.men_name,b.men_job
+        FROM
+            bigdata.business_men_base a INNER JOIN
+        bigdata.business_staff_men b on a.men_id=b.men_id
+        where b.business_id=%s 
+        group by a.men_id,a.men_name,b.men_job
+
+        """
+        menlist = self.db.query(sql_men, business_id)
+        pf_detail_product = self.db.query(
+            "SELECT md5(fund_product_pf.fundid) fundid, fund_product_pf.fundName, fund_product_pf.jjbh, fund_product_pf.clsj, fund_product_pf.basj, fund_product_pf.jjbajd, fund_product_pf.jjlx, fund_product_pf.bz, fund_product_pf.jjglrmc, fund_product_pf.gllx, fund_product_pf.tgrmc, fund_product_pf.yzzt, fund_product_pf.putOnRecordDate, fund_product_pf.tbts, fund_product_pf.isDeputeManage, fund_product_pf.xxpl_dyyb, fund_product_pf.xxpl_bnb, fund_product_pf.xxpl_nb, fund_product_pf.xxpl_jb, fund_product_pf.lastQuarterUpdate, fund_product_pf.mandatorName, fund_product_pf.updatetime, fund_product_pf.managerUrl, fund_product_pf.managerName, fund_product_pf.managerType FROM fund_product_pf WHERE managerName =% s ORDER BY clsj DESC LIMIT 500",
+            business_detail_base.business_name)
+        if business_detail_base is not None:
+            if len(business_detail_base) > 0:
+                self.create_log(operate_type='200', operate_event=business_detail_base['business_name'])
+            self.render("pf_detail.html", userinfo=self.current_user, business_detail_base=business_detail_base,
+                        business_detail_holdes=business_detail_holdes, business_detail_invests=business_detail_invests,
+                        business_detail_changes=business_detail_changes, reportlists=reportlist,pf_detail_products=pf_detail_product,
+                        sbzfgjjlist=sbzfgjjlist, menlists=menlist)
 
 # 私募管理人发行产品详情
 class pf_product_base(BaseHandler):
