@@ -1,0 +1,119 @@
+{% extends "frame.html" %}
+{% block head %}
+    <title>证券从业人员查询{{ escape(handler.settings["blog_title"]) }}</title>
+    <meta name="description" content="辅投助手为您免费提供证券公司人员查询，从业人员信息,就到辅投助手！">
+    <meta name="keywords" content="证券公司从业资格查询,基金公司从业资格查询，私募基金从业资格查询,资产管理公司从业资格查询，证券公司信息">
+{% end %}
+{% block main %}
+        <div class="tpl-content-wrapper" >
+
+            <div class="container-fluid am-cf">
+                <div class="row">
+                    <div class="am-u-sm-12 am-u-md-12 am-u-lg-9">
+                        <div class="page-header-heading"><span class="am-icon-home page-header-heading-icon"></span> 账户状态和声明 <small>Account status</small></div>
+                        <p class="page-header-description">您现在使用的为大众版本，使用本系统数据无任何限制，不收取任何费用。平台上的信息均来自网络公开信息，由信息来源方对信息真实性等负相应责任，平台所展示信息出于传递更多信息之目的，并不意味平台赞同其观点或已经证实其内容的真实性。</p>
+						<p class="page-header-description">数据来源包括但不限于：全国企业信用信息公示系统 中国裁判文书网 中国执行信息公开网 国家知识产权局 商标局 版权局。</p>
+                    </div>
+
+                </div>
+
+            </div>
+               {% for vippersonallist in vippersonallists %}
+
+                <div class="am-u-md-3">
+                            <div class="card-box widget-user">
+                                <div>
+                                    <a href="person_stock_detail.html?cer_id={{vippersonallist['vcer_num']}}" target="_blank"><img onerror="this.src='http://person.sac.net.cn/photo/images/{{ vippersonallist.RPI_PHOTO_PATH }}'" src="http://exam.sac.net.cn/photo/images/{{ vippersonallist.RPI_PHOTO_PATH }}" class="img-responsive img-circle" alt="{{ vippersonallist.RPI_NAME }}_{{ vippersonallist.AOI_NAME }}"></a>
+                                    <div class="wid-u-info">
+                                        <h5 class="m-t-0 m-b-5 font-600"><a href="person_stock_detail.html?cer_id={{vippersonallist['vcer_num']}}" target="_blank">{{ vippersonallist.RPI_NAME }}</a></h5>
+                                        <p class="text-muted m-b-5 ">{{ vippersonallist.AOI_NAME }}</p>
+                                        <p class="text-muted m-b-5 ">{{ vippersonallist.PTI_NAME }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                </div>
+                {% end %}
+            <div class="row-content am-cf">
+                <div class="row  am-cf">
+                    <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+                        <div class="widget am-cf">
+                            <div class="widget-head am-cf ">
+                                <div class="widget-title am-fl">输入要查询的证券从业人员姓名、执业机构</div>
+                                <div class="widget-function am-fr">
+                                    <a href="javascript:;" class="am-icon-cog"></a>
+                                </div>
+                            </div>
+                            <div class="widget-body am-fr">
+                                <form action="person_stock.html">
+                                <div class="am-fl">
+                                    <div class="row">
+										<div class="am-u-sm-12 am-u-md-12 am-u-lg-8">
+											<div class="am-input-group am-input-group-sm tpl-form-border-form cl-p">
+												<input type="text" name="searchname" id="searchname" value="{% if searchname is not None %}{{ searchname }}{% end %}" class="am-form-field " placeholder="请输入证券业人员姓名、证件号码或其它关键词 ..." required>
+												<span class="am-input-group-btn">
+													<button id="btn" type='submit' class="am-btn  am-btn-default am-btn-success tpl-table-list-field am-icon-search" type="button"></button>
+												</span>
+											</div>
+										</div>
+									</div>
+                                </div>
+                                </form>
+
+                            </div>
+
+                           <div class="am-u-sm-12 am-u-md-12 am-u-lg-12 widget-margin-bottom-lg">
+
+                            <div class="widget am-cf widget-body-lg">
+
+                                <div class="widget-body  am-fr">
+                                    <div class="am-scrollable-horizontal ">
+                                        <table width="100%" class="am-table am-table-compact am-text-nowrap tpl-table-black " id="example-r">
+                                            <thead>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>姓名</th>
+                                                    <th>性别</th>
+                                                    <th>学历</th>
+                                                    <th>证书编号</th>
+                                                    <th>执业机构</th>
+                                                    <th>执业岗位</th>
+                                                    <th>证书取得日期</th>
+                                                    <th>证书有效期</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                  {% for index, vpersonal_list in enumerate(personal_lists)%}
+                                                <tr class="gradeX">
+                                                    <td>{{index}}</td>
+                                                    <td><a href="person_stock_detail.html?cer_id={{vpersonal_list['VCER_NUM']}}" target="_blank">{{vpersonal_list['RPI_NAME']}}</a></td>
+                                                    <td>{{vpersonal_list['SCO_NAME']}}</td>
+                                                    <td>{{vpersonal_list['ECO_NAME']}}</td>
+                                                    <td>{{vpersonal_list['CER_NUM']}}</td>
+                                                    <td><a href="person_stock.html?searchorgid={{vpersonal_list['AOI_ID']}}">{{vpersonal_list['AOI_NAME']}}</a></td>
+                                                    <td>{{vpersonal_list['PTI_NAME']}}</td>
+                                                    <td>{{vpersonal_list['PPP_GET_DATE']}}</td>
+                                                    <td>{{vpersonal_list['PPP_END_DATE']}}</td>
+
+                                                </tr>
+                                                  {%end%}
+                                                  </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+
+                     </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+<script>
+
+</script>
+{% end %}

@@ -9679,7 +9679,7 @@ TODO:
   z-index: 99;
   float: left;
   width: 100%;
-  padding: 10px 10px 15px;
+  padding: 5px 2px 3px;
   visibility: hidden;
   -webkit-transition: -webkit-transform 0.3s;
   transition: -webkit-transform 0.3s;
@@ -14547,4 +14547,37 @@ tbody.am-collapse.am-in {
 .am-wechatpay .am-wechatpay-btn {
   margin-top: 1rem;
   margin-bottom: 1rem;
+}
+.widget-user {
+  min-height: 112px;
+}
+.img-circle {
+    border-radius: 50%;
+}
+
+.widget-user img {
+  height: 72px;
+  float: left;
+}
+.card-box {
+    padding: 20px;
+    box-shadow: 0 0px 8px 0 rgba(0, 0, 0, 0.06), 0 1px 0px 0 rgba(0, 0, 0, 0.02);
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    background-clip: padding-box;
+    margin-bottom: 20px;
+    background-color: #ffffff;
+}
+.widget-user .wid-u-info {
+  margin-left: 90px;
+}
+.widget-user .wid-u-info p,
+.widget-user .wid-u-info h5 {
+  white-space: nowrap;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 14px;
+  margin: 0 0 0.3rem 0
 }

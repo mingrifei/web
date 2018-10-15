@@ -201,7 +201,9 @@
               <i class="am-icon-circle-o am-text-success tpl-user-panel-status-icon"></i>
               {{userinfo.name }}
           </span>
+                    <!--
                     <a href="javascript:" class="tpl-user-panel-action-link"> <span class="am-icon-pencil"></span> 上次登录时间：{{ locale.format_date(userinfo.lastlogindate,shorter=True) }}</a>
+                    -->
                 </div>
             </div>
 
@@ -274,8 +276,13 @@
                     </a>
                     <ul class="sidebar-nav sidebar-nav-sub">
                         <li class="sidebar-nav-link">
-                            <a href="stock_personal.html">
+                            <a href="person_stock.html">
                                 <span class="am-icon-angle-right sidebar-nav-link-logo"></span> 证券从业人员信息
+                            </a>
+                        </li>
+                        <li class="sidebar-nav-link">
+                            <a href="person_fund.html">
+                                <span class="am-icon-angle-right sidebar-nav-link-logo"></span> 基金从业人员信息
                             </a>
                         </li>
                         <li class="sidebar-nav-link">
@@ -283,11 +290,51 @@
                                 <span class="am-icon-angle-right sidebar-nav-link-logo"></span> 证券公司从业信息
                             </a>
                         </li>
+
+                    </ul>
+                </li>
+               <li class="sidebar-nav-link">
+                    <a href="javascript:" class="sidebar-nav-sub-title">
+                        <i class="am-icon-table sidebar-nav-link-logo"></i> 金融产品信息
+                        <span class="am-icon-chevron-down am-fr am-margin-right-sm sidebar-nav-sub-ico"></span>
+                    </a>
+                    <ul class="sidebar-nav sidebar-nav-sub">
                         <li class="sidebar-nav-link">
-                            <a href="pf_map.html">
-                                <span class="am-icon-angle-right sidebar-nav-link-logo"></span> 基金从业人员信息
+                            <a href="fund_product_pf.html">
+                                <span class="am-icon-angle-right sidebar-nav-link-logo"></span>私募基金管理人产品
                             </a>
                         </li>
+                        <li class="sidebar-nav-link">
+                            <a href="#">
+                                <span class="am-icon-angle-right sidebar-nav-link-logo"></span> 证券公司资管产品
+                            </a>
+                        </li>
+                        <li class="sidebar-nav-link">
+                            <a href="#">
+                                <span class="am-icon-angle-right sidebar-nav-link-logo"></span> 证券公司直投基金
+                            </a>
+                        </li>
+                        <li class="sidebar-nav-link">
+                            <a href="#">
+                                <span class="am-icon-angle-right sidebar-nav-link-logo"></span> 证券公司私募投资基金
+                            </a>
+                        </li>
+                        <li class="sidebar-nav-link">
+                            <a href="#">
+                                <span class="am-icon-angle-right sidebar-nav-link-logo"></span> 基金专户产品
+                            </a>
+                        </li>
+                        <li class="sidebar-nav-link">
+                            <a href="#">
+                                <span class="am-icon-angle-right sidebar-nav-link-logo"></span> 资产支持专项计划
+                            </a>
+                        </li>
+                        <li class="sidebar-nav-link">
+                            <a href="#">
+                                <span class="am-icon-angle-right sidebar-nav-link-logo"></span> 期货公司资管产品
+                            </a>
+                        </li>
+
                     </ul>
                 </li>
 
