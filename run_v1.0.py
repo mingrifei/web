@@ -1268,7 +1268,7 @@ class EntryModule(tornado.web.UIModule):
 def main():
     tornado.options.parse_command_line()
     http_server = tornado.httpserver.HTTPServer(Application(), xheaders=True)
-    http_server.listen(options.port)
+    http_server.listen(808)
     tornado.ioloop.IOLoop.current().start()
 
 

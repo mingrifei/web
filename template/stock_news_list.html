@@ -2,7 +2,7 @@
 {% block head %}
     <title>个股新闻_[{{ escape(handler.settings["blog_title"]) }}]</title>
     <meta name="description" content="辅投助手提供沪深两市全面的个股新闻，及时将国内各大机构个股新闻优化整合，第一时间提供各大券商研究所报告，个股新闻，深入解析上市公司最新变化、发展方向、成长性以及业绩变动趋势。最大程度减少个人投资者与机构之间信息上的差异，使个人投资者更早的了解到上市公司基本面变化,信息仅供参考！行业研报尽在futouzs.com！">
-    <meta name="keywords" content="机构研究报告,研报中心,研报,个股评级,买入评级,个股研报,盈利预测,行业研究,行业研报,策略研究">
+    <meta name="keywords" content="机构研究报告，研报中心，研报，个股评级，买入评级，个股研报，股票新闻，盈利预测，行业研究，行业研报，策略研究">
 {% end %}
 {% block main %}
 {% autoescape None %}<!--全局不转义-->
@@ -65,8 +65,8 @@
                                             <h3 class="am-list-item-hd"><a target="_blank" href="stock_news_detail.html?id={{ newslist.id }}">{{newslist.title}}</a></h3>
                                             <div class="am-list-item-text">
                                                 <ul>
-                                                    <span>证券代码：<a href="stock_news_list.html?type=all&report_search={{ newslist.stkcode }}">{{newslist.stkcode}}</a></span>
-                                                    <span>证券名称：<a href="stock_news_list.html?type=all&report_search={{ newslist.stkname }}">{{newslist.stkname}}</a></span>
+                                                    <span>股票代码：<a href="stock_news_list.html?type=all&report_search={{ newslist.stkcode }}">{{newslist.stkcode}}</a></span>
+                                                    <span>股票名称：<a href="stock_news_list.html?type=all&report_search={{ newslist.stkname }}">{{newslist.stkname}}</a></span>
                                                     <span>所属行业：<a href="stock_news_list.html?type=all&report_search={{ newslist.stkindustry }}">{{newslist.stkindustry}}</a></span>
                                                     <span>发布日期：<a href="stock_news_list.html?type=all&report_search={{ newslist.pubtime }}">{{newslist.pubtime}}</a></span>
                                                 </ul>

@@ -28,16 +28,15 @@ import tornado.escape
 from tornado import gen
 import tornado.httpserver
 import tornado.ioloop
-import tornado.options
 import tornado.web
 import unicodedata
 import json
 import requests
 from bs4 import BeautifulSoup
 import lxml
-from tornado.options import define, options
-from dbconfig import define
-#from orm import AsyncMysqlClient
+from tornado.options import options
+import dbconfig
+from orm import AsyncMysqlClient
 
 # A thread pool to be used for password hashing with bcrypt.
 executor = concurrent.futures.ThreadPoolExecutor(2)
@@ -133,8 +132,9 @@ class Application(tornado.web.Application):
         )
         super(Application, self).__init__(handlers, **settings)
         # Have one global connection to the blog DB across all handlers
-        #self.orm=AsyncMysqlClient()
-        #self.dbs_query=self.orm.query_all
+        self.orm=AsyncMysqlClient()
+        self.dbs_query=self.orm.query_all
+        self.dbs_get=self.orm.query_one
         self.db = torndb.Connection(
             host=options.mysql_host, database=options.mysql_database,
             user=options.mysql_user, password=options.mysql_password)
@@ -152,13 +152,22 @@ class Application(tornado.web.Application):
                                    '--password=' + options.mysql_password],
                                   stdin=open('schema.sql'))
 
+class Row(dict):
+    """A dict that allows for object-like property access syntax."""
 
+    def __getattr__(self, name):
+        try:
+            return self[name]
+        except KeyError:
+            raise AttributeError(name)
 class BaseHandler(tornado.web.RequestHandler):
     @property
     def db(self):
         return self.application.db
     def orm_query_all(self,sql,args=None):
         return self.application.dbs_query(sql,args)
+    def orm_query_get(self,sql,args=None):
+        return self.application.dbs_get(sql,args)
     def get_current_user(self):
         # user_id = self.get_secure_cookie("login_user")
         user_id = 2
@@ -188,13 +197,17 @@ class BaseHandler(tornado.web.RequestHandler):
             "sql_newslist_tech": "SELECT `t_news`.`id`,     `t_news`.`title`,     `t_news`.`pubtime`,     `t_news`.`url`,     `t_news`.`tag`,     `t_news`.`refer`,     `t_news`.`body`,     `t_news`.`link_business_id` FROM `bigdata`.`t_news` where tag='tech' order by  pub_time desc limit 10 ",
             "sql_newslist_ent": "SELECT `t_news`.`id`,     `t_news`.`title`,     `t_news`.`pubtime`,     `t_news`.`url`,     `t_news`.`tag`,     `t_news`.`refer`,     `t_news`.`body`,     `t_news`.`link_business_id` FROM `bigdata`.`t_news` where tag='ent' order by  pub_time desc limit 10 ",
             "sql_stock_report": "SELECT `stock_report`.`id`,`stock_report`.`reportname`,`stock_report`.`tag`,`stock_report`.`pubdate`,`stock_report`.`pubtime`,`stock_report`.`refer`,`stock_report`.`stkcode`,`stock_report`.`stkname`,`stock_report`.`body`,`stock_report`.`url`,`stock_report`.`ywpj`,`stock_report`.`pjbd`,`stock_report`.`pjjg`,`stock_report`.`ycsy1`,`stock_report`.`ycsyl1`,`stock_report`.`ycsy2`,`stock_report`.`ycsyl2`,`stock_report`.`instime` FROM `bigdata`.`stock_report` order by pubdate desc limit 10 ",
-            "sql_business_newscount": "select count(*) news_count from bigdata.t_news t ",
-            "sql_business_count": "select count(*) business_count from bigdata.business_base",
             "sql_business_list": "SELECT t1.business_id, t1.business_name, t1.business_industry, t1.business_score FROM `bigdata`.`business_base` AS t1 JOIN ( SELECT ROUND( RAND() * ( SELECT MAX(id) FROM `bigdata`.`business_base` )) AS id ) AS t2 WHERE t1.id >= t2.id ORDER BY t1.id ASC LIMIT 10",
             "sql_business_public_list": "SELECT t1.business_id, t1.business_name, t1.business_industry, t1.business_score FROM ( SELECT * FROM `bigdata`.`business_base` WHERE business_plate = 'A' ) AS t1 JOIN ( SELECT ROUND( RAND() * ( SELECT MAX(id) FROM `bigdata`.`business_base` WHERE business_plate = 'A' )) AS id ) AS t2 WHERE t1.id >= t2.id ORDER BY t1.id ASC LIMIT 10",
-            "sql_vipfundpersonal":"SELECT rpi_photo_path,md5(aoi_id) AOI_ID,md5(rpi_id) RPI_ID, RPI_NAME, sco_name, aoi_name, md5(aoi_name) vaoi_name, eco_name, pti_name, cer_num, md5(cer_num) AS vcer_num FROM ( SELECT s.*, RIGHT (s.CER_NUM, 11) vcer_num FROM `bigdata`.`person_fund_base_info` s ) a WHERE vcer_num >= (( SELECT MAX(a.vcer_num) FROM ( SELECT *, RIGHT (CER_NUM, 11) vcer_num FROM `bigdata`.`person_fund_base_info` ) a ) - ( SELECT MIN(a1.vcer_num) FROM ( SELECT *, RIGHT (CER_NUM, 11) vcer_num FROM `bigdata`.`person_fund_base_info` ) a1 )) * RAND() * 2000 + ( SELECT MIN(a2.vcer_num) FROM ( SELECT *, RIGHT (CER_NUM, 11) vcer_num FROM `bigdata`.`person_fund_base_info` ) a2 ) LIMIT 4"
+            "sql_vipfundpersonal":"SELECT rpi_photo_path,md5(aoi_id) AOI_ID,md5(rpi_id) RPI_ID, RPI_NAME, sco_name, aoi_name, md5(aoi_name) vaoi_name, eco_name, pti_name, cer_num, md5(cer_num) AS vcer_num FROM ( SELECT s.*, RIGHT (s.CER_NUM, 11) vcer_num FROM `bigdata`.`person_fund_base_info` s ) a WHERE vcer_num >= (( SELECT MAX(a.vcer_num) FROM ( SELECT *, RIGHT (CER_NUM, 11) vcer_num FROM `bigdata`.`person_fund_base_info` ) a ) - ( SELECT MIN(a1.vcer_num) FROM ( SELECT *, RIGHT (CER_NUM, 11) vcer_num FROM `bigdata`.`person_fund_base_info` ) a1 )) * RAND() * 2000 + ( SELECT MIN(a2.vcer_num) FROM ( SELECT *, RIGHT (CER_NUM, 11) vcer_num FROM `bigdata`.`person_fund_base_info` ) a2 ) LIMIT 4",
+            "sql_report_search":"SELECT `stock_report`.`id`,`stock_report`.`reportname`,`stock_report`.`tag`,`stock_report`.`pubdate`,`stock_report`.`pubtime`,`stock_report`.`refer`,`stock_report`.`stkcode`,`stock_report`.`stkname`,`stock_report`.`body`,`stock_report`.`url`,`stock_report`.`ywpj`,`stock_report`.`pjbd`,`stock_report`.`pjjg`,`stock_report`.`ycsy1`,`stock_report`.`ycsyl1`,`stock_report`.`ycsy2`,`stock_report`.`ycsyl2`,`stock_report`.`instime` FROM `bigdata`.`stock_report` where stkname like %s  or pjjg like %s  or stkcode like %s or pubdate like %s order by pubdate desc limit %s, 20",
+            "sql_report_search_noparam":"SELECT `stock_report`.`id`,`stock_report`.`reportname`,`stock_report`.`tag`,`stock_report`.`pubdate`,`stock_report`.`pubtime`,`stock_report`.`refer`,`stock_report`.`stkcode`,`stock_report`.`stkname`,`stock_report`.`body`,`stock_report`.`url`,`stock_report`.`ywpj`,`stock_report`.`pjbd`,`stock_report`.`pjjg`,`stock_report`.`ycsy1`,`stock_report`.`ycsyl1`,`stock_report`.`ycsy2`,`stock_report`.`ycsyl2`,`stock_report`.`instime` FROM `bigdata`.`stock_report` order by pubdate desc limit %s, 200",
+            "sql_report_search_noparam1":"SELECT `stock_report`.`id`,`stock_report`.`reportname`,`stock_report`.`tag`,`stock_report`.`pubdate`,`stock_report`.`pubtime`,`stock_report`.`refer`,`stock_report`.`stkcode`,`stock_report`.`stkname`,`stock_report`.`body`,`stock_report`.`url`,`stock_report`.`ywpj`,`stock_report`.`pjbd`,`stock_report`.`pjjg`,`stock_report`.`ycsy1`,`stock_report`.`ycsyl1`,`stock_report`.`ycsy2`,`stock_report`.`ycsyl2`,`stock_report`.`instime` FROM `bigdata`.`stock_report` where tag=%s  order by pubdate desc limit %s, 20"
         }
-        v_result=self.db.query(sqldict[sqlitem])
+        if sqlparam is not None:
+            v_result=yield self.orm_query_all(sqldict[sqlitem],sqlparam)
+        else:
+            v_result=yield self.orm_query_all(sqldict[sqlitem])
         return v_result
 
     @gen.coroutine
@@ -203,10 +216,9 @@ class BaseHandler(tornado.web.RequestHandler):
             "sql_business_newscount": "select count(*) news_count from bigdata.t_news t ",
             "sql_business_count": "select count(*) business_count from bigdata.business_base"
         }
-        v_result=yield self.db.get(sqldict[sqlitem])
-        return v_result
+        v_result=yield self.orm_query_get(sqldict[sqlitem])
+        return Row(v_result)
 class HomeHandler(BaseHandler):
-    @tornado.web.asynchronous
     @gen.coroutine
     def get(self):
         userinfo = self.current_user
@@ -248,7 +260,6 @@ class HomeHandler(BaseHandler):
                 , self.excutesql('sql_fundcompanylist')
                 #vipfundpersonal_list
                 ,self.excutesql('sql_vipfundpersonal')]
-            print('newslist_finance',newslist_finance)
             self.render("index.html", userinfo=userinfo,
                     business_count=business_count,
                     newslists=newslist,
@@ -996,7 +1007,6 @@ class Stock_report_detail_Handler(BaseHandler):
 
 # 研报列表
 class Stock_report_list_Handler(BaseHandler):
-    @tornado.web.asynchronous
     @gen.coroutine
     def get(self):
         vreport_search = self.get_argument("report_search", '')
@@ -1005,19 +1015,13 @@ class Stock_report_list_Handler(BaseHandler):
         page_count = 20
         news_page = int(vnews_page) * page_count
         if news_type == 'all':
-            if vreport_search != None:
+            if vreport_search != '':
                 report_search = '%' + vreport_search + '%'
-                sql = "SELECT `stock_report`.`id`,`stock_report`.`reportname`,`stock_report`.`tag`,`stock_report`.`pubdate`,`stock_report`.`pubtime`,`stock_report`.`refer`,`stock_report`.`stkcode`,`stock_report`.`stkname`,`stock_report`.`body`,`stock_report`.`url`,`stock_report`.`ywpj`,`stock_report`.`pjbd`,`stock_report`.`pjjg`,`stock_report`.`ycsy1`,`stock_report`.`ycsyl1`,`stock_report`.`ycsy2`,`stock_report`.`ycsyl2`,`stock_report`.`instime` FROM `bigdata`.`stock_report` where stkname like %s  or pjjg like %s  or stkcode like %s or pubdate like %s order by pubdate desc limit {news_page}, 20".format(
-                    news_page=news_page)
-                reportlist = self.db.query(sql, report_search, report_search, report_search, report_search)
+                reportlist=yield self.excutesql('sql_report_search',sqlparam=(report_search, report_search, report_search, report_search,news_page))
             else:
-                sql = "SELECT `stock_report`.`id`,`stock_report`.`reportname`,`stock_report`.`tag`,`stock_report`.`pubdate`,`stock_report`.`pubtime`,`stock_report`.`refer`,`stock_report`.`stkcode`,`stock_report`.`stkname`,`stock_report`.`body`,`stock_report`.`url`,`stock_report`.`ywpj`,`stock_report`.`pjbd`,`stock_report`.`pjjg`,`stock_report`.`ycsy1`,`stock_report`.`ycsyl1`,`stock_report`.`ycsy2`,`stock_report`.`ycsyl2`,`stock_report`.`instime` FROM `bigdata`.`stock_report` order by pubdate desc limit {}, 20".format(
-                    news_page)
-                reportlist = self.db.query(sql)
+                reportlist=yield  self.excutesql('sql_report_search_noparam',(0))
         else:
-            sql = "SELECT `stock_report`.`id`,`stock_report`.`reportname`,`stock_report`.`tag`,`stock_report`.`pubdate`,`stock_report`.`pubtime`,`stock_report`.`refer`,`stock_report`.`stkcode`,`stock_report`.`stkname`,`stock_report`.`body`,`stock_report`.`url`,`stock_report`.`ywpj`,`stock_report`.`pjbd`,`stock_report`.`pjjg`,`stock_report`.`ycsy1`,`stock_report`.`ycsyl1`,`stock_report`.`ycsy2`,`stock_report`.`ycsyl2`,`stock_report`.`instime` FROM `bigdata`.`stock_report` where tag=%s  order by pubdate desc limit {}, 20".format(
-                news_page)
-            reportlist = self.db.query(sql, news_type)
+            reportlist=yield  self.excutesql('sql_report_search_noparam1',(news_type,0))
         self.render("stock_report_list.html", userinfo=self.current_user, reportlists=reportlist, page_count=page_count,
                     news_page=int(vnews_page), report_search=vreport_search)
 
