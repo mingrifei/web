@@ -113,6 +113,10 @@ class Application(tornado.web.Application):
             (r"/fund_product_pf.html", fund_product_pf_Handler),
             # 私募基金产品信息--详情
             (r"/fund_product_pf_detail.html", fund_product_pf__detail_Handler),
+            # 招聘信息列表
+            (r"/jobs_list.html", jobs_list_Handler),
+            # 招聘信息详情
+            (r"/jobs_detail.html", jobs_detail_Handler),
 
             # 无权限页面
             (r"/authdeny.html", authdeny),
@@ -127,7 +131,7 @@ class Application(tornado.web.Application):
             xsrf_cookies=True,
             cookie_secret="__TODO:_GENERATE_YOUR_OWN_RANDOM_VALUE_HERE__",
             login_url="/auth/login",
-            debug=False,
+            debug=True,
             autoreload=True
         )
         super(Application, self).__init__(handlers, **settings)
@@ -202,7 +206,9 @@ class BaseHandler(tornado.web.RequestHandler):
             "sql_vipfundpersonal":"SELECT rpi_photo_path,md5(aoi_id) AOI_ID,md5(rpi_id) RPI_ID, RPI_NAME, sco_name, aoi_name, md5(aoi_name) vaoi_name, eco_name, pti_name, cer_num, md5(cer_num) AS vcer_num FROM ( SELECT s.*, RIGHT (s.CER_NUM, 11) vcer_num FROM `bigdata`.`person_fund_base_info` s ) a WHERE vcer_num >= (( SELECT MAX(a.vcer_num) FROM ( SELECT *, RIGHT (CER_NUM, 11) vcer_num FROM `bigdata`.`person_fund_base_info` ) a ) - ( SELECT MIN(a1.vcer_num) FROM ( SELECT *, RIGHT (CER_NUM, 11) vcer_num FROM `bigdata`.`person_fund_base_info` ) a1 )) * RAND() * 2000 + ( SELECT MIN(a2.vcer_num) FROM ( SELECT *, RIGHT (CER_NUM, 11) vcer_num FROM `bigdata`.`person_fund_base_info` ) a2 ) LIMIT 4",
             "sql_report_search":"SELECT `stock_report`.`id`,`stock_report`.`reportname`,`stock_report`.`tag`,`stock_report`.`pubdate`,`stock_report`.`pubtime`,`stock_report`.`refer`,`stock_report`.`stkcode`,`stock_report`.`stkname`,`stock_report`.`body`,`stock_report`.`url`,`stock_report`.`ywpj`,`stock_report`.`pjbd`,`stock_report`.`pjjg`,`stock_report`.`ycsy1`,`stock_report`.`ycsyl1`,`stock_report`.`ycsy2`,`stock_report`.`ycsyl2`,`stock_report`.`instime` FROM `bigdata`.`stock_report` where stkname like %s  or pjjg like %s  or stkcode like %s or pubdate like %s order by pubdate desc limit %s, 20",
             "sql_report_search_noparam":"SELECT `stock_report`.`id`,`stock_report`.`reportname`,`stock_report`.`tag`,`stock_report`.`pubdate`,`stock_report`.`pubtime`,`stock_report`.`refer`,`stock_report`.`stkcode`,`stock_report`.`stkname`,`stock_report`.`body`,`stock_report`.`url`,`stock_report`.`ywpj`,`stock_report`.`pjbd`,`stock_report`.`pjjg`,`stock_report`.`ycsy1`,`stock_report`.`ycsyl1`,`stock_report`.`ycsy2`,`stock_report`.`ycsyl2`,`stock_report`.`instime` FROM `bigdata`.`stock_report` order by pubdate desc limit %s, 200",
-            "sql_report_search_noparam1":"SELECT `stock_report`.`id`,`stock_report`.`reportname`,`stock_report`.`tag`,`stock_report`.`pubdate`,`stock_report`.`pubtime`,`stock_report`.`refer`,`stock_report`.`stkcode`,`stock_report`.`stkname`,`stock_report`.`body`,`stock_report`.`url`,`stock_report`.`ywpj`,`stock_report`.`pjbd`,`stock_report`.`pjjg`,`stock_report`.`ycsy1`,`stock_report`.`ycsyl1`,`stock_report`.`ycsy2`,`stock_report`.`ycsyl2`,`stock_report`.`instime` FROM `bigdata`.`stock_report` where tag=%s  order by pubdate desc limit %s, 20"
+            "sql_report_search_noparam1":"SELECT `stock_report`.`id`,`stock_report`.`reportname`,`stock_report`.`tag`,`stock_report`.`pubdate`,`stock_report`.`pubtime`,`stock_report`.`refer`,`stock_report`.`stkcode`,`stock_report`.`stkname`,`stock_report`.`body`,`stock_report`.`url`,`stock_report`.`ywpj`,`stock_report`.`pjbd`,`stock_report`.`pjjg`,`stock_report`.`ycsy1`,`stock_report`.`ycsyl1`,`stock_report`.`ycsy2`,`stock_report`.`ycsyl2`,`stock_report`.`instime` FROM `bigdata`.`stock_report` where tag=%s  order by pubdate desc limit %s, 20",
+            "sql_jobs_list_noparam":"SELECT `business_jobs`.`id`,    `business_jobs`.`business_id`,    `business_jobs`.`job_time`,    `business_jobs`.`job_name`,    `business_jobs`.`job_salary`,    `business_jobs`.`job_experience`,    `business_jobs`.`job_count`,    `business_jobs`.`job_city`,    `business_jobs`.`job_district`,    `business_jobs`.`job_company`,    `business_jobs`.`job_source`,    `business_jobs`.`job_source_url`,    `business_jobs`.`job_end_time` FROM `bigdata`.`business_jobs` order by job_name desc limit %s, 20",
+            "sql_jobs_list_search":"SELECT `business_jobs`.`id`,    `business_jobs`.`business_id`,    `business_jobs`.`job_time`,    `business_jobs`.`job_name`,    `business_jobs`.`job_salary`,    `business_jobs`.`job_experience`,    `business_jobs`.`job_count`,    `business_jobs`.`job_city`,    `business_jobs`.`job_district`,    `business_jobs`.`job_company`,    `business_jobs`.`job_source`,    `business_jobs`.`job_source_url`,    `business_jobs`.`job_end_time` FROM `bigdata`.`business_jobs` where match(job_name) against (%s IN BOOLEAN MODE) order by job_name desc limit %s,20"
         }
         if sqlparam is not None:
             v_result=yield self.orm_query_all(sqldict[sqlitem],sqlparam)
@@ -214,9 +220,16 @@ class BaseHandler(tornado.web.RequestHandler):
     def excutesql_get(self,sqlitem,sqlparam=None):
         sqldict={
             "sql_business_newscount": "select count(*) news_count from bigdata.t_news t ",
-            "sql_business_count": "select count(*) business_count from bigdata.business_base"
+            "sql_business_count": "select count(*) business_count from bigdata.business_base",
+            "sql_jobs_list_noparam_count": "SELECT count(*) vcount FROM `bigdata`.`business_jobs` ",
+            "sql_jobs_list_search_count": "SELECT  count(*) vcount FROM `bigdata`.`business_jobs` where match(job_name) against (%s IN BOOLEAN MODE)",
+            "sql_jobs_detail": "SELECT `business_jobs`.`id`,    `business_jobs`.`business_id`,    `business_jobs`.`job_time`,    `business_jobs`.`job_name`,    `business_jobs`.`job_salary`,    `business_jobs`.`job_experience`,    `business_jobs`.`job_count`,    `business_jobs`.`job_city`,    `business_jobs`.`job_district`,    `business_jobs`.`job_company`,    `business_jobs`.`job_source`,    `business_jobs`.`job_source_url`,    `business_jobs`.`job_end_time`,job_summary FROM `bigdata`.`business_jobs` where id=%s"
+
         }
-        v_result=yield self.orm_query_get(sqldict[sqlitem])
+        if sqlparam is not None:
+            v_result=yield self.orm_query_get(sqldict[sqlitem],sqlparam)
+        else:
+            v_result=yield self.orm_query_get(sqldict[sqlitem])
         return Row(v_result)
 class HomeHandler(BaseHandler):
     @gen.coroutine
@@ -1056,7 +1069,6 @@ class Stock_news_detail_Handler(BaseHandler):
 
 # 个股新闻列表
 class Stock_news_list_Handler(BaseHandler):
-    @tornado.web.asynchronous
     @gen.coroutine
     def get(self):
         vreport_search = self.get_argument("report_search", '')
@@ -1131,7 +1143,35 @@ class fund_product_pf__detail_Handler(BaseHandler):
             self.create_log(operate_type='501', operate_event=res['fundName'])
         self.render("fund_product_pf_detail.html", userinfo=userinfo, product_info=res,
                     vipproductlists=vipproductlist)
+# 招聘信息详情页面
+class jobs_detail_Handler(BaseHandler):
+    @gen.coroutine
+    def get(self):
+        id = self.get_argument("id", None)
+        job_detail=yield self.excutesql_get('sql_jobs_detail',(id))
+        self.render("jobs_detail.html", userinfo=self.current_user, job_detail=job_detail)
 
+
+# 招聘信息列表
+class jobs_list_Handler(BaseHandler):
+    @gen.coroutine
+    def get(self):
+        jobs_search = self.get_argument("jobs_search", '')
+        vnews_page = self.get_argument("page", 0)
+        page_count = 100
+        #news_page = (int(vnews_page)) * page_count
+        news_page=int(vnews_page)
+        if jobs_search != '':
+            jobs_search = jobs_search
+
+            jobslist =yield  self.excutesql('sql_jobs_list_search',sqlparam=(jobs_search,news_page))
+            jobslistcount =yield  self.excutesql_get('sql_jobs_list_search_count',sqlparam=(jobs_search))
+        else:
+            jobslist = yield self.excutesql('sql_jobs_list_noparam',sqlparam=(news_page))
+            jobslistcount = yield self.excutesql_get('sql_jobs_list_noparam_count')
+
+        self.render("jobs_list.html", userinfo=self.current_user, jobslists=jobslist, page_count=page_count,
+                    news_page=int(news_page),jobs_search=jobs_search,jobslistcount=jobslistcount)
 
 # 无权限页面
 class authdeny(BaseHandler):

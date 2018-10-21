@@ -1,0 +1,51 @@
+{% extends "frame.html" %}
+{% block head %}
+    <title>{{job_detail.job_name}}_[{{ escape(handler.settings["blog_title"]) }}]</title>
+    <meta name="description" content="辅投助手为您提供{{job_detail.job_company}}招聘信息，{{ job_detail.job_name }}{{ job_detail.job_district }}{{ job_detail.job_salary }} 更多就业机会尽在futouzs.com！">
+    <meta name="keywords" content="{{ job_detail.job_name }}，{{job_detail.job_company}}，行业研报">
+{% end %}
+{% block main %}
+        <div class="tpl-content-wrapper" >
+
+            <div class="row-content am-cf">
+
+
+                <div class="row">
+
+                    <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+                        <div class="widget am-cf">
+                            <div class="widget-head am-cf">
+                                <div class="widget-title am-fl">{{ job_detail.job_company }}招聘信息</div>
+                                <div class="widget-function am-fr">
+                                    <a href="javascript:;" class="am-icon-cog"></a>
+                                </div>
+                            </div>
+                            <div class="widget-body am-fr">
+                                    <div class="am-form-group">
+                                        <h2>{{ job_detail.job_name}}</h2>
+                                    </div>
+                                    <div class="am-form-group">
+                                        <h3>工作待遇：<span style="color:red">{{ job_detail.job_salary }}</span>||工作地点：{{ job_detail.job_district }}||公司名称：{{ job_detail.job_company }}</h3>
+                                    </div>
+                                    <div class="am-form-group">
+                                        <div class="am-u-sm-12">
+
+                                               {% raw job_detail.job_summary %}
+
+                                        </div>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+            </div>
+        </div>
+
+<script>
+
+</script>
+{% end %}

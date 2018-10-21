@@ -1,0 +1,107 @@
+{% extends "frame.html" %}
+{% block head %}
+    <title>金融行业招聘信息_[{{ escape(handler.settings["blog_title"]) }}]</title>
+    <meta name="description" content="辅投助手提供为您提供金融行业招聘信息，信息仅供参考！金融行业就业机会尽在futouzs.com！">
+    <meta name="keywords" content="证券招聘,金融机构招聘信息,保险求职信息,全国银行招聘，找工作,求职,人才,招聘">
+{% end %}
+{% block main %}
+{% autoescape None %}<!--全局不转义-->
+        <div class="tpl-content-wrapper" >
+
+            <div class="row-content am-cf">
+                <div class="row">
+                    <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+                        <div class="widget am-cf">
+
+                            <div class="widget-head am-cf">
+                                <div class="widget-title  am-cf">招聘信息列表</div>
+                                   <div class="am-u-sm-12 am-u-md-12 am-u-lg-5">
+                                     {%if jobs_search!=''%}
+                                        <form action="jobs_list.html" method="get">
+                                             {% module xsrf_form_html() %}
+                                            <div class="am-input-group am-input-group-sm tpl-form-border-form cl-p">
+                                                <input value="all" id="type" name="type" hidden>
+                                                <input type="text" name="jobs_search" id="report_search" value="{{jobs_search}}" class="am-form-field ">
+                                                <span class="am-input-group-btn">
+                                                    <button class="am-btn  am-btn-default am-btn-success tpl-table-list-field am-icon-search" type='submit'></button>
+                                                </span>
+                                            </div>
+                                         </form>
+                                        <div class="widget-title  am-cf">以下为关键字"<font color="red">{{jobs_search}}</font> "查询结果<span>{{ jobslistcount.vcount }}</span>条</div>
+                                     {%else%}
+                                        <form action="jobs_list.html" method="get">
+                                         {% module xsrf_form_html() %}
+                                        <div class="am-input-group am-input-group-sm tpl-form-border-form cl-p">
+                                             <input value="all" id="type" name="type" hidden>
+                                            <input type="text" name="jobs_search" id="jobs_search" class="am-form-field ">
+                                            <span class="am-input-group-btn">
+                                                <button class="am-btn  am-btn-default am-btn-success tpl-table-list-field am-icon-search" type='submit'></button>
+                                            </span>
+                                        </div>
+                                     </form>
+
+                                    {%end%}
+                                </div>
+                            </div>
+
+                            <div class="am-list-news am-list-news-default">
+
+                                 <div class="am-list-news-bd">
+                                     {% for joblist in jobslists %}
+                                    <ul class="am-list">
+                                     <!--缩略图在标题左边-->
+                                      <li class="am-g am-list-item-desced ">
+                                        <div class=" am-u-sm-11 am-list-main">
+                                            <h3 class="am-list-item-hd"><a target="_blank" href="jobs_detail.html?id={{ joblist.id }}">{{joblist.job_name}}</a></h3>
+                                            <div class="am-list-item-text">
+                                                <ul>
+                                                    <span>待遇：{{joblist.job_salary}}</span>
+                                                    <span>工作地点：{{joblist.job_district}}</span>
+                                                    <span>公司名称：{{joblist.job_company}}</span>
+                                                </ul>
+
+                                             </div>
+
+                                        </div>
+                                      </li>
+                                    </ul>
+                                    {%end%}
+                                 </div>
+                                <div class="am-u-lg-12 am-cf">
+
+                                    <div class="am-fr">
+                                        <ul class="am-pagination tpl-pagination">
+
+                                            {%if news_page>0%}
+                                                {%set previous_page=news_page-1%}
+                                                {% set nextpage=news_page+1 %}
+                                            {%elif news_page==0%}
+                                                {% set nextpage=news_page+1 %}
+                                                {%set previous_page=news_page%}
+                                            {%else%}
+                                                {%set previous_page=news_page%}
+                                            {%end%}
+                                            {%if jobs_search!=''%}
+                                            <li><a href="jobs_list.html?page=0&jobs_search={{jobs_search}}">首页</a></li>
+                                            <li><a href="jobs_list.html?page={{previous_page}}&jobs_search={{jobs_search}}">上一页</a></li>
+                                            <li><a href="jobs_list.html?page={{nextpage}}&jobs_search={{jobs_search}}">下一页</a></li>
+                                            {%else%}
+                                            <li><a href="jobs_list.html?page={{previous_page}}&type=all">上一页</a></li>
+                                            <li><a href="jobs_list.html?page={{nextpage}}&type=all">下一页</a></li>
+                                            {%end%}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+
+<script>
+
+</script>
+{% end %}
